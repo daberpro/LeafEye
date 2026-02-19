@@ -1,0 +1,9 @@
+table FileHistory {
+    /// objectbox: id
+    id:ulong;
+    filename:string;
+    file_size:uint;
+    date_created:long;
+    date_modified:long;
+    confidence_score:float;
+}

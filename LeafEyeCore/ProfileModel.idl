@@ -1,0 +1,13 @@
+namespace LeafEyeCore {
+    [default_interface]
+    runtimeclass ProfileModel
+    {
+        ProfileModel();
+        ProfileModel(UInt64 id, String fullname, String avatarPath, Int32 role);
+
+        UInt64 Id{set;get;};
+        String Fullname{set;get;};
+        String AvatarPath{set;get;};
+        Int32 Role{set;get;};
+    }
+}

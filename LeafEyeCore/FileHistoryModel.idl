@@ -1,0 +1,16 @@
+namespace LeafEyeCore {
+    [default_interface]
+    runtimeclass FileHistoryModel
+    {
+        FileHistoryModel();
+        FileHistoryModel(UInt64 id, String fileName, UInt32 fileSize, Int64 dateCreated, Int64 dateModified, Single confidenceScore);
+
+        UInt64 Id{set;get;};
+        String FileName{set;get;};
+        UInt32 FileSize{set;get;};
+        Int64 DateCreated{set;get;};
+        Int64 DateModified{set;get;};
+        IVector<UInt32> DetectedDiseases{set;get;};
+        Single ConfidenceScore{set;get;};
+    }
+}

@@ -1,0 +1,14 @@
+
+namespace LeafEyeCore
+{
+    [default_interface]
+    runtimeclass Result
+    {
+        Result();
+        Result(Boolean is_error, Int32 error_code, String message, Object result_value);
+        Boolean IsError { get;set;};
+        Int32 ErrorCode { get;set;}; // only exists when get an error
+        String Message { get;set;}; // only exists when get an error
+        Object ResultValue { get;set;}; // only exists when get a success
+    }
+}

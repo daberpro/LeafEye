@@ -1,0 +1,14 @@
+namespace LeafEyeCore {
+    [default_interface]
+    runtimeclass UserModel
+    {
+        
+        UserModel();
+        UserModel(String username, String password, Boolean isAdmin);
+        
+        UInt64 Id{get;set;};
+        String Username{get;set;};
+        String Password{get;set;};
+        Boolean IsAdmin{get;set;};
+    }
+}

@@ -1,0 +1,9 @@
+namespace LeafEye
+{
+    [default_interface]
+    runtimeclass MainWindow : Microsoft.UI.Xaml.Window, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        MainWindow();
+        String MyStatusText;
+    }
+}

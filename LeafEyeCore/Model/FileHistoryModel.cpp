@@ -1,0 +1,73 @@
+#include "pch.h"
+#include "FileHistoryModel.h"
+#include "FileHistoryModel.g.cpp"
+
+namespace winrt::LeafEyeCore::implementation
+{
+    FileHistoryModel::FileHistoryModel(uint64_t const& id, hstring const& fileName, uint32_t const& fileSize, int64_t const& dateCreated, int64_t const& dateModified, float const& confidenceScore)
+        : m_id(id), m_fileName(fileName), m_fileSize(fileSize), m_dateCreated(dateCreated), m_dateModified(dateModified), m_confidenceScore(confidenceScore)
+    {
+	}
+    uint64_t FileHistoryModel::Id()
+    {
+        return m_id;
+    }
+    void FileHistoryModel::Id(uint64_t value)
+    {
+        m_id = value;
+    }
+
+    hstring FileHistoryModel::FileName()
+    {
+        return m_fileName;
+    }
+    void FileHistoryModel::FileName(hstring const& value)
+    {
+        m_fileName = value;
+    }
+
+    uint32_t FileHistoryModel::FileSize()
+    {
+        return m_fileSize;
+    }
+    void FileHistoryModel::FileSize(uint32_t value)
+    {
+        m_fileSize = value;
+    }
+
+    int64_t FileHistoryModel::DateCreated()
+    {
+        return m_dateCreated;
+    }
+    void FileHistoryModel::DateCreated(int64_t value)
+    {
+        m_dateCreated = value;
+    }
+
+    int64_t FileHistoryModel::DateModified()
+    {
+        return m_dateModified;
+    }
+    void FileHistoryModel::DateModified(int64_t value)
+    {
+        m_dateModified = value;
+    }
+
+    winrt::Windows::Foundation::Collections::IVector<uint32_t> FileHistoryModel::DetectedDiseases()
+    {
+        return m_detectedDiseases;
+    }
+    void FileHistoryModel::DetectedDiseases(winrt::Windows::Foundation::Collections::IVector<uint32_t> const& value)
+    {
+        m_detectedDiseases = value;
+    }
+
+    float FileHistoryModel::ConfidenceScore()
+    {
+        return m_confidenceScore;
+    }
+    void FileHistoryModel::ConfidenceScore(float value)
+    {
+        m_confidenceScore = value;
+    }
+}

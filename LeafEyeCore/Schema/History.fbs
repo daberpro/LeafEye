@@ -1,0 +1,10 @@
+include "FileHistory.fbs";
+/// objectbox:relation(name=files,to=FileHistory)
+table History{
+    /// objectbox: id
+    id:ulong;
+    /// objectbox: date
+    date:long;
+    total_files:uint;
+    status:uint;
+}

@@ -1,0 +1,8 @@
+table Profile{
+    /// objectbox: id
+    id:ulong;
+    /// objectbox: index=hash
+    full_name:string;
+    avatar_path:string;
+    role:int;
+}

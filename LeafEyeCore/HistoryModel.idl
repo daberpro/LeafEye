@@ -1,0 +1,16 @@
+import "FileHistoryModel.idl";
+
+namespace LeafEyeCore {
+    [default_interface]
+    runtimeclass HistoryModel
+    {
+        HistoryModel();
+        HistoryModel(UInt64 id, Int64 date, UInt32 totalFiles, UInt32 status);
+
+        UInt64 Id{set;get;};
+        Int64 Date{set;get;};
+        UInt32 TotalFiles{set;get;};
+        UInt32 Status{set;get;};
+        IVector<FileHistoryModel> Files{set;get;};
+    }
+}

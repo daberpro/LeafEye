@@ -1,0 +1,175 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:956102776773730000",
+      "lastPropertyId": "1:159805687203425824",
+      "name": "File",
+      "properties": [
+        {
+          "id": "1:159805687203425824",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        }
+      ]
+    },
+    {
+      "id": "2:40048249367672753",
+      "lastPropertyId": "4:5307989602780852122",
+      "name": "History",
+      "properties": [
+        {
+          "id": "1:4099338566193010180",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1644701040708899335",
+          "name": "date",
+          "type": 10
+        },
+        {
+          "id": "3:8190082165606202171",
+          "name": "total_files",
+          "type": 5,
+          "flags": 8192
+        },
+        {
+          "id": "4:5307989602780852122",
+          "name": "status",
+          "type": 5,
+          "flags": 8192
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:8344513716167167100",
+          "name": "files",
+          "targetId": "5:7203642947974398314"
+        }
+      ]
+    },
+    {
+      "id": "3:3282537307467431222",
+      "lastPropertyId": "4:4746280122636286434",
+      "name": "Profile",
+      "properties": [
+        {
+          "id": "1:5310139145486461373",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6561022647064370313",
+          "name": "full_name",
+          "indexId": "1:7321477854285674987",
+          "type": 9,
+          "flags": 2048
+        },
+        {
+          "id": "3:9019589123206531678",
+          "name": "avatar_path",
+          "type": 9
+        },
+        {
+          "id": "4:4746280122636286434",
+          "name": "role",
+          "type": 5
+        }
+      ]
+    },
+    {
+      "id": "4:915219184694351256",
+      "lastPropertyId": "5:101514211085163999",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:730520790257828564",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2802589360075883275",
+          "name": "username",
+          "indexId": "2:7292895028237184623",
+          "type": 9,
+          "flags": 4096
+        },
+        {
+          "id": "3:5964648463446491874",
+          "name": "password",
+          "type": 9
+        },
+        {
+          "id": "5:101514211085163999",
+          "name": "is_admin",
+          "type": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "2:4448433225820285083",
+          "name": "profile",
+          "targetId": "3:3282537307467431222"
+        }
+      ]
+    },
+    {
+      "id": "5:7203642947974398314",
+      "lastPropertyId": "6:3065987969989679219",
+      "name": "FileHistory",
+      "properties": [
+        {
+          "id": "1:5164298717709435730",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3342432616709917633",
+          "name": "filename",
+          "type": 9
+        },
+        {
+          "id": "3:8564058090546440764",
+          "name": "date_created",
+          "type": 6
+        },
+        {
+          "id": "4:855346855330524523",
+          "name": "date_modified",
+          "type": 6
+        },
+        {
+          "id": "5:555034200902362785",
+          "name": "confidence_score",
+          "type": 7
+        },
+        {
+          "id": "6:3065987969989679219",
+          "name": "file_size",
+          "type": 5,
+          "flags": 8192
+        }
+      ]
+    }
+  ],
+  "lastEntityId": "5:7203642947974398314",
+  "lastIndexId": "2:7292895028237184623",
+  "lastRelationId": "2:4448433225820285083",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    5240296351151806314
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}

@@ -1,0 +1,1370 @@
+Folder PATH listing for volume New Volume
+Volume serial number is BA27-8DF4
+D:.
++---LeafEye
+¦   +---Assets
+¦   +---Generated Files
+¦   ¦   +---sources
+¦   ¦   +---Styles
+¦   ¦   +---winrt
+¦   ¦       +---impl
+¦   +---LeafEye
+¦   ¦   +---x64
+¦   ¦       +---Debug
+¦   ¦           +---.winmd_cache
+¦   ¦           +---embed
+¦   ¦           ¦   +---Styles
+¦   ¦           +---LeafEye.tlog
+¦   ¦           +---LeafEye_MD.tlog
+¦   ¦           +---Merged
+¦   ¦           +---microsoft
+¦   ¦           ¦   +---STL
+¦   ¦           +---Unmerged
+¦   +---packages
+¦   ¦   +---Microsoft.Web.WebView2.1.0.3179.45
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦       +---arm64
+¦   ¦   ¦   ¦       +---include
+¦   ¦   ¦   ¦       +---include-winrt
+¦   ¦   ¦   ¦       +---x64
+¦   ¦   ¦   ¦       +---x86
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---net462
+¦   ¦   ¦   +---lib_manual
+¦   ¦   ¦   ¦   +---net5.0-windows10.0.17763.0
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   ¦   +---net8.0-windows10.0.17763.0
+¦   ¦   ¦   ¦   +---netcoreapp3.0
+¦   ¦   ¦   +---runtimes
+¦   ¦   ¦   ¦   +---win-arm64
+¦   ¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   ¦   +---native_uap
+¦   ¦   ¦   ¦   +---win-x64
+¦   ¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   ¦   +---native_uap
+¦   ¦   ¦   ¦   +---win-x86
+¦   ¦   ¦   ¦       +---native
+¦   ¦   ¦   ¦       +---native_uap
+¦   ¦   ¦   +---tools
+¦   ¦   ¦       +---wv2winrt
+¦   ¦   ¦           +---cs
+¦   ¦   ¦           +---de
+¦   ¦   ¦           +---es
+¦   ¦   ¦           +---fr
+¦   ¦   ¦           +---it
+¦   ¦   ¦           +---ja
+¦   ¦   ¦           +---ko
+¦   ¦   ¦           +---pl
+¦   ¦   ¦           +---pt-BR
+¦   ¦   ¦           +---ru
+¦   ¦   ¦           +---tr
+¦   ¦   ¦           +---zh-Hans
+¦   ¦   ¦           +---zh-Hant
+¦   ¦   +---Microsoft.Windows.CppWinRT.2.0.250303.1
+¦   ¦   ¦   +---bin
+¦   ¦   ¦   +---build
+¦   ¦   ¦       +---native
+¦   ¦   ¦           +---lib
+¦   ¦   ¦               +---arm64
+¦   ¦   ¦               +---win32
+¦   ¦   ¦               +---x64
+¦   ¦   +---Microsoft.Windows.ImplementationLibrary.1.0.260126.7
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   +---wil
+¦   ¦   ¦   +---natvis
+¦   ¦   +---Microsoft.Windows.SDK.BuildTools.10.0.26100.7705
+¦   ¦   ¦   +---bin
+¦   ¦   ¦   ¦   +---10.0.26100.0
+¦   ¦   ¦   ¦       +---arm64
+¦   ¦   ¦   ¦       ¦   +---AccChecker
+¦   ¦   ¦   ¦       ¦   +---en
+¦   ¦   ¦   ¦       ¦   +---en-US
+¦   ¦   ¦   ¦       +---x64
+¦   ¦   ¦   ¦       ¦   +---AccChecker
+¦   ¦   ¦   ¦       ¦   +---en
+¦   ¦   ¦   ¦       ¦   +---en-US
+¦   ¦   ¦   ¦       +---x86
+¦   ¦   ¦   ¦           +---AccChecker
+¦   ¦   ¦   ¦           +---en
+¦   ¦   ¦   ¦           +---en-US
+¦   ¦   ¦   +---build
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---schemas
+¦   ¦   ¦       +---10.0.26100.0
+¦   ¦   ¦           +---winrt
+¦   ¦   +---Microsoft.Windows.SDK.BuildTools.MSIX.1.7.20250829.1
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---AppDevPackageScripts
+¦   ¦   ¦   ¦   ¦   +---Add-AppDevPackage.resources
+¦   ¦   ¦   ¦   ¦       +---cs-CZ
+¦   ¦   ¦   ¦   ¦       +---de-DE
+¦   ¦   ¦   ¦   ¦       +---en-US
+¦   ¦   ¦   ¦   ¦       +---es-ES
+¦   ¦   ¦   ¦   ¦       +---fr-FR
+¦   ¦   ¦   ¦   ¦       +---it-IT
+¦   ¦   ¦   ¦   ¦       +---ja-JP
+¦   ¦   ¦   ¦   ¦       +---ko-KR
+¦   ¦   ¦   ¦   ¦       +---pl-PL
+¦   ¦   ¦   ¦   ¦       +---pt-BR
+¦   ¦   ¦   ¦   ¦       +---ru-RU
+¦   ¦   ¦   ¦   ¦       +---tr-TR
+¦   ¦   ¦   ¦   ¦       +---zh-CN
+¦   ¦   ¦   ¦   ¦       +---zh-TW
+¦   ¦   ¦   ¦   +---Landing
+¦   ¦   ¦   ¦   ¦   +---extras
+¦   ¦   ¦   ¦   +---Rules
+¦   ¦   ¦   ¦   +---Templates
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---tools
+¦   ¦   ¦       +---net472
+¦   ¦   ¦       +---net6.0
+¦   ¦   +---Microsoft.WindowsAppSDK.1.8.260209005
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦       +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.AI.1.8.47
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   +---metadata
+¦   ¦   ¦   +---runtimes-framework
+¦   ¦   ¦       +---win-arm64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       ¦       +---NpuDetect
+¦   ¦   ¦       +---win-arm64ec
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       ¦       +---NpuDetect
+¦   ¦   ¦       +---win-x64
+¦   ¦   ¦           +---native
+¦   ¦   ¦               +---NpuDetect
+¦   ¦   +---Microsoft.WindowsAppSDK.Base.1.8.251216001
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦       +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.DWrite.1.8.25122902
+¦   ¦   ¦   +---build
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---include
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦       +---arm64
+¦   ¦   ¦   ¦       +---arm64ec
+¦   ¦   ¦   ¦       +---x64
+¦   ¦   ¦   ¦       +---x86
+¦   ¦   ¦   +---runtimes-framework
+¦   ¦   ¦       +---win-arm64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-arm64ec
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x86
+¦   ¦   ¦           +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.Foundation.1.8.260203002
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---include
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   ¦   +---arm64
+¦   ¦   ¦   ¦   ¦   +---arm64ec
+¦   ¦   ¦   ¦   ¦   +---x64
+¦   ¦   ¦   ¦   ¦   +---x86
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   +---metadata
+¦   ¦   ¦   +---runtimes
+¦   ¦   ¦   ¦   +---win-arm64
+¦   ¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---win-arm64ec
+¦   ¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---win-x64
+¦   ¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---win-x86
+¦   ¦   ¦   ¦       +---native
+¦   ¦   ¦   +---runtimes-framework
+¦   ¦   ¦       +---win-arm64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-arm64ec
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x86
+¦   ¦   ¦           +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.260125001
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   +---winrt
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   ¦   +---win10-arm64
+¦   ¦   ¦   ¦   ¦   +---win10-arm64ec
+¦   ¦   ¦   ¦   ¦   +---win10-x64
+¦   ¦   ¦   ¦   ¦   +---win10-x86
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.18362.0
+¦   ¦   ¦   +---metadata
+¦   ¦   ¦   ¦   +---10.0.17763.0
+¦   ¦   ¦   ¦   +---10.0.18362.0
+¦   ¦   ¦   +---runtimes-framework
+¦   ¦   ¦       +---win-arm64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-arm64ec
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x86
+¦   ¦   ¦           +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.ML.1.8.2124
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   +---winml
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   ¦   +---arm64
+¦   ¦   ¦   ¦   ¦   +---arm64ec
+¦   ¦   ¦   ¦   ¦   +---x64
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   ¦   +---net8.0-windows10.0.17763.0
+¦   ¦   ¦   +---metadata
+¦   ¦   ¦   +---runtimes-framework
+¦   ¦   ¦       +---win-arm64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-arm64ec
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x64
+¦   ¦   ¦           +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.Runtime.1.8.260209005
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---include
+¦   ¦   ¦   +---tools
+¦   ¦   ¦       +---MSIX
+¦   ¦   ¦           +---win10-arm64
+¦   ¦   ¦           +---win10-arm64ec
+¦   ¦   ¦           +---win10-x64
+¦   ¦   ¦           +---win10-x86
+¦   ¦   +---Microsoft.WindowsAppSDK.Widgets.1.8.251231004
+¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---buildTransitive
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   +---metadata
+¦   ¦   ¦   +---runtimes-framework
+¦   ¦   ¦       +---win-arm64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-arm64ec
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x64
+¦   ¦   ¦       ¦   +---native
+¦   ¦   ¦       +---win-x86
+¦   ¦   ¦           +---native
+¦   ¦   +---Microsoft.WindowsAppSDK.WinUI.1.8.260204000
+¦   ¦       +---build
+¦   ¦       ¦   +---native
+¦   ¦       +---buildTransitive
+¦   ¦       ¦   +---native
+¦   ¦       +---include
+¦   ¦       +---lib
+¦   ¦       ¦   +---native
+¦   ¦       ¦   ¦   +---Microsoft.UI
+¦   ¦       ¦   ¦       +---Themes
+¦   ¦       ¦   +---net6.0-windows10.0.17763.0
+¦   ¦       ¦       +---Microsoft.WinUI
+¦   ¦       ¦           +---Themes
+¦   ¦       +---metadata
+¦   ¦       +---runtimes-framework
+¦   ¦       ¦   +---win-arm64
+¦   ¦       ¦   ¦   +---native
+¦   ¦       ¦   ¦       +---af-ZA
+¦   ¦       ¦   ¦       +---am-ET
+¦   ¦       ¦   ¦       +---ar-SA
+¦   ¦       ¦   ¦       +---as-IN
+¦   ¦       ¦   ¦       +---az-Latn-AZ
+¦   ¦       ¦   ¦       +---bg-BG
+¦   ¦       ¦   ¦       +---bn-IN
+¦   ¦       ¦   ¦       +---bs-Latn-BA
+¦   ¦       ¦   ¦       +---ca-ES
+¦   ¦       ¦   ¦       +---ca-Es-VALENCIA
+¦   ¦       ¦   ¦       +---cs-CZ
+¦   ¦       ¦   ¦       +---cy-GB
+¦   ¦       ¦   ¦       +---da-DK
+¦   ¦       ¦   ¦       +---de-DE
+¦   ¦       ¦   ¦       +---el-GR
+¦   ¦       ¦   ¦       +---en-GB
+¦   ¦       ¦   ¦       +---en-us
+¦   ¦       ¦   ¦       +---es-ES
+¦   ¦       ¦   ¦       +---es-MX
+¦   ¦       ¦   ¦       +---et-EE
+¦   ¦       ¦   ¦       +---eu-ES
+¦   ¦       ¦   ¦       +---fa-IR
+¦   ¦       ¦   ¦       +---fi-FI
+¦   ¦       ¦   ¦       +---fil-PH
+¦   ¦       ¦   ¦       +---fr-CA
+¦   ¦       ¦   ¦       +---fr-FR
+¦   ¦       ¦   ¦       +---ga-IE
+¦   ¦       ¦   ¦       +---gd-gb
+¦   ¦       ¦   ¦       +---gl-ES
+¦   ¦       ¦   ¦       +---gu-IN
+¦   ¦       ¦   ¦       +---he-IL
+¦   ¦       ¦   ¦       +---hi-IN
+¦   ¦       ¦   ¦       +---hr-HR
+¦   ¦       ¦   ¦       +---hu-HU
+¦   ¦       ¦   ¦       +---hy-AM
+¦   ¦       ¦   ¦       +---id-ID
+¦   ¦       ¦   ¦       +---is-IS
+¦   ¦       ¦   ¦       +---it-IT
+¦   ¦       ¦   ¦       +---ja-JP
+¦   ¦       ¦   ¦       +---ka-GE
+¦   ¦       ¦   ¦       +---kk-KZ
+¦   ¦       ¦   ¦       +---km-KH
+¦   ¦       ¦   ¦       +---kn-IN
+¦   ¦       ¦   ¦       +---ko-KR
+¦   ¦       ¦   ¦       +---kok-IN
+¦   ¦       ¦   ¦       +---lb-LU
+¦   ¦       ¦   ¦       +---lo-LA
+¦   ¦       ¦   ¦       +---lt-LT
+¦   ¦       ¦   ¦       +---lv-LV
+¦   ¦       ¦   ¦       +---mi-NZ
+¦   ¦       ¦   ¦       +---Microsoft.UI.Xaml
+¦   ¦       ¦   ¦       ¦   +---Assets
+¦   ¦       ¦   ¦       +---mk-MK
+¦   ¦       ¦   ¦       +---ml-IN
+¦   ¦       ¦   ¦       +---mr-IN
+¦   ¦       ¦   ¦       +---ms-MY
+¦   ¦       ¦   ¦       +---mt-MT
+¦   ¦       ¦   ¦       +---nb-NO
+¦   ¦       ¦   ¦       +---ne-NP
+¦   ¦       ¦   ¦       +---nl-NL
+¦   ¦       ¦   ¦       +---nn-NO
+¦   ¦       ¦   ¦       +---or-IN
+¦   ¦       ¦   ¦       +---pa-IN
+¦   ¦       ¦   ¦       +---pl-PL
+¦   ¦       ¦   ¦       +---pt-BR
+¦   ¦       ¦   ¦       +---pt-PT
+¦   ¦       ¦   ¦       +---quz-PE
+¦   ¦       ¦   ¦       +---ro-RO
+¦   ¦       ¦   ¦       +---ru-RU
+¦   ¦       ¦   ¦       +---sk-SK
+¦   ¦       ¦   ¦       +---sl-SI
+¦   ¦       ¦   ¦       +---sq-AL
+¦   ¦       ¦   ¦       +---sr-Cyrl-BA
+¦   ¦       ¦   ¦       +---sr-Cyrl-RS
+¦   ¦       ¦   ¦       +---sr-Latn-RS
+¦   ¦       ¦   ¦       +---sv-SE
+¦   ¦       ¦   ¦       +---ta-IN
+¦   ¦       ¦   ¦       +---te-IN
+¦   ¦       ¦   ¦       +---th-TH
+¦   ¦       ¦   ¦       +---tr-TR
+¦   ¦       ¦   ¦       +---tt-RU
+¦   ¦       ¦   ¦       +---ug-CN
+¦   ¦       ¦   ¦       +---uk-UA
+¦   ¦       ¦   ¦       +---ur-PK
+¦   ¦       ¦   ¦       +---uz-Latn-UZ
+¦   ¦       ¦   ¦       +---vi-VN
+¦   ¦       ¦   ¦       +---zh-CN
+¦   ¦       ¦   ¦       +---zh-TW
+¦   ¦       ¦   +---win-arm64ec
+¦   ¦       ¦   ¦   +---native
+¦   ¦       ¦   ¦       +---af-ZA
+¦   ¦       ¦   ¦       +---am-ET
+¦   ¦       ¦   ¦       +---ar-SA
+¦   ¦       ¦   ¦       +---as-IN
+¦   ¦       ¦   ¦       +---az-Latn-AZ
+¦   ¦       ¦   ¦       +---bg-BG
+¦   ¦       ¦   ¦       +---bn-IN
+¦   ¦       ¦   ¦       +---bs-Latn-BA
+¦   ¦       ¦   ¦       +---ca-ES
+¦   ¦       ¦   ¦       +---ca-Es-VALENCIA
+¦   ¦       ¦   ¦       +---cs-CZ
+¦   ¦       ¦   ¦       +---cy-GB
+¦   ¦       ¦   ¦       +---da-DK
+¦   ¦       ¦   ¦       +---de-DE
+¦   ¦       ¦   ¦       +---el-GR
+¦   ¦       ¦   ¦       +---en-GB
+¦   ¦       ¦   ¦       +---en-us
+¦   ¦       ¦   ¦       +---es-ES
+¦   ¦       ¦   ¦       +---es-MX
+¦   ¦       ¦   ¦       +---et-EE
+¦   ¦       ¦   ¦       +---eu-ES
+¦   ¦       ¦   ¦       +---fa-IR
+¦   ¦       ¦   ¦       +---fi-FI
+¦   ¦       ¦   ¦       +---fil-PH
+¦   ¦       ¦   ¦       +---fr-CA
+¦   ¦       ¦   ¦       +---fr-FR
+¦   ¦       ¦   ¦       +---ga-IE
+¦   ¦       ¦   ¦       +---gd-gb
+¦   ¦       ¦   ¦       +---gl-ES
+¦   ¦       ¦   ¦       +---gu-IN
+¦   ¦       ¦   ¦       +---he-IL
+¦   ¦       ¦   ¦       +---hi-IN
+¦   ¦       ¦   ¦       +---hr-HR
+¦   ¦       ¦   ¦       +---hu-HU
+¦   ¦       ¦   ¦       +---hy-AM
+¦   ¦       ¦   ¦       +---id-ID
+¦   ¦       ¦   ¦       +---is-IS
+¦   ¦       ¦   ¦       +---it-IT
+¦   ¦       ¦   ¦       +---ja-JP
+¦   ¦       ¦   ¦       +---ka-GE
+¦   ¦       ¦   ¦       +---kk-KZ
+¦   ¦       ¦   ¦       +---km-KH
+¦   ¦       ¦   ¦       +---kn-IN
+¦   ¦       ¦   ¦       +---ko-KR
+¦   ¦       ¦   ¦       +---kok-IN
+¦   ¦       ¦   ¦       +---lb-LU
+¦   ¦       ¦   ¦       +---lo-LA
+¦   ¦       ¦   ¦       +---lt-LT
+¦   ¦       ¦   ¦       +---lv-LV
+¦   ¦       ¦   ¦       +---mi-NZ
+¦   ¦       ¦   ¦       +---Microsoft.UI.Xaml
+¦   ¦       ¦   ¦       ¦   +---Assets
+¦   ¦       ¦   ¦       +---mk-MK
+¦   ¦       ¦   ¦       +---ml-IN
+¦   ¦       ¦   ¦       +---mr-IN
+¦   ¦       ¦   ¦       +---ms-MY
+¦   ¦       ¦   ¦       +---mt-MT
+¦   ¦       ¦   ¦       +---nb-NO
+¦   ¦       ¦   ¦       +---ne-NP
+¦   ¦       ¦   ¦       +---nl-NL
+¦   ¦       ¦   ¦       +---nn-NO
+¦   ¦       ¦   ¦       +---or-IN
+¦   ¦       ¦   ¦       +---pa-IN
+¦   ¦       ¦   ¦       +---pl-PL
+¦   ¦       ¦   ¦       +---pt-BR
+¦   ¦       ¦   ¦       +---pt-PT
+¦   ¦       ¦   ¦       +---quz-PE
+¦   ¦       ¦   ¦       +---ro-RO
+¦   ¦       ¦   ¦       +---ru-RU
+¦   ¦       ¦   ¦       +---sk-SK
+¦   ¦       ¦   ¦       +---sl-SI
+¦   ¦       ¦   ¦       +---sq-AL
+¦   ¦       ¦   ¦       +---sr-Cyrl-BA
+¦   ¦       ¦   ¦       +---sr-Cyrl-RS
+¦   ¦       ¦   ¦       +---sr-Latn-RS
+¦   ¦       ¦   ¦       +---sv-SE
+¦   ¦       ¦   ¦       +---ta-IN
+¦   ¦       ¦   ¦       +---te-IN
+¦   ¦       ¦   ¦       +---th-TH
+¦   ¦       ¦   ¦       +---tr-TR
+¦   ¦       ¦   ¦       +---tt-RU
+¦   ¦       ¦   ¦       +---ug-CN
+¦   ¦       ¦   ¦       +---uk-UA
+¦   ¦       ¦   ¦       +---ur-PK
+¦   ¦       ¦   ¦       +---uz-Latn-UZ
+¦   ¦       ¦   ¦       +---vi-VN
+¦   ¦       ¦   ¦       +---zh-CN
+¦   ¦       ¦   ¦       +---zh-TW
+¦   ¦       ¦   +---win-x64
+¦   ¦       ¦   ¦   +---native
+¦   ¦       ¦   ¦       +---af-ZA
+¦   ¦       ¦   ¦       +---am-ET
+¦   ¦       ¦   ¦       +---ar-SA
+¦   ¦       ¦   ¦       +---as-IN
+¦   ¦       ¦   ¦       +---az-Latn-AZ
+¦   ¦       ¦   ¦       +---bg-BG
+¦   ¦       ¦   ¦       +---bn-IN
+¦   ¦       ¦   ¦       +---bs-Latn-BA
+¦   ¦       ¦   ¦       +---ca-ES
+¦   ¦       ¦   ¦       +---ca-Es-VALENCIA
+¦   ¦       ¦   ¦       +---cs-CZ
+¦   ¦       ¦   ¦       +---cy-GB
+¦   ¦       ¦   ¦       +---da-DK
+¦   ¦       ¦   ¦       +---de-DE
+¦   ¦       ¦   ¦       +---el-GR
+¦   ¦       ¦   ¦       +---en-GB
+¦   ¦       ¦   ¦       +---en-us
+¦   ¦       ¦   ¦       +---es-ES
+¦   ¦       ¦   ¦       +---es-MX
+¦   ¦       ¦   ¦       +---et-EE
+¦   ¦       ¦   ¦       +---eu-ES
+¦   ¦       ¦   ¦       +---fa-IR
+¦   ¦       ¦   ¦       +---fi-FI
+¦   ¦       ¦   ¦       +---fil-PH
+¦   ¦       ¦   ¦       +---fr-CA
+¦   ¦       ¦   ¦       +---fr-FR
+¦   ¦       ¦   ¦       +---ga-IE
+¦   ¦       ¦   ¦       +---gd-gb
+¦   ¦       ¦   ¦       +---gl-ES
+¦   ¦       ¦   ¦       +---gu-IN
+¦   ¦       ¦   ¦       +---he-IL
+¦   ¦       ¦   ¦       +---hi-IN
+¦   ¦       ¦   ¦       +---hr-HR
+¦   ¦       ¦   ¦       +---hu-HU
+¦   ¦       ¦   ¦       +---hy-AM
+¦   ¦       ¦   ¦       +---id-ID
+¦   ¦       ¦   ¦       +---is-IS
+¦   ¦       ¦   ¦       +---it-IT
+¦   ¦       ¦   ¦       +---ja-JP
+¦   ¦       ¦   ¦       +---ka-GE
+¦   ¦       ¦   ¦       +---kk-KZ
+¦   ¦       ¦   ¦       +---km-KH
+¦   ¦       ¦   ¦       +---kn-IN
+¦   ¦       ¦   ¦       +---ko-KR
+¦   ¦       ¦   ¦       +---kok-IN
+¦   ¦       ¦   ¦       +---lb-LU
+¦   ¦       ¦   ¦       +---lo-LA
+¦   ¦       ¦   ¦       +---lt-LT
+¦   ¦       ¦   ¦       +---lv-LV
+¦   ¦       ¦   ¦       +---mi-NZ
+¦   ¦       ¦   ¦       +---Microsoft.UI.Xaml
+¦   ¦       ¦   ¦       ¦   +---Assets
+¦   ¦       ¦   ¦       +---mk-MK
+¦   ¦       ¦   ¦       +---ml-IN
+¦   ¦       ¦   ¦       +---mr-IN
+¦   ¦       ¦   ¦       +---ms-MY
+¦   ¦       ¦   ¦       +---mt-MT
+¦   ¦       ¦   ¦       +---nb-NO
+¦   ¦       ¦   ¦       +---ne-NP
+¦   ¦       ¦   ¦       +---nl-NL
+¦   ¦       ¦   ¦       +---nn-NO
+¦   ¦       ¦   ¦       +---or-IN
+¦   ¦       ¦   ¦       +---pa-IN
+¦   ¦       ¦   ¦       +---pl-PL
+¦   ¦       ¦   ¦       +---pt-BR
+¦   ¦       ¦   ¦       +---pt-PT
+¦   ¦       ¦   ¦       +---quz-PE
+¦   ¦       ¦   ¦       +---ro-RO
+¦   ¦       ¦   ¦       +---ru-RU
+¦   ¦       ¦   ¦       +---sk-SK
+¦   ¦       ¦   ¦       +---sl-SI
+¦   ¦       ¦   ¦       +---sq-AL
+¦   ¦       ¦   ¦       +---sr-Cyrl-BA
+¦   ¦       ¦   ¦       +---sr-Cyrl-RS
+¦   ¦       ¦   ¦       +---sr-Latn-RS
+¦   ¦       ¦   ¦       +---sv-SE
+¦   ¦       ¦   ¦       +---ta-IN
+¦   ¦       ¦   ¦       +---te-IN
+¦   ¦       ¦   ¦       +---th-TH
+¦   ¦       ¦   ¦       +---tr-TR
+¦   ¦       ¦   ¦       +---tt-RU
+¦   ¦       ¦   ¦       +---ug-CN
+¦   ¦       ¦   ¦       +---uk-UA
+¦   ¦       ¦   ¦       +---ur-PK
+¦   ¦       ¦   ¦       +---uz-Latn-UZ
+¦   ¦       ¦   ¦       +---vi-VN
+¦   ¦       ¦   ¦       +---zh-CN
+¦   ¦       ¦   ¦       +---zh-TW
+¦   ¦       ¦   +---win-x86
+¦   ¦       ¦       +---native
+¦   ¦       ¦           +---af-ZA
+¦   ¦       ¦           +---am-ET
+¦   ¦       ¦           +---ar-SA
+¦   ¦       ¦           +---as-IN
+¦   ¦       ¦           +---az-Latn-AZ
+¦   ¦       ¦           +---bg-BG
+¦   ¦       ¦           +---bn-IN
+¦   ¦       ¦           +---bs-Latn-BA
+¦   ¦       ¦           +---ca-ES
+¦   ¦       ¦           +---ca-Es-VALENCIA
+¦   ¦       ¦           +---cs-CZ
+¦   ¦       ¦           +---cy-GB
+¦   ¦       ¦           +---da-DK
+¦   ¦       ¦           +---de-DE
+¦   ¦       ¦           +---el-GR
+¦   ¦       ¦           +---en-GB
+¦   ¦       ¦           +---en-us
+¦   ¦       ¦           +---es-ES
+¦   ¦       ¦           +---es-MX
+¦   ¦       ¦           +---et-EE
+¦   ¦       ¦           +---eu-ES
+¦   ¦       ¦           +---fa-IR
+¦   ¦       ¦           +---fi-FI
+¦   ¦       ¦           +---fil-PH
+¦   ¦       ¦           +---fr-CA
+¦   ¦       ¦           +---fr-FR
+¦   ¦       ¦           +---ga-IE
+¦   ¦       ¦           +---gd-gb
+¦   ¦       ¦           +---gl-ES
+¦   ¦       ¦           +---gu-IN
+¦   ¦       ¦           +---he-IL
+¦   ¦       ¦           +---hi-IN
+¦   ¦       ¦           +---hr-HR
+¦   ¦       ¦           +---hu-HU
+¦   ¦       ¦           +---hy-AM
+¦   ¦       ¦           +---id-ID
+¦   ¦       ¦           +---is-IS
+¦   ¦       ¦           +---it-IT
+¦   ¦       ¦           +---ja-JP
+¦   ¦       ¦           +---ka-GE
+¦   ¦       ¦           +---kk-KZ
+¦   ¦       ¦           +---km-KH
+¦   ¦       ¦           +---kn-IN
+¦   ¦       ¦           +---ko-KR
+¦   ¦       ¦           +---kok-IN
+¦   ¦       ¦           +---lb-LU
+¦   ¦       ¦           +---lo-LA
+¦   ¦       ¦           +---lt-LT
+¦   ¦       ¦           +---lv-LV
+¦   ¦       ¦           +---mi-NZ
+¦   ¦       ¦           +---Microsoft.UI.Xaml
+¦   ¦       ¦           ¦   +---Assets
+¦   ¦       ¦           +---mk-MK
+¦   ¦       ¦           +---ml-IN
+¦   ¦       ¦           +---mr-IN
+¦   ¦       ¦           +---ms-MY
+¦   ¦       ¦           +---mt-MT
+¦   ¦       ¦           +---nb-NO
+¦   ¦       ¦           +---ne-NP
+¦   ¦       ¦           +---nl-NL
+¦   ¦       ¦           +---nn-NO
+¦   ¦       ¦           +---or-IN
+¦   ¦       ¦           +---pa-IN
+¦   ¦       ¦           +---pl-PL
+¦   ¦       ¦           +---pt-BR
+¦   ¦       ¦           +---pt-PT
+¦   ¦       ¦           +---quz-PE
+¦   ¦       ¦           +---ro-RO
+¦   ¦       ¦           +---ru-RU
+¦   ¦       ¦           +---sk-SK
+¦   ¦       ¦           +---sl-SI
+¦   ¦       ¦           +---sq-AL
+¦   ¦       ¦           +---sr-Cyrl-BA
+¦   ¦       ¦           +---sr-Cyrl-RS
+¦   ¦       ¦           +---sr-Latn-RS
+¦   ¦       ¦           +---sv-SE
+¦   ¦       ¦           +---ta-IN
+¦   ¦       ¦           +---te-IN
+¦   ¦       ¦           +---th-TH
+¦   ¦       ¦           +---tr-TR
+¦   ¦       ¦           +---tt-RU
+¦   ¦       ¦           +---ug-CN
+¦   ¦       ¦           +---uk-UA
+¦   ¦       ¦           +---ur-PK
+¦   ¦       ¦           +---uz-Latn-UZ
+¦   ¦       ¦           +---vi-VN
+¦   ¦       ¦           +---zh-CN
+¦   ¦       ¦           +---zh-TW
+¦   ¦       +---tools
+¦   ¦           +---arm64
+¦   ¦           +---arm64ec
+¦   ¦           +---net472
+¦   ¦           +---net6.0
+¦   ¦           +---x64
+¦   ¦           +---x86
+¦   +---Styles
+¦   +---x64
+¦       +---Debug
+¦           +---.winmd_cache
+¦           +---embed
+¦           ¦   +---Styles
+¦           +---LeafEye
+¦           ¦   +---Assets
+¦           ¦   +---Styles
+¦           +---LeafEye.Test
+¦           ¦   +---Assets
+¦           +---LeafEye.tlog
+¦           +---LeafEye_MD.tlog
+¦           +---Merged
+¦           +---microsoft
+¦           ¦   +---STL
+¦           +---RuntimeComponent1
+¦           +---UnitTestApp2
+¦           ¦   +---Assets
+¦           +---Unmerged
++---LeafEyeCore
+¦   +---Generated Files
+¦   ¦   +---Schema
+¦   ¦   +---sources
+¦   ¦   +---winrt
+¦   ¦       +---impl
+¦   +---Model
+¦   +---Schema
+¦   +---Utility
+¦   +---x64
+¦       +---Debug
+¦           +---embed
+¦           +---LeafEyeCore.tlog
+¦           +---LeafEyeCore_MD.tlog
+¦           +---Merged
+¦           +---microsoft
+¦           ¦   +---STL
+¦           +---Unmerged
++---LeafEyeTest
+¦   +---Assets
+¦   +---Generated Files
+¦   ¦   +---sources
+¦   ¦   +---winrt
+¦   ¦       +---impl
+¦   +---x64
+¦       +---Debug
+¦           +---.winmd_cache
+¦           +---embed
+¦           +---LeafEyeTest.tlog
+¦           +---LeafEyeTest_MD.tlog
+¦           +---Merged
+¦           +---microsoft
+¦           ¦   +---STL
+¦           +---Unmerged
++---packages
+¦   +---Microsoft.Web.WebView2.1.0.3179.45
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   ¦       +---arm64
+¦   ¦   ¦       +---include
+¦   ¦   ¦       +---include-winrt
+¦   ¦   ¦       +---x64
+¦   ¦   ¦       +---x86
+¦   ¦   +---buildTransitive
+¦   ¦   +---lib
+¦   ¦   ¦   +---net462
+¦   ¦   +---lib_manual
+¦   ¦   ¦   +---net5.0-windows10.0.17763.0
+¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   +---net8.0-windows10.0.17763.0
+¦   ¦   ¦   +---netcoreapp3.0
+¦   ¦   +---runtimes
+¦   ¦   ¦   +---win-arm64
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---native_uap
+¦   ¦   ¦   +---win-x64
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---native_uap
+¦   ¦   ¦   +---win-x86
+¦   ¦   ¦       +---native
+¦   ¦   ¦       +---native_uap
+¦   ¦   +---tools
+¦   ¦       +---wv2winrt
+¦   ¦           +---cs
+¦   ¦           +---de
+¦   ¦           +---es
+¦   ¦           +---fr
+¦   ¦           +---it
+¦   ¦           +---ja
+¦   ¦           +---ko
+¦   ¦           +---pl
+¦   ¦           +---pt-BR
+¦   ¦           +---ru
+¦   ¦           +---tr
+¦   ¦           +---zh-Hans
+¦   ¦           +---zh-Hant
+¦   +---Microsoft.Windows.CppWinRT.2.0.250303.1
+¦   ¦   +---bin
+¦   ¦   +---build
+¦   ¦       +---native
+¦   ¦           +---lib
+¦   ¦               +---arm64
+¦   ¦               +---win32
+¦   ¦               +---x64
+¦   +---Microsoft.Windows.ImplementationLibrary.1.0.260126.7
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---include
+¦   ¦   ¦   +---wil
+¦   ¦   +---natvis
+¦   +---Microsoft.Windows.SDK.BuildTools.10.0.26100.7705
+¦   ¦   +---bin
+¦   ¦   ¦   +---10.0.26100.0
+¦   ¦   ¦       +---arm64
+¦   ¦   ¦       ¦   +---AccChecker
+¦   ¦   ¦       ¦   +---en
+¦   ¦   ¦       ¦   +---en-US
+¦   ¦   ¦       +---x64
+¦   ¦   ¦       ¦   +---AccChecker
+¦   ¦   ¦       ¦   +---en
+¦   ¦   ¦       ¦   +---en-US
+¦   ¦   ¦       +---x86
+¦   ¦   ¦           +---AccChecker
+¦   ¦   ¦           +---en
+¦   ¦   ¦           +---en-US
+¦   ¦   +---build
+¦   ¦   +---buildTransitive
+¦   ¦   +---schemas
+¦   ¦       +---10.0.26100.0
+¦   ¦           +---winrt
+¦   +---Microsoft.Windows.SDK.BuildTools.MSIX.1.7.20250829.1
+¦   ¦   +---build
+¦   ¦   ¦   +---AppDevPackageScripts
+¦   ¦   ¦   ¦   +---Add-AppDevPackage.resources
+¦   ¦   ¦   ¦       +---cs-CZ
+¦   ¦   ¦   ¦       +---de-DE
+¦   ¦   ¦   ¦       +---en-US
+¦   ¦   ¦   ¦       +---es-ES
+¦   ¦   ¦   ¦       +---fr-FR
+¦   ¦   ¦   ¦       +---it-IT
+¦   ¦   ¦   ¦       +---ja-JP
+¦   ¦   ¦   ¦       +---ko-KR
+¦   ¦   ¦   ¦       +---pl-PL
+¦   ¦   ¦   ¦       +---pt-BR
+¦   ¦   ¦   ¦       +---ru-RU
+¦   ¦   ¦   ¦       +---tr-TR
+¦   ¦   ¦   ¦       +---zh-CN
+¦   ¦   ¦   ¦       +---zh-TW
+¦   ¦   ¦   +---Landing
+¦   ¦   ¦   ¦   +---extras
+¦   ¦   ¦   +---Rules
+¦   ¦   ¦   +---Templates
+¦   ¦   +---buildTransitive
+¦   ¦   +---tools
+¦   ¦       +---net472
+¦   ¦       +---net6.0
+¦   +---Microsoft.WindowsAppSDK.1.8.260209005
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦       +---native
+¦   +---Microsoft.WindowsAppSDK.AI.1.8.47
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---native
+¦   ¦   +---lib
+¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   +---metadata
+¦   ¦   +---runtimes-framework
+¦   ¦       +---win-arm64
+¦   ¦       ¦   +---native
+¦   ¦       ¦       +---NpuDetect
+¦   ¦       +---win-arm64ec
+¦   ¦       ¦   +---native
+¦   ¦       ¦       +---NpuDetect
+¦   ¦       +---win-x64
+¦   ¦           +---native
+¦   ¦               +---NpuDetect
+¦   +---Microsoft.WindowsAppSDK.Base.1.8.251216001
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦       +---native
+¦   +---Microsoft.WindowsAppSDK.DWrite.1.8.25122902
+¦   ¦   +---build
+¦   ¦   +---buildTransitive
+¦   ¦   +---include
+¦   ¦   +---lib
+¦   ¦   ¦   +---native
+¦   ¦   ¦       +---arm64
+¦   ¦   ¦       +---arm64ec
+¦   ¦   ¦       +---x64
+¦   ¦   ¦       +---x86
+¦   ¦   +---runtimes-framework
+¦   ¦       +---win-arm64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-arm64ec
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x86
+¦   ¦           +---native
+¦   +---Microsoft.WindowsAppSDK.Foundation.1.8.260203002
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---native
+¦   ¦   +---include
+¦   ¦   +---lib
+¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---arm64
+¦   ¦   ¦   ¦   +---arm64ec
+¦   ¦   ¦   ¦   +---x64
+¦   ¦   ¦   ¦   +---x86
+¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   +---metadata
+¦   ¦   +---runtimes
+¦   ¦   ¦   +---win-arm64
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---win-arm64ec
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---win-x64
+¦   ¦   ¦   ¦   +---native
+¦   ¦   ¦   +---win-x86
+¦   ¦   ¦       +---native
+¦   ¦   +---runtimes-framework
+¦   ¦       +---win-arm64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-arm64ec
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x86
+¦   ¦           +---native
+¦   +---Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.260125001
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---native
+¦   ¦   +---include
+¦   ¦   ¦   +---winrt
+¦   ¦   +---lib
+¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---win10-arm64
+¦   ¦   ¦   ¦   +---win10-arm64ec
+¦   ¦   ¦   ¦   +---win10-x64
+¦   ¦   ¦   ¦   +---win10-x86
+¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   +---net6.0-windows10.0.18362.0
+¦   ¦   +---metadata
+¦   ¦   ¦   +---10.0.17763.0
+¦   ¦   ¦   +---10.0.18362.0
+¦   ¦   +---runtimes-framework
+¦   ¦       +---win-arm64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-arm64ec
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x86
+¦   ¦           +---native
+¦   +---Microsoft.WindowsAppSDK.ML.1.8.2124
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---native
+¦   ¦   +---include
+¦   ¦   ¦   +---winml
+¦   ¦   +---lib
+¦   ¦   ¦   +---native
+¦   ¦   ¦   ¦   +---arm64
+¦   ¦   ¦   ¦   +---arm64ec
+¦   ¦   ¦   ¦   +---x64
+¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   ¦   +---net8.0-windows10.0.17763.0
+¦   ¦   +---metadata
+¦   ¦   +---runtimes-framework
+¦   ¦       +---win-arm64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-arm64ec
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x64
+¦   ¦           +---native
+¦   +---Microsoft.WindowsAppSDK.Runtime.1.8.260209005
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---native
+¦   ¦   +---include
+¦   ¦   +---tools
+¦   ¦       +---MSIX
+¦   ¦           +---win10-arm64
+¦   ¦           +---win10-arm64ec
+¦   ¦           +---win10-x64
+¦   ¦           +---win10-x86
+¦   +---Microsoft.WindowsAppSDK.Widgets.1.8.251231004
+¦   ¦   +---build
+¦   ¦   ¦   +---native
+¦   ¦   +---buildTransitive
+¦   ¦   ¦   +---native
+¦   ¦   +---lib
+¦   ¦   ¦   +---net6.0-windows10.0.17763.0
+¦   ¦   +---metadata
+¦   ¦   +---runtimes-framework
+¦   ¦       +---win-arm64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-arm64ec
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x64
+¦   ¦       ¦   +---native
+¦   ¦       +---win-x86
+¦   ¦           +---native
+¦   +---Microsoft.WindowsAppSDK.WinUI.1.8.260204000
+¦       +---build
+¦       ¦   +---native
+¦       +---buildTransitive
+¦       ¦   +---native
+¦       +---include
+¦       +---lib
+¦       ¦   +---native
+¦       ¦   ¦   +---Microsoft.UI
+¦       ¦   ¦       +---Themes
+¦       ¦   +---net6.0-windows10.0.17763.0
+¦       ¦       +---Microsoft.WinUI
+¦       ¦           +---Themes
+¦       +---metadata
+¦       +---runtimes-framework
+¦       ¦   +---win-arm64
+¦       ¦   ¦   +---native
+¦       ¦   ¦       +---af-ZA
+¦       ¦   ¦       +---am-ET
+¦       ¦   ¦       +---ar-SA
+¦       ¦   ¦       +---as-IN
+¦       ¦   ¦       +---az-Latn-AZ
+¦       ¦   ¦       +---bg-BG
+¦       ¦   ¦       +---bn-IN
+¦       ¦   ¦       +---bs-Latn-BA
+¦       ¦   ¦       +---ca-ES
+¦       ¦   ¦       +---ca-Es-VALENCIA
+¦       ¦   ¦       +---cs-CZ
+¦       ¦   ¦       +---cy-GB
+¦       ¦   ¦       +---da-DK
+¦       ¦   ¦       +---de-DE
+¦       ¦   ¦       +---el-GR
+¦       ¦   ¦       +---en-GB
+¦       ¦   ¦       +---en-us
+¦       ¦   ¦       +---es-ES
+¦       ¦   ¦       +---es-MX
+¦       ¦   ¦       +---et-EE
+¦       ¦   ¦       +---eu-ES
+¦       ¦   ¦       +---fa-IR
+¦       ¦   ¦       +---fi-FI
+¦       ¦   ¦       +---fil-PH
+¦       ¦   ¦       +---fr-CA
+¦       ¦   ¦       +---fr-FR
+¦       ¦   ¦       +---ga-IE
+¦       ¦   ¦       +---gd-gb
+¦       ¦   ¦       +---gl-ES
+¦       ¦   ¦       +---gu-IN
+¦       ¦   ¦       +---he-IL
+¦       ¦   ¦       +---hi-IN
+¦       ¦   ¦       +---hr-HR
+¦       ¦   ¦       +---hu-HU
+¦       ¦   ¦       +---hy-AM
+¦       ¦   ¦       +---id-ID
+¦       ¦   ¦       +---is-IS
+¦       ¦   ¦       +---it-IT
+¦       ¦   ¦       +---ja-JP
+¦       ¦   ¦       +---ka-GE
+¦       ¦   ¦       +---kk-KZ
+¦       ¦   ¦       +---km-KH
+¦       ¦   ¦       +---kn-IN
+¦       ¦   ¦       +---ko-KR
+¦       ¦   ¦       +---kok-IN
+¦       ¦   ¦       +---lb-LU
+¦       ¦   ¦       +---lo-LA
+¦       ¦   ¦       +---lt-LT
+¦       ¦   ¦       +---lv-LV
+¦       ¦   ¦       +---mi-NZ
+¦       ¦   ¦       +---Microsoft.UI.Xaml
+¦       ¦   ¦       ¦   +---Assets
+¦       ¦   ¦       +---mk-MK
+¦       ¦   ¦       +---ml-IN
+¦       ¦   ¦       +---mr-IN
+¦       ¦   ¦       +---ms-MY
+¦       ¦   ¦       +---mt-MT
+¦       ¦   ¦       +---nb-NO
+¦       ¦   ¦       +---ne-NP
+¦       ¦   ¦       +---nl-NL
+¦       ¦   ¦       +---nn-NO
+¦       ¦   ¦       +---or-IN
+¦       ¦   ¦       +---pa-IN
+¦       ¦   ¦       +---pl-PL
+¦       ¦   ¦       +---pt-BR
+¦       ¦   ¦       +---pt-PT
+¦       ¦   ¦       +---quz-PE
+¦       ¦   ¦       +---ro-RO
+¦       ¦   ¦       +---ru-RU
+¦       ¦   ¦       +---sk-SK
+¦       ¦   ¦       +---sl-SI
+¦       ¦   ¦       +---sq-AL
+¦       ¦   ¦       +---sr-Cyrl-BA
+¦       ¦   ¦       +---sr-Cyrl-RS
+¦       ¦   ¦       +---sr-Latn-RS
+¦       ¦   ¦       +---sv-SE
+¦       ¦   ¦       +---ta-IN
+¦       ¦   ¦       +---te-IN
+¦       ¦   ¦       +---th-TH
+¦       ¦   ¦       +---tr-TR
+¦       ¦   ¦       +---tt-RU
+¦       ¦   ¦       +---ug-CN
+¦       ¦   ¦       +---uk-UA
+¦       ¦   ¦       +---ur-PK
+¦       ¦   ¦       +---uz-Latn-UZ
+¦       ¦   ¦       +---vi-VN
+¦       ¦   ¦       +---zh-CN
+¦       ¦   ¦       +---zh-TW
+¦       ¦   +---win-arm64ec
+¦       ¦   ¦   +---native
+¦       ¦   ¦       +---af-ZA
+¦       ¦   ¦       +---am-ET
+¦       ¦   ¦       +---ar-SA
+¦       ¦   ¦       +---as-IN
+¦       ¦   ¦       +---az-Latn-AZ
+¦       ¦   ¦       +---bg-BG
+¦       ¦   ¦       +---bn-IN
+¦       ¦   ¦       +---bs-Latn-BA
+¦       ¦   ¦       +---ca-ES
+¦       ¦   ¦       +---ca-Es-VALENCIA
+¦       ¦   ¦       +---cs-CZ
+¦       ¦   ¦       +---cy-GB
+¦       ¦   ¦       +---da-DK
+¦       ¦   ¦       +---de-DE
+¦       ¦   ¦       +---el-GR
+¦       ¦   ¦       +---en-GB
+¦       ¦   ¦       +---en-us
+¦       ¦   ¦       +---es-ES
+¦       ¦   ¦       +---es-MX
+¦       ¦   ¦       +---et-EE
+¦       ¦   ¦       +---eu-ES
+¦       ¦   ¦       +---fa-IR
+¦       ¦   ¦       +---fi-FI
+¦       ¦   ¦       +---fil-PH
+¦       ¦   ¦       +---fr-CA
+¦       ¦   ¦       +---fr-FR
+¦       ¦   ¦       +---ga-IE
+¦       ¦   ¦       +---gd-gb
+¦       ¦   ¦       +---gl-ES
+¦       ¦   ¦       +---gu-IN
+¦       ¦   ¦       +---he-IL
+¦       ¦   ¦       +---hi-IN
+¦       ¦   ¦       +---hr-HR
+¦       ¦   ¦       +---hu-HU
+¦       ¦   ¦       +---hy-AM
+¦       ¦   ¦       +---id-ID
+¦       ¦   ¦       +---is-IS
+¦       ¦   ¦       +---it-IT
+¦       ¦   ¦       +---ja-JP
+¦       ¦   ¦       +---ka-GE
+¦       ¦   ¦       +---kk-KZ
+¦       ¦   ¦       +---km-KH
+¦       ¦   ¦       +---kn-IN
+¦       ¦   ¦       +---ko-KR
+¦       ¦   ¦       +---kok-IN
+¦       ¦   ¦       +---lb-LU
+¦       ¦   ¦       +---lo-LA
+¦       ¦   ¦       +---lt-LT
+¦       ¦   ¦       +---lv-LV
+¦       ¦   ¦       +---mi-NZ
+¦       ¦   ¦       +---Microsoft.UI.Xaml
+¦       ¦   ¦       ¦   +---Assets
+¦       ¦   ¦       +---mk-MK
+¦       ¦   ¦       +---ml-IN
+¦       ¦   ¦       +---mr-IN
+¦       ¦   ¦       +---ms-MY
+¦       ¦   ¦       +---mt-MT
+¦       ¦   ¦       +---nb-NO
+¦       ¦   ¦       +---ne-NP
+¦       ¦   ¦       +---nl-NL
+¦       ¦   ¦       +---nn-NO
+¦       ¦   ¦       +---or-IN
+¦       ¦   ¦       +---pa-IN
+¦       ¦   ¦       +---pl-PL
+¦       ¦   ¦       +---pt-BR
+¦       ¦   ¦       +---pt-PT
+¦       ¦   ¦       +---quz-PE
+¦       ¦   ¦       +---ro-RO
+¦       ¦   ¦       +---ru-RU
+¦       ¦   ¦       +---sk-SK
+¦       ¦   ¦       +---sl-SI
+¦       ¦   ¦       +---sq-AL
+¦       ¦   ¦       +---sr-Cyrl-BA
+¦       ¦   ¦       +---sr-Cyrl-RS
+¦       ¦   ¦       +---sr-Latn-RS
+¦       ¦   ¦       +---sv-SE
+¦       ¦   ¦       +---ta-IN
+¦       ¦   ¦       +---te-IN
+¦       ¦   ¦       +---th-TH
+¦       ¦   ¦       +---tr-TR
+¦       ¦   ¦       +---tt-RU
+¦       ¦   ¦       +---ug-CN
+¦       ¦   ¦       +---uk-UA
+¦       ¦   ¦       +---ur-PK
+¦       ¦   ¦       +---uz-Latn-UZ
+¦       ¦   ¦       +---vi-VN
+¦       ¦   ¦       +---zh-CN
+¦       ¦   ¦       +---zh-TW
+¦       ¦   +---win-x64
+¦       ¦   ¦   +---native
+¦       ¦   ¦       +---af-ZA
+¦       ¦   ¦       +---am-ET
+¦       ¦   ¦       +---ar-SA
+¦       ¦   ¦       +---as-IN
+¦       ¦   ¦       +---az-Latn-AZ
+¦       ¦   ¦       +---bg-BG
+¦       ¦   ¦       +---bn-IN
+¦       ¦   ¦       +---bs-Latn-BA
+¦       ¦   ¦       +---ca-ES
+¦       ¦   ¦       +---ca-Es-VALENCIA
+¦       ¦   ¦       +---cs-CZ
+¦       ¦   ¦       +---cy-GB
+¦       ¦   ¦       +---da-DK
+¦       ¦   ¦       +---de-DE
+¦       ¦   ¦       +---el-GR
+¦       ¦   ¦       +---en-GB
+¦       ¦   ¦       +---en-us
+¦       ¦   ¦       +---es-ES
+¦       ¦   ¦       +---es-MX
+¦       ¦   ¦       +---et-EE
+¦       ¦   ¦       +---eu-ES
+¦       ¦   ¦       +---fa-IR
+¦       ¦   ¦       +---fi-FI
+¦       ¦   ¦       +---fil-PH
+¦       ¦   ¦       +---fr-CA
+¦       ¦   ¦       +---fr-FR
+¦       ¦   ¦       +---ga-IE
+¦       ¦   ¦       +---gd-gb
+¦       ¦   ¦       +---gl-ES
+¦       ¦   ¦       +---gu-IN
+¦       ¦   ¦       +---he-IL
+¦       ¦   ¦       +---hi-IN
+¦       ¦   ¦       +---hr-HR
+¦       ¦   ¦       +---hu-HU
+¦       ¦   ¦       +---hy-AM
+¦       ¦   ¦       +---id-ID
+¦       ¦   ¦       +---is-IS
+¦       ¦   ¦       +---it-IT
+¦       ¦   ¦       +---ja-JP
+¦       ¦   ¦       +---ka-GE
+¦       ¦   ¦       +---kk-KZ
+¦       ¦   ¦       +---km-KH
+¦       ¦   ¦       +---kn-IN
+¦       ¦   ¦       +---ko-KR
+¦       ¦   ¦       +---kok-IN
+¦       ¦   ¦       +---lb-LU
+¦       ¦   ¦       +---lo-LA
+¦       ¦   ¦       +---lt-LT
+¦       ¦   ¦       +---lv-LV
+¦       ¦   ¦       +---mi-NZ
+¦       ¦   ¦       +---Microsoft.UI.Xaml
+¦       ¦   ¦       ¦   +---Assets
+¦       ¦   ¦       +---mk-MK
+¦       ¦   ¦       +---ml-IN
+¦       ¦   ¦       +---mr-IN
+¦       ¦   ¦       +---ms-MY
+¦       ¦   ¦       +---mt-MT
+¦       ¦   ¦       +---nb-NO
+¦       ¦   ¦       +---ne-NP
+¦       ¦   ¦       +---nl-NL
+¦       ¦   ¦       +---nn-NO
+¦       ¦   ¦       +---or-IN
+¦       ¦   ¦       +---pa-IN
+¦       ¦   ¦       +---pl-PL
+¦       ¦   ¦       +---pt-BR
+¦       ¦   ¦       +---pt-PT
+¦       ¦   ¦       +---quz-PE
+¦       ¦   ¦       +---ro-RO
+¦       ¦   ¦       +---ru-RU
+¦       ¦   ¦       +---sk-SK
+¦       ¦   ¦       +---sl-SI
+¦       ¦   ¦       +---sq-AL
+¦       ¦   ¦       +---sr-Cyrl-BA
+¦       ¦   ¦       +---sr-Cyrl-RS
+¦       ¦   ¦       +---sr-Latn-RS
+¦       ¦   ¦       +---sv-SE
+¦       ¦   ¦       +---ta-IN
+¦       ¦   ¦       +---te-IN
+¦       ¦   ¦       +---th-TH
+¦       ¦   ¦       +---tr-TR
+¦       ¦   ¦       +---tt-RU
+¦       ¦   ¦       +---ug-CN
+¦       ¦   ¦       +---uk-UA
+¦       ¦   ¦       +---ur-PK
+¦       ¦   ¦       +---uz-Latn-UZ
+¦       ¦   ¦       +---vi-VN
+¦       ¦   ¦       +---zh-CN
+¦       ¦   ¦       +---zh-TW
+¦       ¦   +---win-x86
+¦       ¦       +---native
+¦       ¦           +---af-ZA
+¦       ¦           +---am-ET
+¦       ¦           +---ar-SA
+¦       ¦           +---as-IN
+¦       ¦           +---az-Latn-AZ
+¦       ¦           +---bg-BG
+¦       ¦           +---bn-IN
+¦       ¦           +---bs-Latn-BA
+¦       ¦           +---ca-ES
+¦       ¦           +---ca-Es-VALENCIA
+¦       ¦           +---cs-CZ
+¦       ¦           +---cy-GB
+¦       ¦           +---da-DK
+¦       ¦           +---de-DE
+¦       ¦           +---el-GR
+¦       ¦           +---en-GB
+¦       ¦           +---en-us
+¦       ¦           +---es-ES
+¦       ¦           +---es-MX
+¦       ¦           +---et-EE
+¦       ¦           +---eu-ES
+¦       ¦           +---fa-IR
+¦       ¦           +---fi-FI
+¦       ¦           +---fil-PH
+¦       ¦           +---fr-CA
+¦       ¦           +---fr-FR
+¦       ¦           +---ga-IE
+¦       ¦           +---gd-gb
+¦       ¦           +---gl-ES
+¦       ¦           +---gu-IN
+¦       ¦           +---he-IL
+¦       ¦           +---hi-IN
+¦       ¦           +---hr-HR
+¦       ¦           +---hu-HU
+¦       ¦           +---hy-AM
+¦       ¦           +---id-ID
+¦       ¦           +---is-IS
+¦       ¦           +---it-IT
+¦       ¦           +---ja-JP
+¦       ¦           +---ka-GE
+¦       ¦           +---kk-KZ
+¦       ¦           +---km-KH
+¦       ¦           +---kn-IN
+¦       ¦           +---ko-KR
+¦       ¦           +---kok-IN
+¦       ¦           +---lb-LU
+¦       ¦           +---lo-LA
+¦       ¦           +---lt-LT
+¦       ¦           +---lv-LV
+¦       ¦           +---mi-NZ
+¦       ¦           +---Microsoft.UI.Xaml
+¦       ¦           ¦   +---Assets
+¦       ¦           +---mk-MK
+¦       ¦           +---ml-IN
+¦       ¦           +---mr-IN
+¦       ¦           +---ms-MY
+¦       ¦           +---mt-MT
+¦       ¦           +---nb-NO
+¦       ¦           +---ne-NP
+¦       ¦           +---nl-NL
+¦       ¦           +---nn-NO
+¦       ¦           +---or-IN
+¦       ¦           +---pa-IN
+¦       ¦           +---pl-PL
+¦       ¦           +---pt-BR
+¦       ¦           +---pt-PT
+¦       ¦           +---quz-PE
+¦       ¦           +---ro-RO
+¦       ¦           +---ru-RU
+¦       ¦           +---sk-SK
+¦       ¦           +---sl-SI
+¦       ¦           +---sq-AL
+¦       ¦           +---sr-Cyrl-BA
+¦       ¦           +---sr-Cyrl-RS
+¦       ¦           +---sr-Latn-RS
+¦       ¦           +---sv-SE
+¦       ¦           +---ta-IN
+¦       ¦           +---te-IN
+¦       ¦           +---th-TH
+¦       ¦           +---tr-TR
+¦       ¦           +---tt-RU
+¦       ¦           +---ug-CN
+¦       ¦           +---uk-UA
+¦       ¦           +---ur-PK
+¦       ¦           +---uz-Latn-UZ
+¦       ¦           +---vi-VN
+¦       ¦           +---zh-CN
+¦       ¦           +---zh-TW
+¦       +---tools
+¦           +---arm64
+¦           +---arm64ec
+¦           +---net472
+¦           +---net6.0
+¦           +---x64
+¦           +---x86
++---x64
+    +---Debug
+        +---LeafEye
+        ¦   +---AppX
+        ¦   ¦   +---Assets
+        ¦   +---Assets
+        ¦   +---Styles
+        +---LeafEyeCore
+        +---LeafEyeTest
+            +---AppX
+            ¦   +---Assets
+            +---Assets

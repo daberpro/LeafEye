@@ -1,0 +1,60 @@
+import "Result.idl";
+namespace LeafEyeCore{
+
+    enum DatabaseError
+    {
+        None = 0,
+        FileNotFound = 1,
+        ReadError = 2,
+        WriteError = 3,
+        CorruptedData = 4,
+        UnknownError = 5,
+        FailedCreateModule = 6
+    };
+
+    enum DatabaseStatus
+    {
+        Success = 0,
+        Failure = 1,
+        NotFound = 2,
+        AlreadyExists = 3,
+        InvalidData = 4
+    };
+
+    enum BoxType
+    {
+        User = 0,
+        History = 1,
+        Profile = 2,
+        FileHistory = 3
+    };
+
+    [default_interface]
+    runtimeclass Database
+    {
+        Database(
+            String database_location,
+            Int32 max_db_size
+        );
+
+        Windows.Foundation.IAsyncOperation<Result> InitializeAsync();
+        void PrintInfo();        
+
+        Windows.Foundation.IAsyncOperation<Result> AddEntryAsync(BoxType box, Object data);
+        Windows.Foundation.IAsyncOperation<Result> ClearEntriesAsync(BoxType box);
+        Windows.Foundation.IAsyncOperation<Result> DeleteEntryAsync(BoxType box, Object data);
+        Windows.Foundation.IAsyncOperation<Result> UpdateEntryAsync(BoxType box, Object oldData, Object newData);
+        
+        Windows.Foundation.IAsyncOperation<Result> AddRelationAsync(BoxType box, Object from, Object to);
+        Windows.Foundation.IAsyncOperation<Result> RemoveRelationAsync(BoxType box, Object from, Object to);
+
+        Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<Object> > GetEntriesWithFilterAsync(BoxType box, Object filter);
+        Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<Object> > GetAllEntriesAsync(BoxType box, Int32 limit, Int32 offset);
+
+        Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<Object> > GetHistoryByDateRangeAsync(Int64 startUnix, Int64 endUnix);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryCountByDateRangeAsync(Int64 startUnix, Int64 endUnix);
+
+        Windows.Foundation.IAsyncOperation<Result> GetCountAsync(BoxType box);
+        Windows.Foundation.IAsyncOperation<Result> GetCountWithFilterAsync(BoxType box, Object filter);
+    }
+}
