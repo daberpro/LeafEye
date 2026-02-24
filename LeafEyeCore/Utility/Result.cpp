@@ -4,8 +4,8 @@
 
 namespace winrt::LeafEyeCore::implementation
 {
-    Result::Result(bool is_error, int32_t error_code, hstring const& message, winrt::Windows::Foundation::IInspectable const& result_value):
-    m_is_error(is_error), m_error_code(error_code), m_message(message), m_result_value(result_value){}
+    Result::Result(bool is_error, bool is_value_exists, int32_t error_code, hstring const& message, winrt::Windows::Foundation::IInspectable const& result_value):
+    m_is_error(is_error), m_error_code(error_code), m_message(message), m_result_value(result_value), m_is_value_exists(is_value_exists){}
     
     bool Result::IsError()
     {
@@ -15,6 +15,16 @@ namespace winrt::LeafEyeCore::implementation
     void Result::IsError(bool value)
     {
 		m_is_error = value;
+    }
+
+    bool Result::IsValueExists()
+    {
+        return m_is_value_exists;
+    }
+
+    void Result::IsValueExists(bool value)
+    {
+        m_is_value_exists = value;
     }
 
     int32_t Result::ErrorCode()

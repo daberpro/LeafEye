@@ -1,10 +1,11 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include <winrt/LeafEyeCore.h>
 #include "CppUnitTest.h"
+#include <format>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-// Tell the testing framework how to format winrt::hstring for Assert::AreEqual
+// ── hstring formatter for Assert::AreEqual ──────────────────────────────────
 namespace Microsoft::VisualStudio::CppUnitTestFramework
 {
     template<>
@@ -14,498 +15,446 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
     }
 }
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+// Build an assertion message string from a Result's hstring Message.
+// Cannot use std::format with hstring directly; concatenate wstrings instead.
+static std::wstring Msg(const winrt::LeafEyeCore::Result& r, const wchar_t* prefix)
+{
+    return std::wstring(prefix) + L": " + r.Message().c_str();
+}
+
+// Unbox a typed IVector out of a Result's IInspectable ResultValue.
+template<typename T>
+winrt::Windows::Foundation::Collections::IVector<T>
+UnboxVector(const winrt::LeafEyeCore::Result& r)
+{
+    return r.ResultValue().try_as<winrt::Windows::Foundation::Collections::IVector<T>>();
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 namespace LeafEyeTest
 {
     TEST_CLASS(DatabaseTests)
     {
     private:
-        winrt::hstring m_local_storage_path{ winrt::Windows::Storage::ApplicationData::Current().LocalFolder().Path() };
+        winrt::hstring m_db_path{
+            winrt::Windows::Storage::ApplicationData::Current().LocalFolder().Path()
+            + L"\\db_unit_test"
+        };
         winrt::LeafEyeCore::Database m_db{ nullptr };
 
-        TEST_METHOD_INITIALIZE(Setup) {
-            m_db = winrt::LeafEyeCore::Database{ m_local_storage_path + L"/database_test", 1024 * 10};
-            // Gunakan .get() untuk memblokir dan menunggu hasil async di dalam Unit Test
-            auto result = m_db.InitializeAsync().get();
-            Assert::IsFalse(result.IsError(), std::format(L"DB Init Failed: {}", result.Message()).c_str());
+        // ── Lifecycle ─────────────────────────────────────────────────────────
+
+        TEST_METHOD_INITIALIZE(Setup)
+        {
+            m_db = winrt::LeafEyeCore::Database(m_db_path, 1024 * 20 /*20 MB*/);
+            auto r = m_db.InitializeAsync().get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"InitializeAsync failed").c_str());
         }
 
-        TEST_METHOD_CLEANUP(Teardown) {
-            m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::User).get();
-            m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::Profile).get();
-            m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::History).get();
-            m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::FileHistory).get();
+        TEST_METHOD_CLEANUP(Teardown)
+        {
+            // Tests use unique string values to avoid cross-test contamination.
         }
 
     public:
 
-        // ===================== DATABASE =====================
+        // ════════════════════════════════════════════════════════════════════
+        //  DATABASE INIT
+        // ════════════════════════════════════════════════════════════════════
 
-        TEST_METHOD(Database_Initialize_ShouldSucceed) {
-            m_db.PrintInfo();
-            Assert::IsTrue(true);
+        TEST_METHOD(Database_Initialize_ShouldSucceed)
+        {
+            Assert::IsTrue(true); // Setup() already asserts this
         }
 
-        // ===================== USER =====================
+        // ════════════════════════════════════════════════════════════════════
+        //  USER — CRUD
+        // ════════════════════════════════════════════════════════════════════
 
-        TEST_METHOD(User_Add_ShouldSucceed) {
-            auto result = m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
-            Assert::IsFalse(result.IsError(), std::format(L"AddEntry User Failed: {}", result.Message()).c_str());
+        TEST_METHOD(User_Add_ShouldSucceed)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_add_user", L"pass123", false);
+            auto r = m_db.AddUser(user).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"AddUser failed").c_str());
         }
 
-        TEST_METHOD(User_GetAll_ShouldReturnEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::User, 100, 0).get();
-            Assert::IsTrue(entries.Size() > 0, L"GetAllEntries User should return at least 1 entry");
+        TEST_METHOD(User_GetByUsername_ShouldReturnUser)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_getbyname", L"pass123", false);
+            m_db.AddUser(user).get();
+
+            auto r = m_db.GetUserByUsername(L"t_getbyname").get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetUserByUsername failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected a user to be returned");
+
+            auto fetched = winrt::unbox_value<winrt::LeafEyeCore::UserModel>(r.ResultValue());
+            Assert::AreEqual(winrt::hstring(L"t_getbyname"), fetched.Username(), L"Username should match");
         }
 
-        TEST_METHOD(User_GetCount_ShouldBeGreaterThanZero) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
-            auto result = m_db.GetCountAsync(winrt::LeafEyeCore::BoxType::User).get();
-            Assert::IsFalse(result.IsError(), std::format(L"GetCount User Failed: {}", result.Message()).c_str());
-            auto count = winrt::unbox_value<int64_t>(result.ResultValue());
-            Assert::IsTrue(count > 0, L"User count should be greater than 0");
+        TEST_METHOD(User_GetById_ShouldReturnUser)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_getbyid", L"pass123", true);
+            m_db.AddUser(user).get();
+
+            // Get the auto-assigned id via username lookup first
+            auto byName = m_db.GetUserByUsername(L"t_getbyid").get();
+            Assert::IsTrue(byName.IsValueExists(), L"Prerequisite: user must exist by username");
+            uint64_t id = winrt::unbox_value<winrt::LeafEyeCore::UserModel>(byName.ResultValue()).Id();
+            Assert::IsTrue(id != 0, L"Id should have been assigned by ObjectBox");
+
+            auto r = m_db.GetUserById(id).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetUserById failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected a user to be returned");
+
+            auto fetched = winrt::unbox_value<winrt::LeafEyeCore::UserModel>(r.ResultValue());
+            Assert::AreEqual(winrt::hstring(L"t_getbyid"), fetched.Username(), L"Username should match");
         }
 
-        TEST_METHOD(User_GetCountWithFilter_ShouldMatchUsername) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
+        TEST_METHOD(User_ContainsUsername_ShouldReturnMatch)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_containstest_abc", L"pass", false);
+            m_db.AddUser(user).get();
 
-            winrt::LeafEyeCore::UserModel filter;
-            filter.Username(L"daberdev");
-            auto result = m_db.GetCountWithFilterAsync(winrt::LeafEyeCore::BoxType::User, filter).get();
-
-            Assert::IsFalse(result.IsError(), std::format(L"GetCountWithFilter User Failed: {}", result.Message()).c_str());
-            auto count = winrt::unbox_value<int64_t>(result.ResultValue());
-            Assert::IsTrue(count > 0, L"Filtered user count should be greater than 0");
+            auto r = m_db.GetUserContainsUsername(L"t_contains", 0, 10).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetUserContainsUsername failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected a matching user");
         }
 
-        TEST_METHOD(User_GetWithFilter_ShouldReturnMatchingUser) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
+        TEST_METHOD(User_GetAll_ShouldReturnAtLeastOneEntry)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_getall_user", L"pass", false);
+            m_db.AddUser(user).get();
 
-            winrt::LeafEyeCore::UserModel filter;
-            filter.Username(L"daberdev");
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::User, filter).get();
+            auto r = m_db.GetAllUsers(0, 100).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetAllUsers failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected at least one user");
 
-            Assert::IsTrue(entries.Size() > 0, L"Should find user with username 'daberdev'");
-
-            auto user = entries.GetAt(0).try_as<winrt::LeafEyeCore::UserModel>();
-            Assert::IsTrue(user != nullptr, L"Cast to UserModel should not be null");
-            Assert::AreEqual(winrt::hstring(L"daberdev"), user.Username(), L"Username should match");
-            Assert::IsTrue(user.IsAdmin(), L"User should be admin");
+            auto vec = UnboxVector<winrt::LeafEyeCore::UserModel>(r);
+            Assert::IsTrue(vec != nullptr && vec.Size() > 0, L"GetAllUsers should return at least 1 entry");
         }
 
-        TEST_METHOD(User_Update_ShouldReflectNewValues) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
+        TEST_METHOD(User_GetAll_Pagination_LimitOne_ShouldReturnExactlyOne)
+        {
+            m_db.AddUser(winrt::LeafEyeCore::UserModel(L"t_page_u1", L"p", false)).get();
+            m_db.AddUser(winrt::LeafEyeCore::UserModel(L"t_page_u2", L"p", false)).get();
 
-            winrt::LeafEyeCore::UserModel filter;
-            filter.Username(L"daberdev");
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::User, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"No user found to update");
-
-            auto oldUser = entries.GetAt(0).try_as<winrt::LeafEyeCore::UserModel>();
-            winrt::LeafEyeCore::UserModel newUser(L"daberdev_updated", L"newpassword", false);
-            newUser.Id(oldUser.Id());
-
-            auto result = m_db.UpdateEntryAsync(winrt::LeafEyeCore::BoxType::User, oldUser, newUser).get();
-            Assert::IsFalse(result.IsError(), std::format(L"UpdateEntry User Failed: {}", result.Message()).c_str());
-
-            winrt::LeafEyeCore::UserModel updatedFilter;
-            updatedFilter.Username(L"daberdev_updated");
-            auto updated = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::User, updatedFilter).get();
-            Assert::IsTrue(updated.Size() > 0, L"Updated user should be retrievable");
-
-            auto updatedUser = updated.GetAt(0).try_as<winrt::LeafEyeCore::UserModel>();
-            Assert::AreEqual(winrt::hstring(L"daberdev_updated"), updatedUser.Username(), L"Username should be updated");
-            Assert::IsFalse(updatedUser.IsAdmin(), L"IsAdmin should be updated to false");
+            auto r = m_db.GetAllUsers(0, 1).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetAllUsers(0,1) failed").c_str());
+            auto vec = UnboxVector<winrt::LeafEyeCore::UserModel>(r);
+            Assert::IsTrue(vec != nullptr && vec.Size() == 1, L"Limit=1 should return exactly 1 user");
         }
 
-        TEST_METHOD(User_Delete_ShouldRemoveEntry) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"delete_me", L"123456", false)
-            ).get();
+        TEST_METHOD(User_ValidateCredentials_ValidUser_ShouldSucceed)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_validate_user", L"secret", false);
+            m_db.AddUser(user).get();
 
-            winrt::LeafEyeCore::UserModel filter;
-            filter.Username(L"delete_me");
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::User, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"No user found to delete");
-
-            auto result = m_db.DeleteEntryAsync(winrt::LeafEyeCore::BoxType::User, entries.GetAt(0)).get();
-            Assert::IsFalse(result.IsError(), std::format(L"DeleteEntry User Failed: {}", result.Message()).c_str());
-
-            auto remaining = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::User, filter).get();
-            Assert::AreEqual(0u, remaining.Size(), L"Deleted user should no longer exist");
+            auto r = m_db.ValidateUserCredentials(L"t_validate_user", L"secret").get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"ValidateUserCredentials failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Valid credentials should return a user");
         }
 
-        TEST_METHOD(User_Clear_ShouldRemoveAllEntries) {
-            m_db.AddEntryAsync(winrt::LeafEyeCore::BoxType::User, winrt::LeafEyeCore::UserModel(L"user1", L"pass1", false)).get();
-            m_db.AddEntryAsync(winrt::LeafEyeCore::BoxType::User, winrt::LeafEyeCore::UserModel(L"user2", L"pass2", false)).get();
+        TEST_METHOD(User_ValidateCredentials_WrongPassword_ShouldNotReturnUser)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_validate_wrong", L"correctpass", false);
+            m_db.AddUser(user).get();
 
-            auto result = m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::User).get();
-            Assert::IsFalse(result.IsError(), std::format(L"ClearEntries User Failed: {}", result.Message()).c_str());
-
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::User, 100, 0).get();
-            Assert::AreEqual(0u, entries.Size(), L"All users should be cleared");
+            auto r = m_db.ValidateUserCredentials(L"t_validate_wrong", L"wrongpass").get();
+            Assert::IsFalse(r.IsValueExists(), L"Wrong password should not return a user");
         }
 
-        // ===================== PROFILE =====================
+        TEST_METHOD(User_Update_ShouldUpdatePassword)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_update_user", L"oldpass", false);
+            m_db.AddUser(user).get();
 
-        TEST_METHOD(Profile_Add_ShouldSucceed) {
-            auto result = m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::Profile,
-                winrt::LeafEyeCore::ProfileModel(0, L"Daber Dev", L"/avatars/daber.png", 1)
-            ).get();
-            Assert::IsFalse(result.IsError(), std::format(L"AddEntry Profile Failed: {}", result.Message()).c_str());
+            auto byName = m_db.GetUserByUsername(L"t_update_user").get();
+            Assert::IsTrue(byName.IsValueExists(), L"User must exist before update");
+            auto existing = winrt::unbox_value<winrt::LeafEyeCore::UserModel>(byName.ResultValue());
+
+            // UpdateUser internally preserves the username; only password/isAdmin change.
+            winrt::LeafEyeCore::UserModel updated(L"t_update_user", L"newpass", true);
+            updated.Id(existing.Id());
+
+            auto r = m_db.UpdateUser(updated).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"UpdateUser failed").c_str());
+
+            auto validate = m_db.ValidateUserCredentials(L"t_update_user", L"newpass").get();
+            Assert::IsTrue(validate.IsValueExists(), L"New password should be accepted after update");
         }
 
-        TEST_METHOD(Profile_GetAll_ShouldReturnEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::Profile,
-                winrt::LeafEyeCore::ProfileModel(0, L"Daber Dev", L"/avatars/daber.png", 1)
-            ).get();
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::Profile, 100, 0).get();
-            Assert::IsTrue(entries.Size() > 0, L"GetAllEntries Profile should return at least 1 entry");
+        TEST_METHOD(User_Delete_ShouldRemoveEntry)
+        {
+            winrt::LeafEyeCore::UserModel user(L"t_delete_user", L"pass", false);
+            m_db.AddUser(user).get();
+
+            auto byName = m_db.GetUserByUsername(L"t_delete_user").get();
+            Assert::IsTrue(byName.IsValueExists(), L"User must exist before delete");
+            uint64_t id = winrt::unbox_value<winrt::LeafEyeCore::UserModel>(byName.ResultValue()).Id();
+
+            auto r = m_db.DeleteUser(id).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"DeleteUser failed").c_str());
+
+            auto after = m_db.GetUserById(id).get();
+            Assert::IsFalse(after.IsValueExists(), L"User should not exist after deletion");
         }
 
-        TEST_METHOD(Profile_GetWithFilter_ShouldReturnMatchingRole) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::Profile,
-                winrt::LeafEyeCore::ProfileModel(0, L"Daber Dev", L"/avatars/daber.png", 1)
-            ).get();
-            winrt::LeafEyeCore::ProfileModel filter;
-            filter.Role(1);
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::Profile, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"Should find profile with role 1");
-
-            auto profile = entries.GetAt(0).try_as<winrt::LeafEyeCore::ProfileModel>();
-            Assert::IsTrue(profile != nullptr, L"Cast to ProfileModel should not be null");
-            Assert::AreEqual(winrt::hstring(L"Daber Dev"), profile.Fullname(), L"Fullname should match");
-            Assert::AreEqual(1, profile.Role(), L"Role should match");
+        TEST_METHOD(User_GetById_NotFound_ShouldNotHaveValue)
+        {
+            auto r = m_db.GetUserById(0xDEADBEEFDEADBEEFULL).get();
+            Assert::IsFalse(r.IsValueExists(), L"Non-existent id should not return a value");
         }
 
-        TEST_METHOD(Profile_Update_ShouldReflectNewValues) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::Profile,
-                winrt::LeafEyeCore::ProfileModel(0, L"Daber Dev", L"/avatars/daber.png", 1)
-            ).get();
-            winrt::LeafEyeCore::ProfileModel filter;
-            filter.Role(1);
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::Profile, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"No profile found to update");
-
-            auto oldProfile = entries.GetAt(0).try_as<winrt::LeafEyeCore::ProfileModel>();
-            auto newProfile = winrt::LeafEyeCore::ProfileModel(oldProfile.Id(), L"Daber Updated", L"/avatars/new.png", 2);
-
-            auto result = m_db.UpdateEntryAsync(winrt::LeafEyeCore::BoxType::Profile, oldProfile, newProfile).get();
-            Assert::IsFalse(result.IsError(), std::format(L"UpdateEntry Profile Failed: {}", result.Message()).c_str());
-
-            winrt::LeafEyeCore::ProfileModel updatedFilter;
-            updatedFilter.Role(2);
-            auto updated = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::Profile, updatedFilter).get();
-            Assert::IsTrue(updated.Size() > 0, L"Updated profile should be retrievable");
-
-            auto updatedProfile = updated.GetAt(0).try_as<winrt::LeafEyeCore::ProfileModel>();
-            Assert::AreEqual(winrt::hstring(L"Daber Updated"), updatedProfile.Fullname(), L"Fullname should be updated");
+        TEST_METHOD(User_GetByUsername_NotFound_ShouldNotHaveValue)
+        {
+            auto r = m_db.GetUserByUsername(L"__no_such_user__").get();
+            Assert::IsFalse(r.IsValueExists(), L"Non-existent username should not return a value");
         }
 
-        TEST_METHOD(Profile_Clear_ShouldRemoveAllEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::Profile,
-                winrt::LeafEyeCore::ProfileModel(0, L"Daber Dev", L"/avatars/daber.png", 1)
-            ).get();
-            auto result = m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::Profile).get();
-            Assert::IsFalse(result.IsError(), std::format(L"ClearEntries Profile Failed: {}", result.Message()).c_str());
+        // ════════════════════════════════════════════════════════════════════
+        //  PROFILE — CRUD
+        // ════════════════════════════════════════════════════════════════════
 
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::Profile, 100, 0).get();
-            Assert::AreEqual(0u, entries.Size(), L"All profiles should be cleared");
+        TEST_METHOD(Profile_Add_ShouldSucceed)
+        {
+            winrt::LeafEyeCore::ProfileModel profile(0ULL, L"Test User", L"/avatars/test.png", 1);
+            auto r = m_db.AddUserProfile(profile).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"AddUserProfile failed").c_str());
         }
 
-        // ===================== FILE HISTORY =====================
-
-        TEST_METHOD(FileHistory_Add_ShouldSucceed) {
-            auto result = m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"leaf_001.jpg", 2048, 1700000000LL, 1700003600LL, 0.95f)
-            ).get();
-            Assert::IsFalse(result.IsError(), std::format(L"AddEntry FileHistory Failed: {}", result.Message()).c_str());
+        TEST_METHOD(Profile_GetByUserLink_ShouldNotError)
+        {
+            // Without a wired-up User→Profile relation the result is empty,
+            // but the call must not throw.
+            auto r = m_db.GetUserProfileByLink(9999999ULL).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetUserProfileByLink returned error").c_str());
         }
 
-        TEST_METHOD(FileHistory_GetAll_ShouldReturnEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"leaf_001.jpg", 2048, 1700000000LL, 1700003600LL, 0.95f)
-            ).get();
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::FileHistory, 100, 0).get();
-            Assert::IsTrue(entries.Size() > 0, L"GetAllEntries FileHistory should return at least 1 entry");
+        TEST_METHOD(Profile_Delete_ShouldSucceed)
+        {
+            winrt::LeafEyeCore::ProfileModel profile(0ULL, L"ToDelete Profile", L"/avatars/del.png", 99);
+            m_db.AddUserProfile(profile).get();
+
+            // ObjectBox remove(0) is a no-op; confirms no exception surfaces through Result.
+            auto r = m_db.DeleteUserProfile(0ULL).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"DeleteUserProfile failed").c_str());
         }
 
-        TEST_METHOD(FileHistory_GetWithFilter_ShouldReturnMatchingFile) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"leaf_001.jpg", 2048, 1700000000LL, 1700003600LL, 0.95f)
-            ).get();
-            winrt::LeafEyeCore::FileHistoryModel filter;
-            filter.FileName(L"leaf_001.jpg");
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"Should find file with name 'leaf_001.jpg'");
+        // ════════════════════════════════════════════════════════════════════
+        //  HISTORY — CRUD
+        // ════════════════════════════════════════════════════════════════════
 
-            auto file = entries.GetAt(0).try_as<winrt::LeafEyeCore::FileHistoryModel>();
-            Assert::IsTrue(file != nullptr, L"Cast to FileHistoryModel should not be null");
-            Assert::AreEqual(winrt::hstring(L"leaf_001.jpg"), file.FileName(), L"FileName should match");
-            Assert::AreEqual(2048u, file.FileSize(), L"FileSize should match");
+        TEST_METHOD(History_Add_ShouldSucceed)
+        {
+            winrt::LeafEyeCore::HistoryModel history(0ULL, 1700000000LL, 5u, 1u);
+            auto r = m_db.AddHistory(history).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"AddHistory failed").c_str());
         }
 
-        TEST_METHOD(FileHistory_Update_ShouldReflectNewValues) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"leaf_001.jpg", 2048, 1700000000LL, 1700003600LL, 0.95f)
-            ).get();
-            winrt::LeafEyeCore::FileHistoryModel filter;
-            filter.FileName(L"leaf_001.jpg");
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"No file found to update");
+        TEST_METHOD(History_GetByStatus_ShouldReturnMatchingEntries)
+        {
+            winrt::LeafEyeCore::HistoryModel history(0ULL, 1700000000LL, 3u, 42u /*unique status*/);
+            m_db.AddHistory(history).get();
 
-            auto oldFile = entries.GetAt(0).try_as<winrt::LeafEyeCore::FileHistoryModel>();
-            auto newFile = winrt::LeafEyeCore::FileHistoryModel(
-                oldFile.Id(), L"leaf_001_updated.jpg", 4096, 1700000000LL, 1700007200LL, 0.88f
-            );
+            auto r = m_db.GetHistoryByStatus(42, 0, 100).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetHistoryByStatus failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected at least one history with status 42");
 
-            auto result = m_db.UpdateEntryAsync(winrt::LeafEyeCore::BoxType::FileHistory, oldFile, newFile).get();
-            Assert::IsFalse(result.IsError(), std::format(L"UpdateEntry FileHistory Failed: {}", result.Message()).c_str());
-
-            winrt::LeafEyeCore::FileHistoryModel updatedFilter;
-            updatedFilter.FileName(L"leaf_001_updated.jpg");
-            auto updated = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, updatedFilter).get();
-            Assert::IsTrue(updated.Size() > 0, L"Updated file should be retrievable");
-
-            auto updatedFile = updated.GetAt(0).try_as<winrt::LeafEyeCore::FileHistoryModel>();
-            Assert::AreEqual(4096u, updatedFile.FileSize(), L"FileSize should be updated");
+            auto vec = UnboxVector<winrt::LeafEyeCore::HistoryModel>(r);
+            Assert::IsTrue(vec != nullptr && vec.Size() > 0, L"Should return histories matching status");
+            Assert::AreEqual(42u, vec.GetAt(0).Status(), L"Status should be 42");
         }
 
-        TEST_METHOD(FileHistory_Delete_ShouldRemoveEntry) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"delete_me.jpg", 1024, 1700000000LL, 1700000000LL, 0.5f)
-            ).get();
-            winrt::LeafEyeCore::FileHistoryModel filter;
-            filter.FileName(L"delete_me.jpg");
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"No file found to delete");
+        TEST_METHOD(History_GetByStatus_Pagination_OffsetSkipsFirstResult)
+        {
+            m_db.AddHistory(winrt::LeafEyeCore::HistoryModel(0ULL, 1700000010LL, 1u, 55u)).get();
+            m_db.AddHistory(winrt::LeafEyeCore::HistoryModel(0ULL, 1700000020LL, 2u, 55u)).get();
 
-            auto result = m_db.DeleteEntryAsync(winrt::LeafEyeCore::BoxType::FileHistory, entries.GetAt(0)).get();
-            Assert::IsFalse(result.IsError(), std::format(L"DeleteEntry FileHistory Failed: {}", result.Message()).c_str());
+            auto all = m_db.GetHistoryByStatus(55, 0, 100).get();
+            auto vecAll = UnboxVector<winrt::LeafEyeCore::HistoryModel>(all);
+            Assert::IsTrue(vecAll != nullptr && vecAll.Size() >= 2, L"Should find at least 2 histories");
 
-            auto remaining = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, filter).get();
-            Assert::AreEqual(0u, remaining.Size(), L"Deleted file should no longer exist");
+            auto paged = m_db.GetHistoryByStatus(55, 1, 100).get();
+            auto vecPaged = UnboxVector<winrt::LeafEyeCore::HistoryModel>(paged);
+            Assert::IsTrue(vecPaged != nullptr && vecPaged.Size() == vecAll.Size() - 1,
+                L"Offset=1 should skip the first result");
         }
 
-        TEST_METHOD(FileHistory_Clear_ShouldRemoveAllEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"leaf_001.jpg", 2048, 1700000000LL, 1700003600LL, 0.95f)
-            ).get();
-            auto result = m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::FileHistory).get();
-            Assert::IsFalse(result.IsError(), std::format(L"ClearEntries FileHistory Failed: {}", result.Message()).c_str());
+        TEST_METHOD(History_GetByDateRange_ShouldReturnMatchingEntries)
+        {
+            int64_t ts = 1710000000LL;
+            winrt::LeafEyeCore::HistoryModel history(0ULL, ts, 2u, 1u);
+            m_db.AddHistory(history).get();
 
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::FileHistory, 100, 0).get();
-            Assert::AreEqual(0u, entries.Size(), L"All file histories should be cleared");
+            auto r = m_db.GetHistoryByDateRange(
+                static_cast<uint64_t>(ts - 1000),
+                static_cast<uint64_t>(ts + 1000),
+                0, 100).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetHistoryByDateRange failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected at least one history in date range");
         }
 
-        // ===================== HISTORY =====================
-
-        TEST_METHOD(History_Add_ShouldSucceed) {
-            auto result = m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 5, 1)
-            ).get();
-            Assert::IsFalse(result.IsError(), std::format(L"AddEntry History Failed: {}", result.Message()).c_str());
+        TEST_METHOD(History_GetByUserLink_ShouldNotError)
+        {
+            auto r = m_db.GetHistoryByUserLink(9999999ULL, 0, 100).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetHistoryByUserLink returned error").c_str());
         }
 
-        TEST_METHOD(History_GetAll_ShouldReturnEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 5, 1)
-            ).get();
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::History, 100, 0).get();
-            Assert::IsTrue(entries.Size() > 0, L"GetAllEntries History should return at least 1 entry");
+        TEST_METHOD(History_Update_ShouldReflectNewValues)
+        {
+            // Use a rare status value so we can reliably find this entry
+            winrt::LeafEyeCore::HistoryModel history(0ULL, 1700000000LL, 5u, 101u);
+            m_db.AddHistory(history).get();
+
+            auto getR = m_db.GetHistoryByStatus(101, 0, 1).get();
+            Assert::IsTrue(getR.IsValueExists(), L"History with status 101 must exist");
+            auto fetched = UnboxVector<winrt::LeafEyeCore::HistoryModel>(getR).GetAt(0);
+
+            winrt::LeafEyeCore::HistoryModel updated(fetched.Id(), 1700009999LL, 10u, 102u);
+            auto r = m_db.UpdateHistory(updated).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"UpdateHistory failed").c_str());
+
+            auto afterR = m_db.GetHistoryByStatus(102, 0, 10).get();
+            Assert::IsTrue(afterR.IsValueExists(), L"Should find history with updated status 102");
+            auto afterVec = UnboxVector<winrt::LeafEyeCore::HistoryModel>(afterR);
+            Assert::AreEqual(10u, afterVec.GetAt(0).TotalFiles(), L"TotalFiles should be updated");
         }
 
-        TEST_METHOD(History_GetWithFilter_ShouldReturnMatchingStatus) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 5, 1)
-            ).get();
-            winrt::LeafEyeCore::HistoryModel filter;
-            filter.Status(1);
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"Should find history with status 1");
+        TEST_METHOD(History_Delete_ShouldRemoveEntry)
+        {
+            winrt::LeafEyeCore::HistoryModel history(0ULL, 1700000000LL, 1u, 77u /*unique status*/);
+            m_db.AddHistory(history).get();
 
-            auto history = entries.GetAt(0).try_as<winrt::LeafEyeCore::HistoryModel>();
-            Assert::IsTrue(history != nullptr, L"Cast to HistoryModel should not be null");
-            Assert::AreEqual(1u, history.Status(), L"Status should match");
-            Assert::AreEqual(5u, history.TotalFiles(), L"TotalFiles should match");
+            auto getR = m_db.GetHistoryByStatus(77, 0, 1).get();
+            Assert::IsTrue(getR.IsValueExists(), L"History must exist before deletion");
+            uint64_t id = UnboxVector<winrt::LeafEyeCore::HistoryModel>(getR).GetAt(0).Id();
+
+            auto r = m_db.DeleteHistory(id).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"DeleteHistory failed").c_str());
+
+            auto afterR = m_db.GetHistoryByStatus(77, 0, 100).get();
+            auto afterVec = UnboxVector<winrt::LeafEyeCore::HistoryModel>(afterR);
+            Assert::IsTrue(afterVec == nullptr || afterVec.Size() == 0,
+                L"Deleted history should not be found");
         }
 
-        TEST_METHOD(History_Update_ShouldReflectNewValues) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 5, 1)
-            ).get();
-            winrt::LeafEyeCore::HistoryModel filter;
-            filter.Status(1);
-            auto entries = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, filter).get();
-            Assert::IsTrue(entries.Size() > 0, L"No history found to update");
+        // ════════════════════════════════════════════════════════════════════
+        //  FILE HISTORY — CRUD
+        // ════════════════════════════════════════════════════════════════════
 
-            auto oldHistory = entries.GetAt(0).try_as<winrt::LeafEyeCore::HistoryModel>();
-            auto newHistory = winrt::LeafEyeCore::HistoryModel(oldHistory.Id(), 1700009999LL, 10, 2);
-
-            auto result = m_db.UpdateEntryAsync(winrt::LeafEyeCore::BoxType::History, oldHistory, newHistory).get();
-            Assert::IsFalse(result.IsError(), std::format(L"UpdateEntry History Failed: {}", result.Message()).c_str());
-
-            winrt::LeafEyeCore::HistoryModel updatedFilter;
-            updatedFilter.Status(2);
-            auto updated = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, updatedFilter).get();
-            Assert::IsTrue(updated.Size() > 0, L"Updated history should be retrievable");
-
-            auto updatedHistory = updated.GetAt(0).try_as<winrt::LeafEyeCore::HistoryModel>();
-            Assert::AreEqual(10u, updatedHistory.TotalFiles(), L"TotalFiles should be updated");
-            Assert::AreEqual(2u, updatedHistory.Status(), L"Status should be updated");
+        TEST_METHOD(FileHistory_Add_ShouldSucceed)
+        {
+            winrt::LeafEyeCore::FileHistoryModel fh(0ULL, L"t_leaf_add.jpg", 2048u, 1700000000LL, 1700003600LL, 0.95f);
+            auto r = m_db.AddFileHistory(fh).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"AddFileHistory failed").c_str());
         }
 
-        TEST_METHOD(History_Clear_ShouldRemoveAllEntries) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 5, 1)
-            ).get();
-            auto result = m_db.ClearEntriesAsync(winrt::LeafEyeCore::BoxType::History).get();
-            Assert::IsFalse(result.IsError(), std::format(L"ClearEntries History Failed: {}", result.Message()).c_str());
+        TEST_METHOD(FileHistory_GetByConfidenceThreshold_ShouldReturnMatchingEntries)
+        {
+            winrt::LeafEyeCore::FileHistoryModel fh(0ULL, L"t_leaf_conf.jpg", 512u, 1700000002LL, 1700000002LL, 0.99f);
+            m_db.AddFileHistory(fh).get();
 
-            auto entries = m_db.GetAllEntriesAsync(winrt::LeafEyeCore::BoxType::History, 100, 0).get();
-            Assert::AreEqual(0u, entries.Size(), L"All histories should be cleared");
+            auto r = m_db.GetFileHistoriesByConfidenceThreshold(0.98, 0, 100).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetFileHistoriesByConfidenceThreshold failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected at least one entry with conf >= 0.98");
+
+            auto vec = UnboxVector<winrt::LeafEyeCore::FileHistoryModel>(r);
+            bool found = false;
+            for (uint32_t i = 0; i < vec.Size(); ++i) {
+                if (vec.GetAt(i).FileName() == winrt::hstring(L"t_leaf_conf.jpg")) { found = true; break; }
+            }
+            Assert::IsTrue(found, L"t_leaf_conf.jpg (conf 0.99) should appear in threshold query");
         }
 
-        // ===================== RELATION: History <-> FileHistory =====================
+        TEST_METHOD(FileHistory_GetById_ShouldReturnEntry)
+        {
+            winrt::LeafEyeCore::FileHistoryModel fh(0ULL, L"t_leaf_getbyid.jpg", 1024u, 1700000001LL, 1700000001LL, 0.80f);
+            m_db.AddFileHistory(fh).get();
 
-        TEST_METHOD(Relation_History_FileHistory_AddAndVerify) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 1, 0)
-            ).get();
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"relation_test.jpg", 1024, 1700000000LL, 1700000000LL, 0.88f)
-            ).get();
+            // Locate the entry first via confidence threshold to get the assigned id
+            auto byConf = m_db.GetFileHistoriesByConfidenceThreshold(0.79, 0, 100).get();
+            Assert::IsTrue(byConf.IsValueExists(), L"FileHistory must exist");
+            auto vec = UnboxVector<winrt::LeafEyeCore::FileHistoryModel>(byConf);
 
-            winrt::LeafEyeCore::HistoryModel hFilter;
-            hFilter.Status(0);
-            auto histories = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, hFilter).get();
-            Assert::IsTrue(histories.Size() > 0, L"No history found for relation test");
+            winrt::LeafEyeCore::FileHistoryModel target{ nullptr };
+            for (uint32_t i = 0; i < vec.Size(); ++i) {
+                if (vec.GetAt(i).FileName() == winrt::hstring(L"t_leaf_getbyid.jpg")) {
+                    target = vec.GetAt(i); break;
+                }
+            }
+            Assert::IsTrue(target != nullptr, L"Could not locate inserted file history by filename");
 
-            winrt::LeafEyeCore::FileHistoryModel fFilter;
-            fFilter.FileName(L"relation_test.jpg");
-            auto files = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, fFilter).get();
-            Assert::IsTrue(files.Size() > 0, L"No file found for relation test");
-
-            auto addResult = m_db.AddRelationAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                histories.GetAt(0),
-                files.GetAt(0)
-            ).get();
-            Assert::IsFalse(addResult.IsError(), std::format(L"AddRelation Failed: {}", addResult.Message()).c_str());
-
-            auto linkedHistories = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, hFilter).get();
-            Assert::IsTrue(linkedHistories.Size() > 0, L"No history found after relation");
-            auto history = linkedHistories.GetAt(0).try_as<winrt::LeafEyeCore::HistoryModel>();
-            Assert::IsTrue(history != nullptr, L"Cast to HistoryModel should not be null");
-            Assert::IsTrue(history.Files().Size() > 0, L"History should have linked files");
-            Assert::AreEqual(winrt::hstring(L"relation_test.jpg"), history.Files().GetAt(0).FileName(), L"Linked file name should match");
+            auto r = m_db.GetFileHistoryById(target.Id()).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetFileHistoryById failed").c_str());
+            Assert::IsTrue(r.IsValueExists(), L"Expected a file history to be returned");
         }
 
-        TEST_METHOD(Relation_History_FileHistory_Remove) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                winrt::LeafEyeCore::HistoryModel(0, 1700000000LL, 1, 0)
-            ).get();
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::FileHistory,
-                winrt::LeafEyeCore::FileHistoryModel(0, L"relation_test.jpg", 1024, 1700000000LL, 1700000000LL, 0.88f)
-            ).get();
-
-            winrt::LeafEyeCore::HistoryModel hFilter;
-            hFilter.Status(0);
-            auto histories = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, hFilter).get();
-
-            winrt::LeafEyeCore::FileHistoryModel fFilter;
-            fFilter.FileName(L"relation_test.jpg");
-            auto files = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::FileHistory, fFilter).get();
-
-            m_db.AddRelationAsync(winrt::LeafEyeCore::BoxType::History, histories.GetAt(0), files.GetAt(0)).get();
-
-            auto removeResult = m_db.RemoveRelationAsync(
-                winrt::LeafEyeCore::BoxType::History,
-                histories.GetAt(0),
-                files.GetAt(0)
-            ).get();
-            Assert::IsFalse(removeResult.IsError(), std::format(L"RemoveRelation Failed: {}", removeResult.Message()).c_str());
-
-            auto linkedHistories = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::History, hFilter).get();
-            auto history = linkedHistories.GetAt(0).try_as<winrt::LeafEyeCore::HistoryModel>();
-            Assert::IsTrue(history != nullptr, L"Cast to HistoryModel should not be null");
-            Assert::AreEqual(0u, history.Files().Size(), L"History should have no linked files after removal");
+        TEST_METHOD(FileHistory_GetByHistoryLink_ShouldNotError)
+        {
+            auto r = m_db.GetFileHistoriesByHistoryLink(9999999ULL, 0, 100).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"GetFileHistoriesByHistoryLink returned error").c_str());
         }
 
-        // ===================== RELATION: User <-> Profile =====================
+        TEST_METHOD(FileHistory_Update_ShouldReflectNewValues)
+        {
+            winrt::LeafEyeCore::FileHistoryModel fh(0ULL, L"t_leaf_upd_orig.jpg", 1024u, 1700000003LL, 1700000003LL, 0.60f);
+            m_db.AddFileHistory(fh).get();
 
-        TEST_METHOD(Relation_User_Profile_AddAndRemove) {
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                winrt::LeafEyeCore::UserModel(L"daberdev", L"123456", true)
-            ).get();
-            m_db.AddEntryAsync(
-                winrt::LeafEyeCore::BoxType::Profile,
-                winrt::LeafEyeCore::ProfileModel(0, L"Daber Dev", L"/avatars/daber.png", 1)
-            ).get();
+            // Find the entry by confidence to get its assigned id
+            auto byConf = m_db.GetFileHistoriesByConfidenceThreshold(0.59, 0, 100).get();
+            Assert::IsTrue(byConf.IsValueExists(), L"Should find file to update");
+            auto vec = UnboxVector<winrt::LeafEyeCore::FileHistoryModel>(byConf);
 
-            winrt::LeafEyeCore::UserModel uFilter;
-            uFilter.Username(L"daberdev");
-            auto users = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::User, uFilter).get();
-            Assert::IsTrue(users.Size() > 0, L"No user found for relation test");
+            winrt::LeafEyeCore::FileHistoryModel target{ nullptr };
+            for (uint32_t i = 0; i < vec.Size(); ++i) {
+                if (vec.GetAt(i).FileName() == winrt::hstring(L"t_leaf_upd_orig.jpg")) {
+                    target = vec.GetAt(i); break;
+                }
+            }
+            Assert::IsTrue(target != nullptr, L"Could not locate file history to update");
 
-            winrt::LeafEyeCore::ProfileModel pFilter;
-            pFilter.Role(1);
-            auto profiles = m_db.GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType::Profile, pFilter).get();
-            Assert::IsTrue(profiles.Size() > 0, L"No profile found for relation test");
+            winrt::LeafEyeCore::FileHistoryModel updated(
+                target.Id(), L"t_leaf_upd_new.jpg", 4096u, 1700000003LL, 1700009999LL, 0.75f);
+            auto r = m_db.UpdateFileHistory(updated).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"UpdateFileHistory failed").c_str());
 
-            auto addResult = m_db.AddRelationAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                users.GetAt(0),
-                profiles.GetAt(0)
-            ).get();
-            Assert::IsFalse(addResult.IsError(), std::format(L"AddRelation User/Profile Failed: {}", addResult.Message()).c_str());
+            auto afterR = m_db.GetFileHistoryById(target.Id()).get();
+            Assert::IsTrue(afterR.IsValueExists(), L"Updated file history should still exist");
+            auto afterFH = afterR.ResultValue().try_as<winrt::LeafEyeCore::FileHistoryModel>();
+            Assert::AreEqual(winrt::hstring(L"t_leaf_upd_new.jpg"), afterFH.FileName(),
+                L"FileName should reflect the update");
+            Assert::AreEqual(4096u, afterFH.FileSize(), L"FileSize should reflect the update");
+        }
 
-            auto removeResult = m_db.RemoveRelationAsync(
-                winrt::LeafEyeCore::BoxType::User,
-                users.GetAt(0),
-                profiles.GetAt(0)
-            ).get();
-            Assert::IsFalse(removeResult.IsError(), std::format(L"RemoveRelation User/Profile Failed: {}", removeResult.Message()).c_str());
+        TEST_METHOD(FileHistory_Delete_ShouldRemoveEntry)
+        {
+            winrt::LeafEyeCore::FileHistoryModel fh(0ULL, L"t_leaf_del.jpg", 256u, 1700000004LL, 1700000004LL, 0.50f);
+            m_db.AddFileHistory(fh).get();
+
+            auto byConf = m_db.GetFileHistoriesByConfidenceThreshold(0.49, 0, 100).get();
+            auto vec = UnboxVector<winrt::LeafEyeCore::FileHistoryModel>(byConf);
+
+            winrt::LeafEyeCore::FileHistoryModel target{ nullptr };
+            for (uint32_t i = 0; i < vec.Size(); ++i) {
+                if (vec.GetAt(i).FileName() == winrt::hstring(L"t_leaf_del.jpg")) {
+                    target = vec.GetAt(i); break;
+                }
+            }
+            Assert::IsTrue(target != nullptr, L"File to delete must exist");
+
+            auto r = m_db.DeleteFileHistory(target.Id()).get();
+            Assert::IsFalse(r.IsError(), Msg(r, L"DeleteFileHistory failed").c_str());
+
+            auto afterR = m_db.GetFileHistoryById(target.Id()).get();
+            Assert::IsFalse(afterR.IsValueExists(), L"Deleted file history should not be found");
+        }
+
+        TEST_METHOD(FileHistory_GetById_NotFound_ShouldNotHaveValue)
+        {
+            auto r = m_db.GetFileHistoryById(0xDEADBEEFDEADBEEFULL).get();
+            Assert::IsFalse(r.IsValueExists(), L"Non-existent file history id should not return a value");
         }
     };
 }

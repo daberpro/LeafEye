@@ -35,9 +35,12 @@ static inline OBX_model* create_obx_model() {
     obx_model_property(model, "total_files", OBXPropertyType_Int, 3, 8190082165606202171);
     obx_model_property_flags(model, OBXPropertyFlags_UNSIGNED);
     obx_model_property(model, "status", OBXPropertyType_Int, 4, 5307989602780852122);
-    obx_model_property_flags(model, OBXPropertyFlags_UNSIGNED);
-    obx_model_relation(model, 1, 8344513716167167100, 5, 7203642947974398314);
-    obx_model_entity_last_property_id(model, 4, 5307989602780852122);
+    obx_model_property_flags(model, OBXPropertyFlags_INDEXED | OBXPropertyFlags_UNSIGNED);
+    obx_model_property_index_id(model, 4, 186823815847267261);
+    obx_model_property(model, "user_id", OBXPropertyType_Relation, 5, 3881446591020797012);
+    obx_model_property_flags(model, OBXPropertyFlags_INDEXED | OBXPropertyFlags_INDEX_PARTIAL_SKIP_ZERO);
+    obx_model_property_relation(model, "User", 5, 5319899987597520295);
+    obx_model_entity_last_property_id(model, 5, 3881446591020797012);
     
     obx_model_entity(model, "Profile", 3, 3282537307467431222);
     obx_model_property(model, "id", OBXPropertyType_Long, 1, 5310139145486461373);
@@ -57,22 +60,29 @@ static inline OBX_model* create_obx_model() {
     obx_model_property_index_id(model, 2, 7292895028237184623);
     obx_model_property(model, "password", OBXPropertyType_String, 3, 5964648463446491874);
     obx_model_property(model, "is_admin", OBXPropertyType_Bool, 5, 101514211085163999);
-    obx_model_relation(model, 2, 4448433225820285083, 3, 3282537307467431222);
-    obx_model_entity_last_property_id(model, 5, 101514211085163999);
+    obx_model_property_flags(model, OBXPropertyFlags_INDEXED);
+    obx_model_property_index_id(model, 6, 1294413343393588513);
+    obx_model_property(model, "profile_id", OBXPropertyType_Relation, 6, 1404990613378645912);
+    obx_model_property_flags(model, OBXPropertyFlags_INDEXED | OBXPropertyFlags_INDEX_PARTIAL_SKIP_ZERO);
+    obx_model_property_relation(model, "Profile", 7, 5339488725715556934);
+    obx_model_entity_last_property_id(model, 6, 1404990613378645912);
     
     obx_model_entity(model, "FileHistory", 5, 7203642947974398314);
     obx_model_property(model, "id", OBXPropertyType_Long, 1, 5164298717709435730);
     obx_model_property_flags(model, OBXPropertyFlags_ID);
     obx_model_property(model, "filename", OBXPropertyType_String, 2, 3342432616709917633);
-    obx_model_property(model, "date_created", OBXPropertyType_Long, 3, 8564058090546440764);
+    obx_model_property(model, "date_created", OBXPropertyType_Date, 3, 8564058090546440764);
     obx_model_property(model, "date_modified", OBXPropertyType_Long, 4, 855346855330524523);
     obx_model_property(model, "confidence_score", OBXPropertyType_Float, 5, 555034200902362785);
     obx_model_property(model, "file_size", OBXPropertyType_Int, 6, 3065987969989679219);
     obx_model_property_flags(model, OBXPropertyFlags_UNSIGNED);
-    obx_model_entity_last_property_id(model, 6, 3065987969989679219);
+    obx_model_property(model, "history_id", OBXPropertyType_Relation, 7, 6552531899135967717);
+    obx_model_property_flags(model, OBXPropertyFlags_INDEXED | OBXPropertyFlags_INDEX_PARTIAL_SKIP_ZERO);
+    obx_model_property_relation(model, "History", 3, 3516362836295967298);
+    obx_model_entity_last_property_id(model, 7, 6552531899135967717);
     
     obx_model_last_entity_id(model, 5, 7203642947974398314);
-    obx_model_last_index_id(model, 2, 7292895028237184623);
+    obx_model_last_index_id(model, 7, 5339488725715556934);
     obx_model_last_relation_id(model, 2, 4448433225820285083);
     return model; // NOTE: the returned model will contain error information if an error occurred.
 }

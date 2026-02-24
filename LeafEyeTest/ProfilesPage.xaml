@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="LeafEyeTest.ProfilesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:LeafEyeCore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:LeafEyeTest"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <Grid Padding="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="28"
+                FontWeight="SemiBold"
+                Text="Manage Profiles" />
+            <StackPanel
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="10">
+                <Button
+                    x:Name="RefreshButton"
+                    Click="RefreshButton_Click"
+                    Content="Refresh" />
+                <Button
+                    x:Name="AddProfileButton"
+                    Click="AddProfileButton_Click"
+                    Content="Add Profile"
+                    Style="{StaticResource AccentButtonStyle}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid
+            Grid.Row="1"
+            Padding="12,10"
+            Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+            CornerRadius="4,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="160" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                FontWeight="Bold"
+                Text="ID" />
+            <TextBlock
+                Grid.Column="1"
+                FontWeight="Bold"
+                Text="Full Name" />
+            <TextBlock
+                Grid.Column="2"
+                FontWeight="Bold"
+                Text="Avatar Path" />
+            <TextBlock
+                Grid.Column="3"
+                FontWeight="Bold"
+                Text="Role" />
+            <TextBlock
+                Grid.Column="4"
+                Margin="0,0,10,0"
+                HorizontalAlignment="Right"
+                FontWeight="Bold"
+                Text="Actions" />
+        </Grid>
+
+        <ListView
+            x:Name="ProfilesListView"
+            Grid.Row="2"
+            BorderBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+            BorderThickness="1,0,1,1"
+            SelectionMode="None">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0,2" />
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="core:ProfileModel">
+                    <Grid Padding="0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="160" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind Id}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind Fullname}" />
+                        <TextBlock
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind AvatarPath}"
+                            TextTrimming="CharacterEllipsis" />
+                        <TextBlock
+                            Grid.Column="3"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind Role}" />
+
+                        <StackPanel
+                            Grid.Column="4"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <Button
+                                Click="EditProfile_Click"
+                                Content="Edit"
+                                Tag="{x:Bind Id}" />
+                            <Button
+                                Click="DeleteProfile_Click"
+                                Content="Delete"
+                                Foreground="Red"
+                                Tag="{x:Bind Id}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackPanel
+            Grid.Row="3"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="20">
+            <Button
+                x:Name="PrevPageButton"
+                Click="PrevPageButton_Click"
+                Content="&#xE76B; Prev"
+                FontFamily="Segoe Fluent Icons" />
+            <TextBlock
+                x:Name="PageInfoText"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Text="Page 1" />
+            <Button
+                x:Name="NextPageButton"
+                Click="NextPageButton_Click"
+                Content="Next &#xE76C;"
+                FontFamily="Segoe Fluent Icons" />
+        </StackPanel>
+
+    </Grid>
+</Page>

@@ -1,0 +1,8 @@
+namespace LeafEyeTest
+{
+    [default_interface]
+    runtimeclass ProfilesPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ProfilesPage();
+    }
+}

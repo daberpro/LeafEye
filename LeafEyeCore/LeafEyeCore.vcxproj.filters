@@ -13,21 +13,22 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Utility\Result.cpp" />
     <ClCompile Include="Generated Files\module.g.cpp" />
-    <ClCompile Include="Utility\Database.cpp" />
     <ClCompile Include="Model\FileHistoryModel.cpp" />
     <ClCompile Include="Model\HistoryModel.cpp" />
     <ClCompile Include="Model\ProfileModel.cpp" />
     <ClCompile Include="Model\UserModel.cpp" />
     <ClCompile Include="Schema\model.obx.cpp" />
+    <ClCompile Include="Utility\Database.cpp" />
+    <ClCompile Include="Utility\ObjectBoxImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utility\Result.h" />
-    <ClInclude Include="Utility\Database.h" />
     <ClInclude Include="Model\FileHistoryModel.h" />
     <ClInclude Include="Model\HistoryModel.h" />
     <ClInclude Include="Model\ProfileModel.h" />
     <ClInclude Include="Model\UserModel.h" />
+    <ClInclude Include="Utility\Database.h" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="Database.idl" />
@@ -40,9 +41,6 @@
   <ItemGroup>
     <None Include="LeafEyeCore.def" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

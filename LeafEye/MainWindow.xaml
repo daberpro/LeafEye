@@ -87,7 +87,7 @@
             <NavigationView.Content>
                 <Frame
                     x:Name="contentFrame"
-                    Padding="16,-30,15,0"
+                    Padding="16,0,15,0"
                     Navigated="contentFrame_Navigated" />
             </NavigationView.Content>
         </NavigationView>

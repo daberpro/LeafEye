@@ -1,60 +1,58 @@
-import "Result.idl";
-namespace LeafEyeCore{
+﻿import "Result.idl";
+import "ProfileModel.idl";
+import "UserModel.idl";
+import "HistoryModel.idl";
+import "FileHistoryModel.idl";
 
-    enum DatabaseError
-    {
-        None = 0,
-        FileNotFound = 1,
-        ReadError = 2,
-        WriteError = 3,
-        CorruptedData = 4,
-        UnknownError = 5,
-        FailedCreateModule = 6
-    };
-
-    enum DatabaseStatus
-    {
-        Success = 0,
-        Failure = 1,
-        NotFound = 2,
-        AlreadyExists = 3,
-        InvalidData = 4
-    };
-
-    enum BoxType
-    {
-        User = 0,
-        History = 1,
-        Profile = 2,
-        FileHistory = 3
-    };
+namespace LeafEyeCore {
 
     [default_interface]
     runtimeclass Database
     {
-        Database(
-            String database_location,
-            Int32 max_db_size
-        );
+        // Constructors
+        Database();
+        Database(String database_location, UInt64 max_db_size);
 
+        // Lifecycle
         Windows.Foundation.IAsyncOperation<Result> InitializeAsync();
-        void PrintInfo();        
 
-        Windows.Foundation.IAsyncOperation<Result> AddEntryAsync(BoxType box, Object data);
-        Windows.Foundation.IAsyncOperation<Result> ClearEntriesAsync(BoxType box);
-        Windows.Foundation.IAsyncOperation<Result> DeleteEntryAsync(BoxType box, Object data);
-        Windows.Foundation.IAsyncOperation<Result> UpdateEntryAsync(BoxType box, Object oldData, Object newData);
-        
-        Windows.Foundation.IAsyncOperation<Result> AddRelationAsync(BoxType box, Object from, Object to);
-        Windows.Foundation.IAsyncOperation<Result> RemoveRelationAsync(BoxType box, Object from, Object to);
+        // ─── User ────────────────────────────────────────────────
+        Windows.Foundation.IAsyncOperation<Result> GetUserById(UInt64 id);
+        Windows.Foundation.IAsyncOperation<Result> GetUserByUsername(String username);
+        Windows.Foundation.IAsyncOperation<Result> GetUserContainsUsername(String username, Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetAllUsers(Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> ValidateUserCredentials(String username, String password);
+        Windows.Foundation.IAsyncOperation<Result> AddUser(UserModel user);
+        Windows.Foundation.IAsyncOperation<Result> UpdateUser(UserModel user);
+        Windows.Foundation.IAsyncOperation<Result> DeleteUser(UInt64 id);
 
-        Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<Object> > GetEntriesWithFilterAsync(BoxType box, Object filter);
-        Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<Object> > GetAllEntriesAsync(BoxType box, Int32 limit, Int32 offset);
+        // ─── Profile ─────────────────────────────────────────────
+        Windows.Foundation.IAsyncOperation<Result> GetProfileById(UInt64 profileId);
+        Windows.Foundation.IAsyncOperation<Result> GetUserProfileByLink(UInt64 userId);
+        Windows.Foundation.IAsyncOperation<Result> AddUserProfile(ProfileModel userProfile);
+        Windows.Foundation.IAsyncOperation<Result> UpdateUserProfile(ProfileModel userProfile);
+        Windows.Foundation.IAsyncOperation<Result> DeleteUserProfile(UInt64 id);
 
-        Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<Object> > GetHistoryByDateRangeAsync(Int64 startUnix, Int64 endUnix);
-        Windows.Foundation.IAsyncOperation<Result> GetHistoryCountByDateRangeAsync(Int64 startUnix, Int64 endUnix);
+        // ─── History ─────────────────────────────────────────────
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryById(UInt64 id);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryByUserLink(UInt64 userId, Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryByStatus(Int32 status, Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryByDateRange(UInt64 start, UInt64 end, Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> AddHistory(HistoryModel history);
+        Windows.Foundation.IAsyncOperation<Result> UpdateHistory(HistoryModel history);
+        Windows.Foundation.IAsyncOperation<Result> DeleteHistory(UInt64 id);
 
-        Windows.Foundation.IAsyncOperation<Result> GetCountAsync(BoxType box);
-        Windows.Foundation.IAsyncOperation<Result> GetCountWithFilterAsync(BoxType box, Object filter);
+        // ─── File History ─────────────────────────────────────────
+        Windows.Foundation.IAsyncOperation<Result> GetFileHistoryById(UInt64 id);
+        Windows.Foundation.IAsyncOperation<Result> GetFileHistoriesByHistoryLink(UInt64 historyId, Int32 page, Int32 pageSize);
+        Windows.Foundation.IAsyncOperation<Result> GetFileHistoriesByConfidenceThreshold(Double minConfidence, Int32 page, Int32 pageSize);
+        Windows.Foundation.IAsyncOperation<Result> AddFileHistory(FileHistoryModel fileHistory);
+        Windows.Foundation.IAsyncOperation<Result> UpdateFileHistory(FileHistoryModel fileHistory);
+        Windows.Foundation.IAsyncOperation<Result> DeleteFileHistory(UInt64 id);
+
+        // Add these inside your Database runtimeclass
+        Windows.Foundation.IAsyncOperation<Result> LinkUserProfile(UInt64 userId, UInt64 profileId);
+        Windows.Foundation.IAsyncOperation<Result> LinkHistoryToUser(UInt64 historyId, UInt64 userId);
+        Windows.Foundation.IAsyncOperation<Result> LinkFileHistoryToHistory(UInt64 fileHistoryId, UInt64 historyId);
     }
 }
