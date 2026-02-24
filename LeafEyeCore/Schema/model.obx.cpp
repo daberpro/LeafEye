@@ -6,7 +6,7 @@ const obx::Property<History, OBXPropertyType_Long> History_::id(1);
 const obx::Property<History, OBXPropertyType_Date> History_::date(2);
 const obx::Property<History, OBXPropertyType_Int> History_::total_files(3);
 const obx::Property<History, OBXPropertyType_Int> History_::status(4);
-const obx::RelationStandalone<History, FileHistory> History_::files(1);
+const obx::RelationProperty<History, User> History_::user_id(5);
 
 void History::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fbb, const History& object) {
     fbb.Clear();
@@ -15,6 +15,7 @@ void History::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fbb, c
     fbb.AddElement(6, object.date);
     fbb.AddElement(8, object.total_files);
     fbb.AddElement(10, object.status);
+    fbb.AddElement(12, object.user_id);
     flatbuffers::Offset<flatbuffers::Table> offset;
     offset.o = fbb.EndTable(fbStart);
     fbb.Finish(offset);
@@ -39,6 +40,7 @@ void History::_OBX_MetaInfo::fromFlatBuffer(const void* data, size_t, History& o
     outObject.date = table->GetField<int64_t>(6, 0);
     outObject.total_files = table->GetField<uint32_t>(8, 0);
     outObject.status = table->GetField<uint32_t>(10, 0);
+    outObject.user_id = table->GetField<obx_id>(12, 0);
 }
 
 const obx::Property<Profile, OBXPropertyType_Long> Profile_::id(1);
@@ -99,7 +101,7 @@ const obx::Property<User, OBXPropertyType_Long> User_::id(1);
 const obx::Property<User, OBXPropertyType_String> User_::username(2);
 const obx::Property<User, OBXPropertyType_String> User_::password(3);
 const obx::Property<User, OBXPropertyType_Bool> User_::is_admin(5);
-const obx::RelationStandalone<User, Profile> User_::profile(2);
+const obx::RelationProperty<User, Profile> User_::profile_id(6);
 
 void User::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fbb, const User& object) {
     fbb.Clear();
@@ -110,6 +112,7 @@ void User::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fbb, cons
     fbb.AddOffset(6, offsetusername);
     fbb.AddOffset(8, offsetpassword);
     fbb.AddElement(12, object.is_admin ? 1 : 0);
+    fbb.AddElement(14, object.profile_id);
     flatbuffers::Offset<flatbuffers::Table> offset;
     offset.o = fbb.EndTable(fbStart);
     fbb.Finish(offset);
@@ -148,14 +151,16 @@ void User::_OBX_MetaInfo::fromFlatBuffer(const void* data, size_t, User& outObje
         }
     }
     outObject.is_admin = table->GetField<uint8_t>(12, 0) != 0;
+    outObject.profile_id = table->GetField<obx_id>(14, 0);
 }
 
 const obx::Property<FileHistory, OBXPropertyType_Long> FileHistory_::id(1);
 const obx::Property<FileHistory, OBXPropertyType_String> FileHistory_::filename(2);
-const obx::Property<FileHistory, OBXPropertyType_Long> FileHistory_::date_created(3);
+const obx::Property<FileHistory, OBXPropertyType_Date> FileHistory_::date_created(3);
 const obx::Property<FileHistory, OBXPropertyType_Long> FileHistory_::date_modified(4);
 const obx::Property<FileHistory, OBXPropertyType_Float> FileHistory_::confidence_score(5);
 const obx::Property<FileHistory, OBXPropertyType_Int> FileHistory_::file_size(6);
+const obx::RelationProperty<FileHistory, History> FileHistory_::history_id(7);
 
 void FileHistory::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fbb, const FileHistory& object) {
     fbb.Clear();
@@ -167,6 +172,7 @@ void FileHistory::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fb
     fbb.AddElement(10, object.date_modified);
     fbb.AddElement(12, object.confidence_score);
     fbb.AddElement(14, object.file_size);
+    fbb.AddElement(16, object.history_id);
     flatbuffers::Offset<flatbuffers::Table> offset;
     offset.o = fbb.EndTable(fbStart);
     fbb.Finish(offset);
@@ -200,5 +206,6 @@ void FileHistory::_OBX_MetaInfo::fromFlatBuffer(const void* data, size_t, FileHi
     outObject.date_modified = table->GetField<int64_t>(10, 0);
     outObject.confidence_score = table->GetField<float>(12, 0.0f);
     outObject.file_size = table->GetField<uint32_t>(14, 0);
+    outObject.history_id = table->GetField<obx_id>(16, 0);
 }
 

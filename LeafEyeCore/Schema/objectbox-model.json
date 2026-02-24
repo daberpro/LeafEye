@@ -18,7 +18,7 @@
     },
     {
       "id": "2:40048249367672753",
-      "lastPropertyId": "4:5307989602780852122",
+      "lastPropertyId": "5:3881446591020797012",
       "name": "History",
       "properties": [
         {
@@ -41,15 +41,17 @@
         {
           "id": "4:5307989602780852122",
           "name": "status",
+          "indexId": "4:186823815847267261",
           "type": 5,
-          "flags": 8192
-        }
-      ],
-      "relations": [
+          "flags": 8200
+        },
         {
-          "id": "1:8344513716167167100",
-          "name": "files",
-          "targetId": "5:7203642947974398314"
+          "id": "5:3881446591020797012",
+          "name": "user_id",
+          "indexId": "5:5319899987597520295",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "User"
         }
       ]
     },
@@ -85,7 +87,7 @@
     },
     {
       "id": "4:915219184694351256",
-      "lastPropertyId": "5:101514211085163999",
+      "lastPropertyId": "6:1404990613378645912",
       "name": "User",
       "properties": [
         {
@@ -109,20 +111,23 @@
         {
           "id": "5:101514211085163999",
           "name": "is_admin",
-          "type": 1
-        }
-      ],
-      "relations": [
+          "indexId": "6:1294413343393588513",
+          "type": 1,
+          "flags": 8
+        },
         {
-          "id": "2:4448433225820285083",
-          "name": "profile",
-          "targetId": "3:3282537307467431222"
+          "id": "6:1404990613378645912",
+          "name": "profile_id",
+          "indexId": "7:5339488725715556934",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "Profile"
         }
       ]
     },
     {
       "id": "5:7203642947974398314",
-      "lastPropertyId": "6:3065987969989679219",
+      "lastPropertyId": "7:6552531899135967717",
       "name": "FileHistory",
       "properties": [
         {
@@ -139,7 +144,7 @@
         {
           "id": "3:8564058090546440764",
           "name": "date_created",
-          "type": 6
+          "type": 10
         },
         {
           "id": "4:855346855330524523",
@@ -156,12 +161,20 @@
           "name": "file_size",
           "type": 5,
           "flags": 8192
+        },
+        {
+          "id": "7:6552531899135967717",
+          "name": "history_id",
+          "indexId": "3:3516362836295967298",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "History"
         }
       ]
     }
   ],
   "lastEntityId": "5:7203642947974398314",
-  "lastIndexId": "2:7292895028237184623",
+  "lastIndexId": "7:5339488725715556934",
   "lastRelationId": "2:4448433225820285083",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
@@ -170,6 +183,9 @@
   "retiredPropertyUids": [
     5240296351151806314
   ],
-  "retiredRelationUids": [],
+  "retiredRelationUids": [
+    8344513716167167100,
+    4448433225820285083
+  ],
   "version": 1
 }

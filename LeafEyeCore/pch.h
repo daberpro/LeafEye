@@ -26,3 +26,11 @@
 #include <winrt/Microsoft.UI.Xaml.Shapes.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <wil/cppwinrt_helpers.h>
+#include <winrt/Windows.Foundation.Collections.h>
+
+#include <iterator> // Pastikan ini di-include untuk std::make_move_iterator
+#include <utility>  // Untuk std::move
+
+#include <iomanip>
+#include <openssl/evp.h>
+#include <openssl/rand.h>

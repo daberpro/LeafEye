@@ -1,697 +1,1061 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Database.h"
 #include "Database.g.cpp"
 
 namespace winrt::LeafEyeCore::implementation
 {
-    Database::Database(hstring const& database_location, int32_t max_db_size)
-        : m_database_location(database_location), m_max_db_size(max_db_size), m_model(create_obx_model()) {
-    }
+	// ─── Helpers ──────────────────────────────────────────────────────────────
+	// Definisi Panjang Tetap
+	const int ITERATIONS = 10000;
+	const int SALT_SIZE = 16;          // 16 byte = 32 karakter hex
+	const int HASH_SIZE = 32;          // 32 byte = 64 karakter hex
+	const int ITER_CHARS = 6;          // Alokasi 6 digit untuk jumlah iterasi (max 999.999)
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::InitializeAsync()
-    {
-        co_await winrt::resume_background();
+	std::string toHex(const unsigned char* data, size_t len) {
+		std::stringstream ss;
+		for (size_t i = 0; i < len; i++)
+			ss << std::hex << std::setw(2) << std::setfill('0') << (int)data[i];
+		return ss.str();
+	}
 
-        if (!m_model) {
-            co_return winrt::LeafEyeCore::Result(
-                true,
-                static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::FailedCreateModule),
-                L"Failed to create module",
-                nullptr
-            );
-        }
+	std::vector<unsigned char> fromHex(const std::string& hex) {
+		std::vector<unsigned char> bytes;
+		for (unsigned int i = 0; i < hex.length(); i += 2) {
+			bytes.push_back((unsigned char)strtol(hex.substr(i, 2).c_str(), NULL, 16));
+		}
+		return bytes;
+	}
 
-        m_options = std::make_unique<obx::Options>(m_model);
-        m_options->directory(winrt::to_string(m_database_location));
-        m_options->maxDbSizeInKb(m_max_db_size);
-        try {
-            m_store = std::make_unique<obx::Store>(*m_options);
-            m_user_box = std::make_unique<obx::Box<User>>(*m_store);
-            m_file_box = std::make_unique<obx::Box<FileHistory>>(*m_store);
-            m_history_box = std::make_unique<obx::Box<History>>(*m_store);
-            m_profile_box = std::make_unique<obx::Box<Profile>>(*m_store);
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(),
-                (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(),
-                nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true,
-                static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] Unknown Error: " + winrt::to_hstring(err.what())).c_str(),
-                nullptr
-            );
-        }
+	// 1. Membuat Hash (Output: [Iterasi(6)][Salt(32)][Hash(64)])
+	std::string createSecureHash(const std::string& password) {
+		unsigned char salt[SALT_SIZE];
+		RAND_bytes(salt, sizeof(salt));
 
-        co_return winrt::LeafEyeCore::Result(
-            false,
-            static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"Database initialized successfully",
-            nullptr
-        );
-    }
+		unsigned char outHash[HASH_SIZE];
+		PKCS5_PBKDF2_HMAC(password.c_str(), password.length(), salt, SALT_SIZE,
+			ITERATIONS, EVP_sha256(), HASH_SIZE, outHash);
 
-    void Database::PrintInfo()
-    {
-        winrt::hstring version = winrt::to_hstring(obx_version_string());
-        OutputDebugString(L"\n");
-        OutputDebugString(winrt::to_hstring(std::string(30, '=')).c_str());
-        OutputDebugString(L"\n");
-        OutputDebugString(std::format(L"ObjectBox VERSION: {}", version).c_str());
-        OutputDebugString(L"\n");
-        OutputDebugString(winrt::to_hstring(std::string(30, '=')).c_str());
-        OutputDebugString(L"\n");
-    }
+		// Gunakan setfill('0') agar panjang iterasi selalu tetap 6 karakter
+		std::stringstream ss;
+		ss << std::setw(ITER_CHARS) << std::setfill('0') << ITERATIONS;
+		ss << toHex(salt, SALT_SIZE);
+		ss << toHex(outHash, HASH_SIZE);
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::AddEntryAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable data)
-    {
-        co_await winrt::resume_background();
+		return ss.str();
+	}
 
-        try {
-            switch (box) {
-            case BoxType::User: {
-                auto user = data.try_as<winrt::LeafEyeCore::UserModel>();
-                if (!user) throw std::invalid_argument("Invalid UserModel data");
-                m_user_box->put(User{
-                    .id = 0,
-                    .username = winrt::to_string(user.Username()),
-                    .password = winrt::to_string(user.Password()),
-                    .is_admin = user.IsAdmin()
-                    });
-                break;
-            }
-            case BoxType::FileHistory: {
-                auto file = data.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                if (!file) throw std::invalid_argument("Invalid FileHistoryModel data");
-                m_file_box->put(FileHistory{
-                    .id = 0,
-                    .filename = winrt::to_string(file.FileName()),
-                    .date_created = file.DateCreated(),
-                    .date_modified = file.DateModified(),
-                    .confidence_score = file.ConfidenceScore(),
-                    .file_size = file.FileSize()
-                    });
-                break;
-            }
-            case BoxType::History: {
-                auto history = data.try_as<winrt::LeafEyeCore::HistoryModel>();
-                if (!history) throw std::invalid_argument("Invalid HistoryModel data");
-                m_history_box->put(History{
-                    .id = 0,
-                    .date = history.Date(),
-                    .total_files = history.TotalFiles(),
-                    .status = history.Status()
-                    });
-                break;
-            }
-            case BoxType::Profile: {
-                auto profile = data.try_as<winrt::LeafEyeCore::ProfileModel>();
-                if (!profile) throw std::invalid_argument("Invalid ProfileModel data");
-                m_profile_box->put(Profile{
-                    .id = 0,
-                    .full_name = winrt::to_string(profile.Fullname()),
-                    .avatar_path = winrt::to_string(profile.AvatarPath()),
-                    .role = profile.Role()
-                    });
-                break;
-            }
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Unknown BoxType", nullptr
-                );
-            }
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] AddEntry Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
+	// 2. Validasi Password
+	bool verifySecureHash(const std::string& password, const std::string& storedData) {
+		// Ambil bagian berdasarkan posisi (substring)
+		// Pos 0-5: Iterasi | Pos 6-37: Salt | Pos 38-101: Hash
+		int iterations = std::stoi(storedData.substr(0, ITER_CHARS));
+		std::string saltHex = storedData.substr(ITER_CHARS, SALT_SIZE * 2);
+		std::string actualHashHex = storedData.substr(ITER_CHARS + (SALT_SIZE * 2));
 
-        co_return winrt::LeafEyeCore::Result(
-            false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"Entry added successfully", nullptr
-        );
-    }
+		std::vector<unsigned char> salt = fromHex(saltHex);
+		unsigned char checkHash[HASH_SIZE];
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::ClearEntriesAsync(winrt::LeafEyeCore::BoxType box)
-    {
-        co_await winrt::resume_background();
+		PKCS5_PBKDF2_HMAC(password.c_str(), password.length(), salt.data(), salt.size(),
+			iterations, EVP_sha256(), HASH_SIZE, checkHash);
 
-        try {
-            switch (box) {
-            case BoxType::User:        m_user_box->removeAll();    break;
-            case BoxType::FileHistory: m_file_box->removeAll();    break;
-            case BoxType::History:     m_history_box->removeAll(); break;
-            case BoxType::Profile:     m_profile_box->removeAll(); break;
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Unknown BoxType", nullptr
-                );
-            }
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] ClearEntries Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
+		return toHex(checkHash, HASH_SIZE) == actualHashHex;
+	}
 
-        co_return winrt::LeafEyeCore::Result(
-            false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"All entries cleared successfully", nullptr
-        );
-    }
+	static winrt::LeafEyeCore::UserModel UserToModel(const User& u)
+	{
+		auto model = winrt::make<implementation::UserModel>();
+		model.Id(u.id);
+		model.Username(winrt::to_hstring(u.username));
+		model.Password(winrt::to_hstring(u.password));
+		model.IsAdmin(u.is_admin);
+		return model;
+	}
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::DeleteEntryAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable data)
-    {
-        co_await winrt::resume_background();
+	static winrt::LeafEyeCore::ProfileModel ProfileToModel(const Profile& p)
+	{
+		auto model = winrt::make<implementation::ProfileModel>();
+		model.Id(p.id);
+		model.Fullname(winrt::to_hstring(p.full_name));
+		model.AvatarPath(winrt::to_hstring(p.avatar_path));
+		model.Role(p.role);
+		return model;
+	}
 
-        try {
-            switch (box) {
-            case BoxType::User: {
-                auto user = data.try_as<winrt::LeafEyeCore::UserModel>();
-                if (!user) throw std::invalid_argument("Invalid UserModel data");
-                m_user_box->remove(user.Id());
-                break;
-            }
-            case BoxType::FileHistory: {
-                auto file = data.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                if (!file) throw std::invalid_argument("Invalid FileHistoryModel data");
-                m_file_box->remove(file.Id());
-                break;
-            }
-            case BoxType::History: {
-                auto history = data.try_as<winrt::LeafEyeCore::HistoryModel>();
-                if (!history) throw std::invalid_argument("Invalid HistoryModel data");
-                m_history_box->remove(history.Id());
-                break;
-            }
-            case BoxType::Profile: {
-                auto profile = data.try_as<winrt::LeafEyeCore::ProfileModel>();
-                if (!profile) throw std::invalid_argument("Invalid ProfileModel data");
-                m_profile_box->remove(profile.Id());
-                break;
-            }
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Unknown BoxType", nullptr
-                );
-            }
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] DeleteEntry Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
+	static winrt::LeafEyeCore::FileHistoryModel FileHistoryToModel(const FileHistory& fh)
+	{
+		auto model = winrt::make<implementation::FileHistoryModel>();
+		model.Id(fh.id);
+		model.FileName(winrt::to_hstring(fh.filename));
+		model.FileSize(fh.file_size);
+		model.DateCreated(fh.date_created);
+		model.DateModified(fh.date_modified);
+		model.ConfidenceScore(fh.confidence_score);
+		return model;
+	}
 
-        co_return winrt::LeafEyeCore::Result(
-            false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"Entry deleted successfully", nullptr
-        );
-    }
+	static winrt::LeafEyeCore::HistoryModel HistoryToModel(const History& h)
+	{
+		auto model = winrt::make<implementation::HistoryModel>();
+		model.Id(h.id);
+		model.Date(h.date);
+		model.TotalFiles(h.total_files);
+		model.Status(h.status);
+		return model;
+	}
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::UpdateEntryAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable oldData, winrt::Windows::Foundation::IInspectable newData)
-    {
-        co_await winrt::resume_background();
+	static User ModelToUser(const winrt::LeafEyeCore::UserModel& m)
+	{
+		User u{};
+		u.id = m.Id();
+		u.username = winrt::to_string(m.Username());
+		u.password = winrt::to_string(m.Password());
+		u.is_admin = m.IsAdmin();
+		return u;
+	}
 
-        try {
-            switch (box) {
-            case BoxType::User: {
-                auto oldUser = oldData.try_as<winrt::LeafEyeCore::UserModel>();
-                auto newUser = newData.try_as<winrt::LeafEyeCore::UserModel>();
-                if (!oldUser || !newUser) throw std::invalid_argument("Invalid UserModel data");
-                m_user_box->put(User{
-                    .id = oldUser.Id(),
-                    .username = winrt::to_string(newUser.Username()),
-                    .password = winrt::to_string(newUser.Password()),
-                    .is_admin = newUser.IsAdmin()
-                    });
-                break;
-            }
-            case BoxType::FileHistory: {
-                auto oldFile = oldData.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                auto newFile = newData.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                if (!oldFile || !newFile) throw std::invalid_argument("Invalid FileHistoryModel data");
-                m_file_box->put(FileHistory{
-                    .id = oldFile.Id(),
-                    .filename = winrt::to_string(newFile.FileName()),
-                    .date_created = newFile.DateCreated(),
-                    .date_modified = newFile.DateModified(),
-                    .confidence_score = newFile.ConfidenceScore(),
-                    .file_size = newFile.FileSize()
-                    });
-                break;
-            }
-            case BoxType::History: {
-                auto oldHistory = oldData.try_as<winrt::LeafEyeCore::HistoryModel>();
-                auto newHistory = newData.try_as<winrt::LeafEyeCore::HistoryModel>();
-                if (!oldHistory || !newHistory) throw std::invalid_argument("Invalid HistoryModel data");
-                m_history_box->put(History{
-                    .id = oldHistory.Id(),
-                    .date = newHistory.Date(),
-                    .total_files = newHistory.TotalFiles(),
-                    .status = newHistory.Status()
-                    });
-                break;
-            }
-            case BoxType::Profile: {
-                auto oldProfile = oldData.try_as<winrt::LeafEyeCore::ProfileModel>();
-                auto newProfile = newData.try_as<winrt::LeafEyeCore::ProfileModel>();
-                if (!oldProfile || !newProfile) throw std::invalid_argument("Invalid ProfileModel data");
-                m_profile_box->put(Profile{
-                    .id = oldProfile.Id(),
-                    .full_name = winrt::to_string(newProfile.Fullname()),
-                    .avatar_path = winrt::to_string(newProfile.AvatarPath()),
-                    .role = newProfile.Role()
-                    });
-                break;
-            }
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Unknown BoxType", nullptr
-                );
-            }
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] UpdateEntry Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
+	static Profile ModelToProfile(const winrt::LeafEyeCore::ProfileModel& m)
+	{
+		Profile p{};
+		p.id = m.Id();
+		p.full_name = winrt::to_string(m.Fullname());
+		p.avatar_path = winrt::to_string(m.AvatarPath());
+		p.role = m.Role();
+		return p;
+	}
 
-        co_return winrt::LeafEyeCore::Result(
-            false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"Entry updated successfully", nullptr
-        );
-    }
+	static History ModelToHistory(const winrt::LeafEyeCore::HistoryModel& m)
+	{
+		History h{};
+		h.id = m.Id();
+		h.date = m.Date();
+		h.total_files = m.TotalFiles();
+		h.status = m.Status();
+		return h;
+	}
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::AddRelationAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable from, winrt::Windows::Foundation::IInspectable to)
-    {
-        co_await winrt::resume_background();
+	static FileHistory ModelToFileHistory(const winrt::LeafEyeCore::FileHistoryModel& m)
+	{
+		FileHistory fh{};
+		fh.id = m.Id();
+		fh.filename = winrt::to_string(m.FileName());
+		fh.file_size = m.FileSize();
+		fh.date_created = m.DateCreated();
+		fh.date_modified = m.DateModified();
+		fh.confidence_score = m.ConfidenceScore();
+		return fh;
+	}
 
-        try {
-            switch (box) {
-            case BoxType::History: {
-                auto history = from.try_as<winrt::LeafEyeCore::HistoryModel>();
-                auto file = to.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                if (!history || !file) throw std::invalid_argument("Invalid History/FileHistory relation data");
-                m_history_box->standaloneRelPut<FileHistory>(History_::files, history.Id(), file.Id());
-                break;
-            }
-            case BoxType::User: {
-                auto user = from.try_as<winrt::LeafEyeCore::UserModel>();
-                auto profile = to.try_as<winrt::LeafEyeCore::ProfileModel>();
-                if (!user || !profile) throw std::invalid_argument("Invalid User/Profile relation data");
-                m_user_box->standaloneRelPut<Profile>(User_::profile, user.Id(), profile.Id());
-                break;
-            }
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Relation not supported for this BoxType", nullptr
-                );
-            }
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] AddRelation Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
+	Database::Database(hstring const& database_location, uint64_t max_db_size)
+		: m_database_location(database_location), m_max_db_size(max_db_size), m_is_initialized(false)
+	{
+	}
 
-        co_return winrt::LeafEyeCore::Result(
-            false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"Relation added successfully", nullptr
-        );
-    }
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::InitializeAsync()
+	{
+		co_await winrt::resume_background();
+		// result construct with param isError, isValueExists, errorCode, message, value
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::RemoveRelationAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable from, winrt::Windows::Foundation::IInspectable to)
-    {
-        co_await winrt::resume_background();
+			obx::Options options(create_obx_model());
+			options.directory(winrt::to_string(m_database_location));
+			options.maxDbSizeInKb(m_max_db_size);
 
-        try {
-            switch (box) {
-            case BoxType::History: {
-                auto history = from.try_as<winrt::LeafEyeCore::HistoryModel>();
-                auto file = to.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                if (!history || !file) throw std::invalid_argument("Invalid History/FileHistory relation data");
-                m_history_box->standaloneRelRemove<FileHistory>(History_::files, history.Id(), file.Id());
-                break;
-            }
-            case BoxType::User: {
-                auto user = from.try_as<winrt::LeafEyeCore::UserModel>();
-                auto profile = to.try_as<winrt::LeafEyeCore::ProfileModel>();
-                if (!user || !profile) throw std::invalid_argument("Invalid User/Profile relation data");
-                m_user_box->standaloneRelRemove<Profile>(User_::profile, user.Id(), profile.Id());
-                break;
-            }
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Relation not supported for this BoxType", nullptr
-                );
-            }
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] RemoveRelation Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
+			m_store = std::make_unique<obx::Store>(options);
+			m_user_box = std::make_unique<obx::Box<User>>(*m_store);
+			m_profile_box = std::make_unique<obx::Box<Profile>>(*m_store);
+			m_history_box = std::make_unique<obx::Box<History>>(*m_store);
+			m_filehistory_box = std::make_unique<obx::Box<FileHistory>>(*m_store);
 
-        co_return winrt::LeafEyeCore::Result(
-            false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-            L"Relation removed successfully", nullptr
-        );
-    }
+			// Get By Id
+			m_query_user_by_id = std::make_unique<obx::Query<User>>(
+				m_user_box->query(
+					User_::id.equals(0)
+				).build()
+			);
+			m_query_profile_by_id = std::make_unique<obx::Query<Profile>>(
+				m_profile_box->query(
+					Profile_::id.equals(0)
+				).build()
+			);
+			m_query_history_by_id = std::make_unique<obx::Query<History>>(
+				m_history_box->query(
+					History_::id.equals(0)
+				).build()
+			);
+			m_query_filehistory_by_id = std::make_unique<obx::Query<FileHistory>>(
+				m_filehistory_box->query(
+					FileHistory_::id.equals(0)
+				).build()
+			);
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable>> Database::GetEntriesWithFilterAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable filter)
-    {
-        co_await winrt::resume_background();
-        auto results = winrt::single_threaded_vector<winrt::Windows::Foundation::IInspectable>();
+			// User query
+			m_query_user_by_username = std::make_unique<obx::Query<User>>(
+				m_user_box->query(
+					User_::username.equals("")
+				).build()
+			);
 
-        switch (box) {
-        case BoxType::User: {
-            auto filterModel = filter.try_as<winrt::LeafEyeCore::UserModel>();
-            if (!filterModel) co_return results;
-            // FITUR: .contains(..., true) untuk case-insensitive partial match
-            auto query = m_user_box->query(User_::username.contains(winrt::to_string(filterModel.Username()), true)).build();
-            for (auto& u : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::UserModel>(
-                    winrt::to_hstring(u.username), winrt::to_hstring(u.password), u.is_admin
-                );
-                model.Id(u.id);
-                results.Append(model);
-            }
-            break;
-        }
-        case BoxType::Profile: {
-            auto filterModel = filter.try_as<winrt::LeafEyeCore::ProfileModel>();
-            if (!filterModel) co_return results;
-            auto query = m_profile_box->query(Profile_::role.equals(filterModel.Role())).build();
-            for (auto& p : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::ProfileModel>(
-                    p.id, winrt::to_hstring(p.full_name), winrt::to_hstring(p.avatar_path), p.role
-                );
-                results.Append(model);
-            }
-            break;
-        }
-        case BoxType::History: {
-            auto filterModel = filter.try_as<winrt::LeafEyeCore::HistoryModel>();
-            if (!filterModel) co_return results;
+			m_query_user_contains_username = std::make_unique<obx::Query<User>>(
+				m_user_box->query(
+					User_::username.contains("")
+				).build()
+			);
 
-            // FITUR: Ditambahkan order by DESCENDING date
-            auto qb = m_history_box->query(History_::status.equals(filterModel.Status()));
-            qb.order(History_::date, OBXOrderFlags_DESCENDING);
-            auto query = qb.build();
+			m_query_user_by_credentials = std::make_unique<obx::Query<User>>(
+				m_user_box->query(
+					User_::username.equals("") && User_::password.equals("")
+				).build()
+			);
 
-            for (auto& h : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::HistoryModel>(
-                    h.id, h.date, h.total_files, h.status
-                );
-                auto qbFiles = m_file_box->query();
-                qbFiles.backlink<History>(History_::files).with(History_::id.equals(h.id));
-                auto linkedFiles = qbFiles.build().find();
-                auto fileVector = winrt::single_threaded_vector<winrt::LeafEyeCore::FileHistoryModel>();
-                for (auto& f : linkedFiles) {
-                    auto fileModel = winrt::make<winrt::LeafEyeCore::implementation::FileHistoryModel>(
-                        f.id, winrt::to_hstring(f.filename), f.file_size, f.date_created, f.date_modified, f.confidence_score
-                    );
-                    fileVector.Append(fileModel);
-                }
-                model.Files(fileVector);
-                results.Append(model);
-            }
-            break;
-        }
-        case BoxType::FileHistory: {
-            auto filterModel = filter.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-            if (!filterModel) co_return results;
-            // Sesuai permintaan: FileHistory tetap menggunakan equals / tidak diubah
-            auto query = m_file_box->query(FileHistory_::filename.equals(winrt::to_string(filterModel.FileName()))).build();
-            for (auto& f : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::FileHistoryModel>(
-                    f.id, winrt::to_hstring(f.filename), f.file_size, f.date_created, f.date_modified, f.confidence_score
-                );
-                results.Append(model);
-            }
-            break;
-        }
-        }
-        co_return results;
-    }
+			// History query
+			m_query_history_by_status = std::make_unique<obx::Query<History>>(
+				m_history_box->query(
+					History_::status.equals(0)
+				).build()
+			);
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable>> Database::GetAllEntriesAsync(winrt::LeafEyeCore::BoxType box, int32_t limit, int32_t offset)
-    {
-        co_await winrt::resume_background();
-        auto results = winrt::single_threaded_vector<winrt::Windows::Foundation::IInspectable>();
+			auto query_builder_history = m_history_box->query();
+			query_builder_history
+				.link(History_::user_id)
+				.with(User_::id.equals(0));
+			m_query_history_by_user_link = std::make_unique<obx::Query<History>>(query_builder_history.build());
 
-        switch (box) {
-        case BoxType::User: {
-            auto query = m_user_box->query().build();
-            query.offset(offset); query.limit(limit);
-            for (auto& u : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::UserModel>(
-                    winrt::to_hstring(u.username), winrt::to_hstring(u.password), u.is_admin
-                );
-                model.Id(u.id);
-                results.Append(model);
-            }
-            break;
-        }
-        case BoxType::Profile: {
-            auto query = m_profile_box->query().build();
-            query.offset(offset); query.limit(limit);
-            for (auto& p : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::ProfileModel>(
-                    p.id, winrt::to_hstring(p.full_name), winrt::to_hstring(p.avatar_path), p.role
-                );
-                results.Append(model);
-            }
-            break;
-        }
-        case BoxType::History: {
-            // FITUR SORTING DITAMBAHKAN DI SINI (DESCENDING DATE)
-            auto qb = m_history_box->query();
-            qb.order(History_::date, OBXOrderFlags_DESCENDING);
-            auto query = qb.build();
+			// FileHistory query
+			m_query_filehistory_by_confidence = std::make_unique<obx::Query<FileHistory>>(
+				m_filehistory_box->query(
+					FileHistory_::confidence_score.greaterOrEq(0)
+				).build()
+			);
 
-            query.offset(offset); query.limit(limit);
-            for (auto& h : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::HistoryModel>(
-                    h.id, h.date, h.total_files, h.status
-                );
-                auto qbFiles = m_file_box->query();
-                qbFiles.backlink<History>(History_::files).with(History_::id.equals(h.id));
-                auto linkedFiles = qbFiles.build().find();
-                auto fileVector = winrt::single_threaded_vector<winrt::LeafEyeCore::FileHistoryModel>();
-                for (auto& f : linkedFiles) {
-                    auto fileModel = winrt::make<winrt::LeafEyeCore::implementation::FileHistoryModel>(
-                        f.id, winrt::to_hstring(f.filename), f.file_size, f.date_created, f.date_modified, f.confidence_score
-                    );
-                    fileVector.Append(fileModel);
-                }
-                model.Files(fileVector);
-                results.Append(model);
-            }
-            break;
-        }
-        case BoxType::FileHistory: {
-            auto query = m_file_box->query().build();
-            query.offset(offset); query.limit(limit);
-            for (auto& f : query.find()) {
-                auto model = winrt::make<winrt::LeafEyeCore::implementation::FileHistoryModel>(
-                    f.id, winrt::to_hstring(f.filename), f.file_size, f.date_created, f.date_modified, f.confidence_score
-                );
-                results.Append(model);
-            }
-            break;
-        }
-        }
-        co_return results;
-    }
+			auto query_builder_filehistory = m_filehistory_box->query();
+			query_builder_filehistory
+				.link(FileHistory_::history_id)
+				.with(History_::id.equals(0));
+			m_query_filehistory_by_history_link = std::make_unique<obx::Query<FileHistory>>(query_builder_filehistory.build());
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable>> Database::GetHistoryByDateRangeAsync(int64_t startUnix, int64_t endUnix)
-    {
-        co_await winrt::resume_background();
-        auto results = winrt::single_threaded_vector<winrt::Windows::Foundation::IInspectable>();
+			// Profile query
+			auto query_builder_profile = m_profile_box->query();
+			query_builder_profile
+				.backlink(User_::profile_id)
+				.with(User_::id.equals(0));
+			m_query_profile_by_user_link = std::make_unique<obx::Query<Profile>>(query_builder_profile.build());
 
-        // MENGGUNAKAN .between() UNTUK RENTANG WAKTU & DIURUTKAN DESCENDING
-        auto qb = m_history_box->query(History_::date.between(startUnix, endUnix));
-        qb.order(History_::date, OBXOrderFlags_DESCENDING);
-        auto query = qb.build();
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"Database initialized successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR] An unknown error occurred while fetching user by ID.");
+		}
 
-        for (auto& h : query.find()) {
-            auto model = winrt::make<winrt::LeafEyeCore::implementation::HistoryModel>(
-                h.id, h.date, h.total_files, h.status
-            );
+		co_return result;
+	}
 
-            auto qbFiles = m_file_box->query();
-            qbFiles.backlink<History>(History_::files).with(History_::id.equals(h.id));
-            auto linkedFiles = qbFiles.build().find();
 
-            auto fileVector = winrt::single_threaded_vector<winrt::LeafEyeCore::FileHistoryModel>();
-            for (auto& f : linkedFiles) {
-                auto fileModel = winrt::make<winrt::LeafEyeCore::implementation::FileHistoryModel>(
-                    f.id, winrt::to_hstring(f.filename), f.file_size, f.date_created, f.date_modified, f.confidence_score
-                );
-                fileVector.Append(fileModel);
-            }
-            model.Files(fileVector);
-            results.Append(model);
-        }
-        co_return results;
-    }
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserById(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_query_user_by_id->setParameter(User_::id, id);
+			auto user = m_query_user_by_id->findFirst();
+			if (!user) {
+				result.Message(L"[DATABASE ERROR][GetUserById] User Not found");
+			}
+			else {
+				result.ErrorCode(0);
+				result.IsError(false);
+				result.ResultValue(winrt::box_value(UserToModel(*user)));
+				result.Message(L"User fetched successfully");
+				result.IsValueExists(true);
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserById] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserById] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetUserById] An unknown error occurred while fetching user by ID.");
+		}
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryCountByDateRangeAsync(int64_t startUnix, int64_t endUnix)
-    {
-        co_await winrt::resume_background();
-        try {
-            uint64_t count = m_history_box->query(History_::date.between(startUnix, endUnix)).build().count();
-            co_return winrt::LeafEyeCore::Result(
-                false,
-                static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-                winrt::to_hstring(count),
-                winrt::box_value(static_cast<int64_t>(count))
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true,
-                static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] Date Range Error: " + winrt::to_hstring(err.what())).c_str(),
-                nullptr
-            );
-        }
-    }
+		co_return result;
+	}
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetCountAsync(winrt::LeafEyeCore::BoxType box)
-    {
-        co_await winrt::resume_background();
-        try {
-            uint64_t count = 0;
-            switch (box) {
-            case BoxType::User:        count = m_user_box->count();    break;
-            case BoxType::FileHistory: count = m_file_box->count();    break;
-            case BoxType::History:     count = m_history_box->count(); break;
-            case BoxType::Profile:     count = m_profile_box->count(); break;
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Unknown BoxType", nullptr
-                );
-            }
-            co_return winrt::LeafEyeCore::Result(
-                false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-                winrt::to_hstring(count), winrt::box_value(static_cast<int64_t>(count))
-            );
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] GetCount Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-    }
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserByUsername(hstring username)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_query_user_by_username->setParameter(User_::username, winrt::to_string(username));
+			auto user = m_query_user_by_username->findFirst();
+			if (!user) {
+				result.Message(L"[DATABASE ERROR][GetUserByUsername] User Not found");
+			}
+			else {
+				result.ErrorCode(0);
+				result.IsError(false);
+				result.ResultValue(winrt::box_value(UserToModel(*user)));
+				result.Message(L"User fetched successfully");
+				result.IsValueExists(true);
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserByUsername] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserByUsername] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetUserByUsername] An unknown error occurred while fetching user by ID.");
+		}
 
-    winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetCountWithFilterAsync(winrt::LeafEyeCore::BoxType box, winrt::Windows::Foundation::IInspectable filter)
-    {
-        co_await winrt::resume_background();
-        try {
-            uint64_t count = 0;
-            switch (box) {
-            case BoxType::User: {
-                auto filterModel = filter.try_as<winrt::LeafEyeCore::UserModel>();
-                if (!filterModel) throw std::invalid_argument("Invalid UserModel filter");
-                // MENGGUNAKAN .contains(..., true)
-                count = m_user_box->query(User_::username.contains(winrt::to_string(filterModel.Username()), true)).build().count();
-                break;
-            }
-            case BoxType::Profile: {
-                auto filterModel = filter.try_as<winrt::LeafEyeCore::ProfileModel>();
-                if (!filterModel) throw std::invalid_argument("Invalid ProfileModel filter");
-                count = m_profile_box->query(Profile_::role.equals(filterModel.Role())).build().count();
-                break;
-            }
-            case BoxType::History: {
-                auto filterModel = filter.try_as<winrt::LeafEyeCore::HistoryModel>();
-                if (!filterModel) throw std::invalid_argument("Invalid HistoryModel filter");
-                count = m_history_box->query(History_::status.equals(filterModel.Status())).build().count();
-                break;
-            }
-            case BoxType::FileHistory: {
-                auto filterModel = filter.try_as<winrt::LeafEyeCore::FileHistoryModel>();
-                if (!filterModel) throw std::invalid_argument("Invalid FileHistoryModel filter");
-                count = m_file_box->query(FileHistory_::filename.equals(winrt::to_string(filterModel.FileName()))).build().count();
-                break;
-            }
-            default:
-                co_return winrt::LeafEyeCore::Result(
-                    true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                    L"[DATABASE] Unknown BoxType", nullptr
-                );
-            }
-            co_return winrt::LeafEyeCore::Result(
-                false, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::None),
-                winrt::to_hstring(count), winrt::box_value(static_cast<int64_t>(count))
-            );
-        }
-        catch (const obx::Exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, err.code(), (L"[DATABASE] ObjectBox Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-        catch (const std::exception& err) {
-            co_return winrt::LeafEyeCore::Result(
-                true, static_cast<int32_t>(winrt::LeafEyeCore::DatabaseError::UnknownError),
-                (L"[DATABASE] GetCountWithFilter Error: " + winrt::to_hstring(err.what())).c_str(), nullptr
-            );
-        }
-    }
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserContainsUsername(hstring username, int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_query_user_contains_username->setParameter(User_::username, winrt::to_string(username));
+			auto user = m_query_user_contains_username->limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::UserModel> users = winrt::single_threaded_vector<winrt::LeafEyeCore::UserModel>();
+			for (auto& u : user) {
+				users.Append(UserToModel(u));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.ResultValue(users);
+			result.Message(L"User fetched successfully");
+			result.IsValueExists(true);
+			
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserContainsUsername] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserContainsUsername] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetUserContainsUsername] An unknown error occurred while fetching user by ID.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetAllUsers(int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_query_user_contains_username->setParameter(User_::username, ""); // Match all users
+			auto raw_users = m_query_user_contains_username->limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::UserModel> users = winrt::single_threaded_vector<winrt::LeafEyeCore::UserModel>();
+			for (auto& user : raw_users) {
+				users.Append(UserToModel(user));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.ResultValue(users);
+			result.Message(L"Users fetched successfully");
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetAllUsers] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetAllUsers] Failed to fetch user by ID: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetAllUsers] An unknown error occurred while fetching user by ID.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::ValidateUserCredentials(hstring username, hstring password)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_query_user_by_username->setParameter(User_::username, winrt::to_string(username));
+			auto user = m_query_user_by_username->findFirst();
+			if (!user) {
+				result.Message(L"[DATABASE ERROR][ValidateUserCredentials] User not found");
+			}
+			else {
+
+				if (verifySecureHash(winrt::to_string(password),user->password)) {
+					result.ErrorCode(0);
+					result.IsError(false);
+					result.Message(L"User credentials valid");
+					result.ResultValue(winrt::box_value(UserToModel(*user)));
+					result.IsValueExists(true);
+				}
+				else {
+					result.Message(L"[DATABASE ERROR][ValidateUserCredentials] Password does not match");
+				}
+
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][ValidateUserCredentials] Failed to validate user: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][ValidateUserCredentials] Failed to validate user: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][ValidateUserCredentials] An unknown error occurred while validate user.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::AddUser(winrt::LeafEyeCore::UserModel user)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			user.Password(
+				winrt::to_hstring(createSecureHash(winrt::to_string(user.Password())))
+			);
+			m_user_box->put(ModelToUser(user));
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"User added successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][AddUser] Failed to add user: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][AddUser] Failed to add user: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][AddUser] An unknown error occurred while add user.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::UpdateUser(winrt::LeafEyeCore::UserModel user)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			// get existing user to preserve username and ID, and prevent accidental username changes which can cause issues with linked data
+			auto existing_user = m_user_box->get(user.Id());
+			auto updated_user = ModelToUser(user);
+			updated_user.id = existing_user->id; // Ensure the ID remains unchanged
+			updated_user.username = existing_user->username; // Preserve the existing username
+			updated_user.password = createSecureHash(winrt::to_string(user.Password()));
+			m_user_box->put(updated_user);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"User updated successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateUser] Failed to updated user: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateUser] Failed to updated user: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][UpdateUser] An unknown error occurred while updated user.");
+		}
+
+		co_return result;
+	}
+
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::DeleteUser(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			// objectbox when one of relation get delete the standalone rel also get delete, so we don't need to manually delete profile and history linked to user
+			m_user_box->remove(id);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"User delete successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteUser] Failed to uelete user: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteUser] Failed to uelete user: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][DeleteUser] An unknown error occurred while uelete user.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetProfileById(uint64_t profileId)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto profile = m_query_profile_by_id->setParameter(User_::id, profileId).findFirst();
+			if (!profile) {
+				result.Message(L"[DATABASE ERROR][GetProfileById] User profile not found");
+			}
+			else {
+				result.ErrorCode(0);
+				result.IsError(false);
+				result.Message(L"profile found");
+				result.ResultValue(winrt::box_value(ProfileToModel(*profile)));
+				result.IsValueExists(true);
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetProfileById] Failed to fetch profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetProfileById] Failed to fetch profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetProfileById] An unknown error occurred while to fetch profile.");
+		}
+
+		co_return result;
+	}
+
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserProfileByLink(uint64_t userId)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto profile = m_query_profile_by_user_link->setParameter(User_::id, userId).findFirst();
+			if (!profile) {
+				result.Message(L"[DATABASE ERROR][GetUserProfileByLink] User profile not found");
+			}
+			else {
+				result.ErrorCode(0);
+				result.IsError(false);
+				result.Message(L"User profile found");
+				result.ResultValue(winrt::box_value(ProfileToModel(*profile)));
+				result.IsValueExists(true);
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserProfileByLink] Failed to fetch profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetUserProfileByLink] Failed to fetch profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetUserProfileByLink] An unknown error occurred while to fetch profile.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::AddUserProfile(winrt::LeafEyeCore::ProfileModel userProfile)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_profile_box->put(ModelToProfile(userProfile));
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"User profile added successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][AddUserProfile] Failed to add profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][AddUserProfile] Failed to add profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][AddUserProfile] An unknown error occurred while add profile.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::UpdateUserProfile(winrt::LeafEyeCore::ProfileModel userProfile)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto existing_profile = m_profile_box->get(userProfile.Id());
+			auto updated_profile = ModelToProfile(userProfile);
+			updated_profile.id = existing_profile->id; // Ensure the ID remains unchanged
+			// We don't need to preserve the existing fullname and avatar path as they can be updated freely
+			m_profile_box->put(updated_profile);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"User profile updated successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateUserProfile] Failed to update user: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateUserProfile] Failed to update user: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][UpdateUserProfile] An unknown error occurred while update profile.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::DeleteUserProfile(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_profile_box->remove(id);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"User profile delete successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteUserProfile] Failed to delete profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteUserProfile] Failed to delete profile: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][DeleteUserProfile] An unknown error occurred while delete profile.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryById(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto history = m_query_history_by_id->setParameter(History_::id, id).findFirst();
+			if (!history) {
+				result.Message(L"[DATABASE ERROR][GetHistoryById] History Not found");
+			}
+			else {
+				result.ErrorCode(0);
+				result.IsError(false);
+				result.Message(L"History fetched successfully");
+				result.ResultValue(winrt::box_value(HistoryToModel(*history)));
+				result.IsValueExists(true);
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryById] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryById] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryById] An unknown error occurred while fetch history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByUserLink(uint64_t userId, int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto histories = m_query_history_by_user_link->setParameter(User_::id, userId).limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::HistoryModel> historyModels = winrt::single_threaded_vector<winrt::LeafEyeCore::HistoryModel>();
+			for (auto& history: histories) {
+				historyModels.Append(HistoryToModel(history));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History fetched successfully");
+			result.ResultValue(historyModels);
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByUserLink] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByUserLink] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByUserLink] An unknown error occurred while fetch history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByStatus(int32_t status, int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto histories = m_query_history_by_status->setParameter(History_::status, status).limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::HistoryModel> historyModels = winrt::single_threaded_vector<winrt::LeafEyeCore::HistoryModel>();
+			for (auto& history : histories) {
+				historyModels.Append(HistoryToModel(history));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History fetched successfully");
+			result.ResultValue(historyModels);
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByStatus] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByStatus] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByStatus] An unknown error occurred while fetch history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByDateRange(uint64_t start, uint64_t end, int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto query = m_history_box->query(History_::date.between(start,end)).build();
+			auto histories = query.limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::HistoryModel> historyModels = winrt::single_threaded_vector<winrt::LeafEyeCore::HistoryModel>();
+			for (auto& history : histories) {
+				historyModels.Append(HistoryToModel(history));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History fetched successfully");
+			result.ResultValue(historyModels);
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByDateRange] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByDateRange] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryByDateRange] An unknown error occurred while fetch history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::AddHistory(winrt::LeafEyeCore::HistoryModel history)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_history_box->put(ModelToHistory(history));
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History added successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][AddHistory] Failed to add history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][AddHistory] Failed to add history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][AddHistory] An unknown error occurred while add history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::UpdateHistory(winrt::LeafEyeCore::HistoryModel history)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto existing_history = m_history_box->get(history.Id());
+			auto updated_history = ModelToHistory(history);
+			updated_history.id = existing_history->id; // Ensure the ID remains unchanged
+			// We don't need to preserve the existing date and total files as they can be updated
+			m_history_box->put(updated_history);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History updated successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateHistory] Failed to update history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateHistory] Failed to update history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][UpdateHistory] An unknown error occurred while update history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::DeleteHistory(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_history_box->remove(id);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History deleted successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteHistory] Failed to delete history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteHistory] Failed to delete history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][DeleteHistory] An unknown error occurred while deleting history.");
+		}
+
+		co_return result;
+	}
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoryById(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto fh = m_query_filehistory_by_id->setParameter(FileHistory_::id, id).findFirst();
+			if (!fh) {
+				result.Message(L"[DATABASE ERROR][GetFileHistoryById] File history not found");
+			}
+			else {
+				result.ErrorCode(0);
+				result.IsError(false);
+				result.ResultValue(winrt::box_value(FileHistoryToModel(*fh)));
+				result.Message(L"File history fetched successfully");
+				result.IsValueExists(true);
+			}
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoryById] Failed to fetch file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoryById] Failed to fetch file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoryById] An unknown error occurred while fetching file history.");
+		}
+
+		co_return result;
+	}
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoriesByHistoryLink(uint64_t historyId, int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto fileHistories = m_query_filehistory_by_history_link->setParameter(History_::id, historyId).limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::FileHistoryModel> fhModels = winrt::single_threaded_vector<winrt::LeafEyeCore::FileHistoryModel>();
+			for (auto& fh : fileHistories) {
+				fhModels.Append(FileHistoryToModel(fh));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"File histories fetched successfully");
+			result.ResultValue(fhModels);
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoriesByHistoryLink] Failed to fetch file histories: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoriesByHistoryLink] Failed to fetch file histories: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoriesByHistoryLink] An unknown error occurred while fetching file histories.");
+		}
+
+		co_return result;
+	}
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoriesByConfidenceThreshold(double minConfidence, int32_t offset, int32_t limit)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+
+			auto fileHistories = m_query_filehistory_by_confidence->setParameter(FileHistory_::confidence_score, minConfidence).limit(limit).offset(offset).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::FileHistoryModel> fhModels = winrt::single_threaded_vector<winrt::LeafEyeCore::FileHistoryModel>();
+			for (auto& fh : fileHistories) {
+				fhModels.Append(FileHistoryToModel(fh));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"File histories fetched successfully");
+			result.ResultValue(fhModels);
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoriesByConfidenceThreshold] Failed to fetch file histories: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoriesByConfidenceThreshold] Failed to fetch file histories: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetFileHistoriesByConfidenceThreshold] An unknown error occurred while fetching file histories.");
+		}
+
+		co_return result;
+	}
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::AddFileHistory(winrt::LeafEyeCore::FileHistoryModel fileHistory)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_filehistory_box->put(ModelToFileHistory(fileHistory));
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"File history added successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][AddFileHistory] Failed to add file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][AddFileHistory] Failed to add file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][AddFileHistory] An unknown error occurred while adding file history.");
+		}
+
+		co_return result;
+	}
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::UpdateFileHistory(winrt::LeafEyeCore::FileHistoryModel fileHistory)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			auto existing_fh = m_filehistory_box->get(fileHistory.Id());
+			auto updated_fh = ModelToFileHistory(fileHistory);
+			updated_fh.id = existing_fh->id; // Ensure the ID remains unchanged
+			m_filehistory_box->put(updated_fh);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"File history updated successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateFileHistory] Failed to update file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][UpdateFileHistory] Failed to update file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][UpdateFileHistory] An unknown error occurred while updating file history.");
+		}
+
+		co_return result;
+	}
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::DeleteFileHistory(uint64_t id)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			m_filehistory_box->remove(id);
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"File history deleted successfully");
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteFileHistory] Failed to delete file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][DeleteFileHistory] Failed to delete file history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][DeleteFileHistory] An unknown error occurred while deleting file history.");
+		}
+
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::LinkUserProfile(uint64_t userId, uint64_t profileId)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			// Fetch the existing user
+			auto user = m_user_box->get(userId);
+			if (!user) {
+				result.Message(L"[DATABASE ERROR] User not found to link profile.");
+				co_return result;
+			}
+
+			// Set the relation ID (assuming ObjectBox generated the foreign key property as 'profile_id')
+			user->profile_id = profileId;
+			m_user_box->put(*user);
+
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"Profile linked to User successfully");
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][LinkUserProfile] Failed to link: " + winrt::to_hstring(e.what()));
+		}
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::LinkHistoryToUser(uint64_t historyId, uint64_t userId)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			// Fetch the existing history
+			auto history = m_history_box->get(historyId);
+			if (!history) {
+				result.Message(L"[DATABASE ERROR] History not found to link to user.");
+				co_return result;
+			}
+
+			// Set the relation ID
+			history->user_id = userId;
+			m_history_box->put(*history);
+
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History linked to User successfully");
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][LinkHistoryToUser] Failed to link: " + winrt::to_hstring(e.what()));
+		}
+		co_return result;
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::LinkFileHistoryToHistory(uint64_t fileHistoryId, uint64_t historyId)
+	{
+		co_await winrt::resume_background();
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+		try {
+			// Fetch the existing file history
+			auto fileHistory = m_filehistory_box->get(fileHistoryId);
+			if (!fileHistory) {
+				result.Message(L"[DATABASE ERROR] FileHistory not found to link to history.");
+				co_return result;
+			}
+
+			// Set the relation ID
+			fileHistory->history_id = historyId;
+			m_filehistory_box->put(*fileHistory);
+
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"FileHistory linked to History successfully");
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][LinkFileHistoryToHistory] Failed to link: " + winrt::to_hstring(e.what()));
+		}
+		co_return result;
+	}
+
 }

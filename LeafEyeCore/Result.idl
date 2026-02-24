@@ -5,8 +5,9 @@ namespace LeafEyeCore
     runtimeclass Result
     {
         Result();
-        Result(Boolean is_error, Int32 error_code, String message, Object result_value);
+        Result(Boolean is_error, Boolean is_value_exists, Int32 error_code, String message, Object result_value);
         Boolean IsError { get;set;};
+        Boolean IsValueExists { get;set;}; // true if ResultValue is not null, false otherwise}
         Int32 ErrorCode { get;set;}; // only exists when get an error
         String Message { get;set;}; // only exists when get an error
         Object ResultValue { get;set;}; // only exists when get a success

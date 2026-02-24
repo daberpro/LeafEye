@@ -1,2 +1,49 @@
-include "History.fbs";
-include "User.fbs";
+table FileHistory {
+    /// objectbox: id
+    id:ulong;
+    filename:string;
+    file_size:uint;
+    /// objectbox: date
+    date_created:long;
+    date_modified:long;
+    
+    confidence_score:float;
+
+    /// objectbox:relation=History
+    history_id:ulong;
+}
+
+table History{
+    /// objectbox: id
+    id:ulong;
+    /// objectbox: date
+    date:long;
+    total_files:uint;
+    /// objectbox: index=value
+    status:uint;
+
+    /// objectbox:relation=User
+    user_id:ulong;
+}
+
+table User {
+    /// objectbox: id
+    id: ulong;
+    /// objectbox: index=hash64
+    username: string;
+    password: string;
+    /// objectbox: index=value
+    is_admin: bool;
+
+    /// objectbox:relation=Profile
+    profile_id: ulong;
+}
+
+table Profile{
+    /// objectbox: id
+    id:ulong;
+    /// objectbox: index=hash
+    full_name:string;
+    avatar_path:string;
+    role:int;
+}

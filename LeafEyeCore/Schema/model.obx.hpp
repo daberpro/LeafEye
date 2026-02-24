@@ -9,7 +9,7 @@
 #include "objectbox.h"
 #include "objectbox.hpp"
 
-struct FileHistory; 
+struct User; 
 
 struct History_;
 
@@ -18,6 +18,7 @@ struct History {
     int64_t date;
     uint32_t total_files;
     uint32_t status;
+    obx_id user_id;
 
     struct _OBX_MetaInfo {
         static constexpr obx_schema_id entityId() { return 2; }
@@ -43,7 +44,7 @@ struct History_ {
     static const obx::Property<History, OBXPropertyType_Date> date;
     static const obx::Property<History, OBXPropertyType_Int> total_files;
     static const obx::Property<History, OBXPropertyType_Int> status;
-    static const obx::RelationStandalone<History, FileHistory> files;
+    static const obx::RelationProperty<History, User> user_id;
 };
 
 
@@ -90,6 +91,7 @@ struct User {
     std::string username;
     std::string password;
     bool is_admin;
+    obx_id profile_id;
 
     struct _OBX_MetaInfo {
         static constexpr obx_schema_id entityId() { return 4; }
@@ -115,9 +117,10 @@ struct User_ {
     static const obx::Property<User, OBXPropertyType_String> username;
     static const obx::Property<User, OBXPropertyType_String> password;
     static const obx::Property<User, OBXPropertyType_Bool> is_admin;
-    static const obx::RelationStandalone<User, Profile> profile;
+    static const obx::RelationProperty<User, Profile> profile_id;
 };
 
+struct History; 
 
 struct FileHistory_;
 
@@ -128,6 +131,7 @@ struct FileHistory {
     int64_t date_modified;
     float confidence_score;
     uint32_t file_size;
+    obx_id history_id;
 
     struct _OBX_MetaInfo {
         static constexpr obx_schema_id entityId() { return 5; }
@@ -151,9 +155,10 @@ struct FileHistory {
 struct FileHistory_ {
     static const obx::Property<FileHistory, OBXPropertyType_Long> id;
     static const obx::Property<FileHistory, OBXPropertyType_String> filename;
-    static const obx::Property<FileHistory, OBXPropertyType_Long> date_created;
+    static const obx::Property<FileHistory, OBXPropertyType_Date> date_created;
     static const obx::Property<FileHistory, OBXPropertyType_Long> date_modified;
     static const obx::Property<FileHistory, OBXPropertyType_Float> confidence_score;
     static const obx::Property<FileHistory, OBXPropertyType_Int> file_size;
+    static const obx::RelationProperty<FileHistory, History> history_id;
 };
 

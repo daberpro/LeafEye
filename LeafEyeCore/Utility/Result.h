@@ -6,9 +6,11 @@ namespace winrt::LeafEyeCore::implementation
     {
         Result() = default;
 
-        Result(bool is_error, int32_t error_code, hstring const& message, winrt::Windows::Foundation::IInspectable const& result_value);
+        Result(bool is_error, bool is_value_exists, int32_t error_code, hstring const& message, winrt::Windows::Foundation::IInspectable const& result_value);
         bool IsError();
         void IsError(bool value);
+        bool IsValueExists();
+        void IsValueExists(bool value);
         int32_t ErrorCode();
         void ErrorCode(int32_t value);
         hstring Message();
@@ -19,6 +21,7 @@ namespace winrt::LeafEyeCore::implementation
     private:
 
         bool m_is_error{ false };
+        bool m_is_value_exists{ false };
         int32_t m_error_code{ 0 };
         winrt::hstring m_message;
 		winrt::Windows::Foundation::IInspectable m_result_value{ nullptr };
