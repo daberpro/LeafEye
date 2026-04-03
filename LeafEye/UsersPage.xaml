@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="LeafEye.UsersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:LeafEyeCore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:LeafEye"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="40" RowDefinitions="Auto, *">
+
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <StackPanel VerticalAlignment="Center" Spacing="4">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Manajemen Pengguna" />
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="Kelola daftar pengguna, peran, dan hak akses." />
+            </StackPanel>
+
+            <StackPanel
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="12">
+                <TextBox
+                    x:Name="SearchBar"
+                    Width="200"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Cari username..."
+                    TextChanged="SearchBar_TextChanged" />
+
+                <ComboBox
+                    x:Name="AccessLevel"
+                    Width="170"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Filter level akses"
+                    SelectionChanged="AccessLevel_SelectionChanged">
+                    <ComboBoxItem Content="Semua Level" />
+                    <ComboBoxItem Content="Admin" />
+                    <ComboBoxItem Content="User" />
+                </ComboBox>
+
+                <Button
+                    x:Name="AddUserButton"
+                    VerticalAlignment="Center"
+                    Click="AddUserButton_Click"
+                    Style="{StaticResource ShadcnPrimaryButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="14" Glyph="&#xE710;" />
+                        <TextBlock x:Uid="AddUser" Text="Tambahkan User" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <SplitView
+            Grid.Row="1"
+            DisplayMode="Inline"
+            IsPaneOpen="True"
+            OpenPaneLength="400"
+            PaneBackground="Transparent">
+
+            <SplitView.Pane>
+                <Border Margin="0,0,24,0" Style="{StaticResource ShadcnCardStyle}">
+                    <Grid RowDefinitions="Auto, *, Auto">
+                        <Border BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                            <StackPanel
+                                Margin="0,0,0,12"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="0,0,16,0"
+                                    Style="{StaticResource SubtitleTextBlockStyle}"
+                                    Text="Daftar Pengguna" />
+                                <ComboBox
+                                    x:Name="PageSize"
+                                    Width="70"
+                                    VerticalAlignment="Center"
+                                    PlaceholderText="10"
+                                    SelectionChanged="PageSize_SelectionChanged">
+                                    <ComboBoxItem Content="2" />
+                                    <ComboBoxItem Content="5" />
+                                    <ComboBoxItem Content="10" IsSelected="True" />
+                                    <ComboBoxItem Content="20" />
+                                    <ComboBoxItem Content="30" />
+                                    <ComboBoxItem Content="40" />
+                                    <ComboBoxItem Content="50" />
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+
+                        <ListView
+                            x:Name="UserListView"
+                            Grid.Row="1"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="core:UserModel">
+                                    <Grid Padding="0,8" ColumnDefinitions="Auto, *, Auto">
+                                        <PersonPicture
+                                            Width="40"
+                                            Height="40"
+                                            Margin="0,0,12,0"
+                                            DisplayName="{x:Bind Username, Mode=OneWay}"
+                                            ProfilePicture="Assets/default_avatar.png" />
+
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Spacing="2">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind Username, Mode=OneWay}" />
+                                            <Border
+                                                Padding="6,2"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource LayerFillColorAltBrush}"
+                                                CornerRadius="4">
+
+                                                <TextBlock
+                                                    Foreground="{StaticResource BrandPrimaryBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind local:UsersPage.ConvertToUserStatus(IsAdmin), Mode=OneWay}" />
+
+                                            </Border>
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="8">
+                                            <Button
+                                                x:Name="UpdateUserBtn"
+                                                Padding="6"
+                                                Click="UpdateUserBtn_Click"
+                                                Style="{StaticResource ShadcnOutlineButtonStyle}"
+                                                Tag="{x:Bind}"
+                                                ToolTipService.ToolTip="Update User">
+                                                <FontIcon
+                                                    FontSize="14"
+                                                    Foreground="{StaticResource BrandPrimaryBrush}"
+                                                    Glyph="&#xE70F;" />
+                                            </Button>
+                                            <Button
+                                                x:Name="DeleteUserBtn"
+                                                Padding="6"
+                                                Click="DeleteUserBtn_Click"
+                                                Style="{StaticResource ShadcnOutlineButtonStyle}"
+                                                Tag="{x:Bind}"
+                                                ToolTipService.ToolTip="Delete User">
+                                                <FontIcon
+                                                    FontSize="14"
+                                                    Foreground="Red"
+                                                    Glyph="&#xE74D;" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                        <Border
+                            Grid.Row="2"
+                            Margin="0,8,0,0"
+                            Padding="12,12,12,0"
+                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                            BorderThickness="0,1,0,0">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="16">
+
+                                <Button
+                                    x:Name="PrevPageBtn"
+                                    Padding="8,4"
+                                    Click="PrevPageButton_Click"
+                                    IsEnabled="{x:Bind PrevPageEnabled, Mode=OneWay}"
+                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
+                                    ToolTipService.ToolTip="Previous Page">
+                                    <FontIcon FontSize="12" Glyph="&#xE76B;" />
+                                </Button>
+
+                                <TextBlock
+                                    x:Name="PageInfoText"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind GetPaginationInfo, Mode=OneWay}" />
+
+                                <Button
+                                    x:Name="NextPageBtn"
+                                    Padding="8,4"
+                                    Click="NextPageButton_Click"
+                                    IsEnabled="{x:Bind NextPageEnabled, Mode=OneWay}"
+                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
+                                    ToolTipService.ToolTip="Next Page">
+                                    <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                                </Button>
+
+                            </StackPanel>
+                        </Border>
+
+                    </Grid>
+                </Border>
+            </SplitView.Pane>
+
+            <SplitView.Content>
+                <Border Margin="0" Style="{StaticResource ShadcnCardStyle}">
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="16">
+
+                        <Border
+                            Width="120"
+                            Height="120"
+                            Background="{ThemeResource LayerFillColorAltBrush}"
+                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="60">
+                            <FontIcon
+                                FontSize="48"
+                                Foreground="{StaticResource BrandPrimaryBrush}"
+                                Glyph="&#xE77B;" />
+                        </Border>
+
+                        <StackPanel HorizontalAlignment="Center" Spacing="4">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Style="{StaticResource TitleTextBlockStyle}"
+                                Text="johndoe_admin" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="Administrator" />
+                        </StackPanel>
+
+                        <Rectangle
+                            Height="1"
+                            Margin="0,16"
+                            Fill="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                            Opacity="0.5" />
+
+                        <StackPanel Width="250" Spacing="12">
+                            <Grid>
+                                <TextBlock
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Email" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="admin@leafeye.com" />
+                            </Grid>
+                            <Grid>
+                                <TextBlock
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Status" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Foreground="Green"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Active" />
+                            </Grid>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+            </SplitView.Content>
+
+        </SplitView>
+
+    </Grid>
+</Page>

@@ -19,6 +19,7 @@ struct History {
     uint32_t total_files;
     uint32_t status;
     obx_id user_id;
+    std::string output_folder;
 
     struct _OBX_MetaInfo {
         static constexpr obx_schema_id entityId() { return 2; }
@@ -45,6 +46,7 @@ struct History_ {
     static const obx::Property<History, OBXPropertyType_Int> total_files;
     static const obx::Property<History, OBXPropertyType_Int> status;
     static const obx::RelationProperty<History, User> user_id;
+    static const obx::Property<History, OBXPropertyType_String> output_folder;
 };
 
 

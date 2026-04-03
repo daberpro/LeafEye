@@ -13,11 +13,16 @@ namespace LeafEyeCore {
         Database();
         Database(String database_location, UInt64 max_db_size);
 
+        void TxWrite();
+        void TxRead();
+        void TxSuccess();
+
         // Lifecycle
         Windows.Foundation.IAsyncOperation<Result> InitializeAsync();
 
         // ─── User ────────────────────────────────────────────────
         Windows.Foundation.IAsyncOperation<Result> GetUserById(UInt64 id);
+        Windows.Foundation.IAsyncOperation<Result> GetUserByAccessLevel(Boolean is_admin,Int32 offset, Int32 limit);
         Windows.Foundation.IAsyncOperation<Result> GetUserByUsername(String username);
         Windows.Foundation.IAsyncOperation<Result> GetUserContainsUsername(String username, Int32 offset, Int32 limit);
         Windows.Foundation.IAsyncOperation<Result> GetAllUsers(Int32 offset, Int32 limit);
@@ -25,6 +30,10 @@ namespace LeafEyeCore {
         Windows.Foundation.IAsyncOperation<Result> AddUser(UserModel user);
         Windows.Foundation.IAsyncOperation<Result> UpdateUser(UserModel user);
         Windows.Foundation.IAsyncOperation<Result> DeleteUser(UInt64 id);
+
+        Windows.Foundation.IAsyncOperation<Result> GetUserCountByAccessLevel(Boolean is_admin);
+        Windows.Foundation.IAsyncOperation<Result> GetUserCountContainsUsername(String username);
+        Windows.Foundation.IAsyncOperation<Result> GetUserCount();
 
         // ─── Profile ─────────────────────────────────────────────
         Windows.Foundation.IAsyncOperation<Result> GetProfileById(UInt64 profileId);
@@ -53,6 +62,6 @@ namespace LeafEyeCore {
         // Add these inside your Database runtimeclass
         Windows.Foundation.IAsyncOperation<Result> LinkUserProfile(UInt64 userId, UInt64 profileId);
         Windows.Foundation.IAsyncOperation<Result> LinkHistoryToUser(UInt64 historyId, UInt64 userId);
-        Windows.Foundation.IAsyncOperation<Result> LinkFileHistoryToHistory(UInt64 fileHistoryId, UInt64 historyId);
+        Windows.Foundation.IAsyncOperation<Result> LinkFileHistoryToHistory(UInt64 fileHistoryId, UInt64 historyId); 
     }
 }

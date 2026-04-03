@@ -18,6 +18,7 @@ namespace winrt::LeafEyeCore::implementation
         Database(hstring const& database_location, uint64_t max_db_size);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> InitializeAsync();
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserById(uint64_t id);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserByAccessLevel(bool is_admin, int32_t offset, int32_t limit);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserByUsername(hstring username);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserContainsUsername(hstring username, int32_t offset, int32_t limit);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetAllUsers(int32_t offset, int32_t limit);
@@ -47,9 +48,17 @@ namespace winrt::LeafEyeCore::implementation
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> LinkHistoryToUser(uint64_t historyId, uint64_t userId);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> LinkFileHistoryToHistory(uint64_t fileHistoryId, uint64_t historyId);
 
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserCountByAccessLevel(bool is_admin);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserCountContainsUsername(hstring username);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserCount();
+
+        void TxWrite();
+        void TxRead();
+        void TxSuccess();
 
     private:
 
+		std::unique_ptr<obx::Transaction> m_current_transaction;
         std::unique_ptr<obx::Store> m_store;
         std::unique_ptr<obx::Box<User>> m_user_box;
         std::unique_ptr<obx::Box<Profile>> m_profile_box;
@@ -61,6 +70,7 @@ namespace winrt::LeafEyeCore::implementation
         std::unique_ptr<obx::Query<User>> m_query_user_by_username; // done
         std::unique_ptr<obx::Query<User>> m_query_user_contains_username; // done
         std::unique_ptr<obx::Query<User>> m_query_user_by_credentials; // done
+        std::unique_ptr<obx::Query<User>> m_query_user_by_access_level; // done
 
         // Queries - Profile
         std::unique_ptr<obx::Query<Profile>> m_query_profile_by_id; // done

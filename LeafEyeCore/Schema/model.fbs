@@ -22,6 +22,8 @@ table History{
     /// objectbox: index=value
     status:uint;
 
+    output_folder:string;
+
     /// objectbox:relation=User
     user_id:ulong;
 }

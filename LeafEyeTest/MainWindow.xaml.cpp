@@ -27,7 +27,11 @@ namespace winrt::LeafEyeTest::implementation
     winrt::fire_and_forget MainWindow::InitDb_Click(IInspectable const&, RoutedEventArgs const&)
     {
         auto folder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-        winrt::hstring dbPath = folder.Path() + L"\\LeafEyeTestDB";
+        winrt::hstring dbPath = folder.Path() + L"\\database";
+
+        OutputDebugString(
+            std::format(L"Initializing database at path: {}\n", dbPath).c_str()
+		);
 
         m_db = winrt::LeafEyeCore::Database(dbPath, 1024 * 1024);
 

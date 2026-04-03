@@ -40,7 +40,8 @@ static inline OBX_model* create_obx_model() {
     obx_model_property(model, "user_id", OBXPropertyType_Relation, 5, 3881446591020797012);
     obx_model_property_flags(model, OBXPropertyFlags_INDEXED | OBXPropertyFlags_INDEX_PARTIAL_SKIP_ZERO);
     obx_model_property_relation(model, "User", 5, 5319899987597520295);
-    obx_model_entity_last_property_id(model, 5, 3881446591020797012);
+    obx_model_property(model, "output_folder", OBXPropertyType_String, 6, 5099225419494932291);
+    obx_model_entity_last_property_id(model, 6, 5099225419494932291);
     
     obx_model_entity(model, "Profile", 3, 3282537307467431222);
     obx_model_property(model, "id", OBXPropertyType_Long, 1, 5310139145486461373);

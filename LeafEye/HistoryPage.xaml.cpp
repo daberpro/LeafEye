@@ -12,13 +12,5 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::LeafEye::implementation
 {
-    int32_t HistoryPage::MyProperty()
-    {
-        throw hresult_not_implemented();
-    }
-
-    void HistoryPage::MyProperty(int32_t /* value */)
-    {
-        throw hresult_not_implemented();
-    }
+    
 }

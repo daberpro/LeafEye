@@ -10,16 +10,24 @@
     <Page Include="SettingsPage.xaml" />
     <Page Include="HistoryPage.xaml" />
     <Page Include="ProfilePage.xaml" />
+    <Page Include="UsersPage.xaml" />
+    <Page Include="AddUserDialog.xaml" />
+    <Page Include="UpdateUserDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
+    <Midl Include="FileItemsHomePageModel.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="FileItemsHomePageModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Base\PaginationBase.h" />
+    <ClInclude Include="Base\PaginationBaseExperiment.h" />
+    <ClInclude Include="FileItemsHomePageModel.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -41,6 +49,9 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\PlaceholderImage.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
@@ -67,5 +78,9 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\..\..\module\bin\objectbox.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\id-ID\Resources.resw" />
   </ItemGroup>
 </Project>

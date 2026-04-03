@@ -127,6 +127,13 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddUserDialog.xaml.h">
+      <DependentUpon>AddUserDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Base\PaginationBase.h" />
+    <ClInclude Include="Base\PaginationBaseExperiment.h" />
+    <ClInclude Include="FileItemsHomePageModel.h" />
     <ClInclude Include="HistoryPage.xaml.h">
       <DependentUpon>HistoryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -150,9 +157,20 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UpdateUserDialog.xaml.h">
+      <DependentUpon>UpdateUserDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UsersPage.xaml.h">
+      <DependentUpon>UsersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
+    <Page Include="AddUserDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="HistoryPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -167,8 +185,19 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\ShadcnUI.xaml" />
+    <Page Include="UpdateUserDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UsersPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddUserDialog.xaml.cpp">
+      <DependentUpon>AddUserDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="FileItemsHomePageModel.cpp" />
     <ClCompile Include="HistoryPage.xaml.cpp">
       <DependentUpon>HistoryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -195,8 +224,21 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UpdateUserDialog.xaml.cpp">
+      <DependentUpon>UpdateUserDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UsersPage.xaml.cpp">
+      <DependentUpon>UsersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="AddUserDialog.idl">
+      <DependentUpon>AddUserDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="FileItemsHomePageModel.idl" />
     <Midl Include="HistoryPage.idl">
       <DependentUpon>HistoryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -217,6 +259,14 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UpdateUserDialog.idl">
+      <DependentUpon>UpdateUserDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UsersPage.idl">
+      <DependentUpon>UsersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt">
@@ -225,6 +275,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
+    <Image Include="Assets\PlaceholderImage.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
@@ -250,6 +301,10 @@
     <ProjectReference Include="..\LeafEyeCore\LeafEyeCore.vcxproj">
       <Project>{c3ffaa34-f245-44dd-aeb5-ebe5aba128d4}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\id-ID\Resources.resw" />
   </ItemGroup>
   <!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution

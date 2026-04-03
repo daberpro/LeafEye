@@ -7,15 +7,18 @@ const obx::Property<History, OBXPropertyType_Date> History_::date(2);
 const obx::Property<History, OBXPropertyType_Int> History_::total_files(3);
 const obx::Property<History, OBXPropertyType_Int> History_::status(4);
 const obx::RelationProperty<History, User> History_::user_id(5);
+const obx::Property<History, OBXPropertyType_String> History_::output_folder(6);
 
 void History::_OBX_MetaInfo::toFlatBuffer(flatbuffers::FlatBufferBuilder& fbb, const History& object) {
     fbb.Clear();
+    auto offsetoutput_folder = fbb.CreateString(object.output_folder);
     flatbuffers::uoffset_t fbStart = fbb.StartTable();
     fbb.AddElement(4, object.id);
     fbb.AddElement(6, object.date);
     fbb.AddElement(8, object.total_files);
     fbb.AddElement(10, object.status);
     fbb.AddElement(12, object.user_id);
+    fbb.AddOffset(14, offsetoutput_folder);
     flatbuffers::Offset<flatbuffers::Table> offset;
     offset.o = fbb.EndTable(fbStart);
     fbb.Finish(offset);
@@ -41,6 +44,14 @@ void History::_OBX_MetaInfo::fromFlatBuffer(const void* data, size_t, History& o
     outObject.total_files = table->GetField<uint32_t>(8, 0);
     outObject.status = table->GetField<uint32_t>(10, 0);
     outObject.user_id = table->GetField<obx_id>(12, 0);
+    {
+        auto* ptr = table->GetPointer<const flatbuffers::String*>(14);
+        if (ptr) {
+            outObject.output_folder.assign(ptr->c_str(), ptr->size());
+        } else {
+            outObject.output_folder.clear();
+        }
+    }
 }
 
 const obx::Property<Profile, OBXPropertyType_Long> Profile_::id(1);

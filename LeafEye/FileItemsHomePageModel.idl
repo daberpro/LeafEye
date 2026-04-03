@@ -1,0 +1,16 @@
+namespace LeafEye {
+    
+    [default_interface]
+    runtimeclass FileItemsHomePageModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        FileItemsHomePageModel();
+        FileItemsHomePageModel(String filePath, Boolean selected, String fileName, UInt32 fileSize, Int64 dateCreated, Int64 dateModified);
+        String FilePath{set;get;};
+        Boolean Selected{set;get;};
+        String FileName{set;get;};
+        UInt32 FileSize{set;get;};
+        UInt64 DateCreated{set;get;};
+        UInt64 DateModified{set;get;};
+    }
+
+}

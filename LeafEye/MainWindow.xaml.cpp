@@ -17,6 +17,22 @@ using namespace Microsoft::UI::Xaml::Navigation;
 
 namespace winrt::LeafEye::implementation
 {
+
+    void MainWindow::SetStatusLog(const winrt::LeafEyeCore::Result& result) {
+        // StatusLog().Text(result.Message());
+        /*if (!result.IsError()) {
+            StatusLog().Foreground(Microsoft::UI::Xaml::Media::SolidColorBrush{ Microsoft::UI::Colors::Green() });
+        }
+        else {
+            StatusLog().Foreground(Microsoft::UI::Xaml::Media::SolidColorBrush{ Microsoft::UI::Colors::Red() });
+        }*/
+    }
+
+    void MainWindow::OnClosed(IInspectable const&, WindowEventArgs const&)
+    {
+        winrt::LeafEye::implementation::App::ClearWindow();
+    }
+
     MainWindow::MainWindow()
     {
         InitializeComponent();
@@ -24,15 +40,14 @@ namespace winrt::LeafEye::implementation
         SetTitleBar(AppTitleBar());
 
 
-        OutputDebugString(
+        /*OutputDebugString(
             winrt::to_hstring(
                 std::format(
                     "\n========\nUSING OBJECT BOX VERSION : {}\n=========\n", 
                     obx_version_string()
                 )
             ).c_str()
-        );
-
+        );*/
         
         auto resources = Application::Current().Resources();
 
@@ -61,6 +76,16 @@ namespace winrt::LeafEye::implementation
         profileFlyout.Items().Append(profileMenuItem);
         profileFlyout.Items().Append(logoutMenuItem);
         Primitives::FlyoutBase::SetAttachedFlyout(ProfilePic(), profileFlyout);
+
+
+        auto app_local_path = winrt::Windows::Storage::ApplicationData::Current().LocalFolder().Path();
+        m_db = winrt::LeafEyeCore::Database(app_local_path + L"\\database", 1024 * 1024);
+        OutputDebugString(
+            std::format(
+                L"Database initialized at path: {}\n",
+                app_local_path + L"\\database"
+            ).c_str()
+		);
     }
 
     void MainWindow::RaisePropertyChanged(hstring const& propertyName)
@@ -100,10 +125,15 @@ namespace winrt::LeafEye::implementation
         }
     }
 
-    void MainWindow::NavigationView_Loaded(IInspectable const&, RoutedEventArgs const&)
+    Windows::Foundation::IAsyncAction MainWindow::NavigationView_Loaded(IInspectable const&, RoutedEventArgs const&)
     {
+        auto db_status = co_await m_db.InitializeAsync();
+        this->DispatcherQueue().TryEnqueue([this,db_status]() {
+            SetStatusLog(db_status);
+        });
+
         AppNavigationView().Header(box_value(L"Home"));
-        contentFrame().Navigate(xaml_typename<LeafEye::HomePage>());
+        contentFrame().Navigate(xaml_typename<LeafEye::HomePage>(),m_db);
     }
 
     void MainWindow::NavigationView_ItemInvoked(NavigationView const& sender, NavigationViewItemInvokedEventArgs const& args)
@@ -119,13 +149,16 @@ namespace winrt::LeafEye::implementation
                 hstring tag = unbox_value<hstring>(item.Tag());
 
                 if (tag == L"HomePage") {
-                    contentFrame().Navigate(xaml_typename<LeafEye::HomePage>());
+                    contentFrame().Navigate(xaml_typename<LeafEye::HomePage>(), m_db);
                 }
                 else if (tag == L"HistoryPage") {
                     contentFrame().Navigate(xaml_typename<LeafEye::HistoryPage>());
                 }
                 else if (tag == L"ProfilePage") {
                     contentFrame().Navigate(xaml_typename<LeafEye::ProfilePage>());
+                }
+                else if (tag == L"UsersPage") {
+                    contentFrame().Navigate(xaml_typename<LeafEye::UsersPage>(), m_db);
                 }
             }
         }

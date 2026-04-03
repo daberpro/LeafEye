@@ -70,4 +70,19 @@ namespace winrt::LeafEyeCore::implementation
     {
         m_confidenceScore = value;
     }
+    winrt::event_token FileHistoryModel::PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+    {
+        return m_propertyChanged.add(handler);
+    }
+    void FileHistoryModel::PropertyChanged(winrt::event_token const& token) noexcept
+    {
+        m_propertyChanged.remove(token);
+    }
+
+    void FileHistoryModel::RaisedPropertyChanged(const winrt::hstring& property_name) {
+        if (m_propertyChanged)
+        {
+            m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ property_name });
+        }
+    }
 }

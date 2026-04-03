@@ -23,6 +23,9 @@ namespace winrt::LeafEyeCore::implementation
         float ConfidenceScore();
         void ConfidenceScore(float value);
 
+        winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
+        void PropertyChanged(winrt::event_token const& token) noexcept;
+
     private:
         uint64_t m_id{ 0 };
         hstring m_fileName;
@@ -31,6 +34,9 @@ namespace winrt::LeafEyeCore::implementation
         int64_t m_dateModified{ 0 };
         winrt::Windows::Foundation::Collections::IVector<uint32_t> m_detectedDiseases{ nullptr };
         float m_confidenceScore{ 0.0f };
+
+        winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
+        void RaisedPropertyChanged(const winrt::hstring& property_name);
     };
 }
 

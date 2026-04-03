@@ -2,15 +2,16 @@ import "FileHistoryModel.idl";
 
 namespace LeafEyeCore {
     [default_interface]
-    runtimeclass HistoryModel
+    runtimeclass HistoryModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         HistoryModel();
-        HistoryModel(UInt64 id, Int64 date, UInt32 totalFiles, UInt32 status);
+        HistoryModel(UInt64 id, Int64 date, UInt32 totalFiles, UInt32 status, String output_folder);
 
         UInt64 Id{set;get;};
         Int64 Date{set;get;};
         UInt32 TotalFiles{set;get;};
         UInt32 Status{set;get;};
+        String OutputFolder{set;get;};
         IVector<FileHistoryModel> Files{set;get;};
     }
 }

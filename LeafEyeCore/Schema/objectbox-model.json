@@ -18,7 +18,7 @@
     },
     {
       "id": "2:40048249367672753",
-      "lastPropertyId": "5:3881446591020797012",
+      "lastPropertyId": "6:5099225419494932291",
       "name": "History",
       "properties": [
         {
@@ -52,6 +52,11 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "User"
+        },
+        {
+          "id": "6:5099225419494932291",
+          "name": "output_folder",
+          "type": 9
         }
       ]
     },

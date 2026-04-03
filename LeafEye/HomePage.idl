@@ -1,9 +1,14 @@
 namespace LeafEye
 {
     [default_interface]
-    runtimeclass HomePage : Microsoft.UI.Xaml.Controls.Page
+    runtimeclass HomePage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         HomePage();
-        Int32 MyProperty;
+        static String ConvertToDateTimeString(UInt64 fileTime);
+        static String ConvertToFileSizeString(UInt64 fileSize);
+        LeafEyeCore.HistoryModel HistoryInfo{get;};
+        
+        Boolean IsProcessButtonEnabled{set;get;};
+        String ProcessButtonInfo{set;get;};
     }
 }

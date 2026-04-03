@@ -1,6 +1,4 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
 
@@ -23,15 +21,15 @@
             <SolidColorBrush x:Key="LogoutBrushForeground" Color="{StaticResource Green700}" />
             <SolidColorBrush x:Key="LogoutBrushBackground" Color="{StaticResource Green50}" />
 
-            <SolidColorBrush x:Key="ButtonBaseBg" Color="{StaticResource Green600}"/>
-            <SolidColorBrush x:Key="ButtonHoverBg" Color="{StaticResource Green700}"/>
-            <SolidColorBrush x:Key="ButtonPressedBg" Color="{StaticResource Green800}"/>
+            <SolidColorBrush x:Key="ButtonBaseBg" Color="{StaticResource Green600}" />
+            <SolidColorBrush x:Key="ButtonHoverBg" Color="{StaticResource Green700}" />
+            <SolidColorBrush x:Key="ButtonPressedBg" Color="{StaticResource Green800}" />
 
-            <SolidColorBrush x:Key="OutlineHoverBg" Color="{StaticResource Green50}"/>
-            <SolidColorBrush x:Key="OutlineHoverBorder" Color="{StaticResource Green300}"/>
-            <SolidColorBrush x:Key="OutlineHoverText" Color="{StaticResource Green900}"/>
+            <SolidColorBrush x:Key="OutlineHoverBg" Color="{StaticResource Green50}" />
+            <SolidColorBrush x:Key="OutlineHoverBorder" Color="{StaticResource Green300}" />
+            <SolidColorBrush x:Key="OutlineHoverText" Color="{StaticResource Green900}" />
 
-            <!-- System Accent Colors -->
+            <!--  System Accent Colors  -->
             <Color x:Key="SystemAccentColor">#059669</Color>
             <Color x:Key="SystemAccentColorLight1">#10B981</Color>
             <Color x:Key="SystemAccentColorLight2">#34D399</Color>
@@ -40,7 +38,7 @@
             <Color x:Key="SystemAccentColorDark2">#065F46</Color>
             <Color x:Key="SystemAccentColorDark3">#064E3B</Color>
 
-            <!-- Toggle Switch Colors -->
+            <!--  Toggle Switch Colors  -->
             <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{StaticResource Green600}" />
             <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{StaticResource Green700}" />
             <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{StaticResource Green800}" />
@@ -50,12 +48,12 @@
             <SolidColorBrush x:Key="ToggleSwitchKnobFillOn" Color="#FFFFFF" />
             <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver" Color="#FFFFFF" />
 
-            <!-- Accent Brushes -->
+            <!--  Accent Brushes  -->
             <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource Green600}" />
             <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{StaticResource Green600}" />
             <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{StaticResource Green600}" />
 
-            <!-- MenuFlyoutItem Theme Resources -->
+            <!--  MenuFlyoutItem Theme Resources  -->
             <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="{StaticResource Green700}" />
             <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{StaticResource Green700}" />
             <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="{StaticResource Green50}" />
@@ -80,15 +78,15 @@
             <SolidColorBrush x:Key="LogoutBrushForeground" Color="#34D399" />
             <SolidColorBrush x:Key="LogoutBrushBackground" Color="#1A10B981" />
 
-            <SolidColorBrush x:Key="ButtonBaseBg" Color="{StaticResource Green600}"/>
-            <SolidColorBrush x:Key="ButtonHoverBg" Color="{StaticResource Green500}"/>
-            <SolidColorBrush x:Key="ButtonPressedBg" Color="{StaticResource Green700}"/>
+            <SolidColorBrush x:Key="ButtonBaseBg" Color="{StaticResource Green600}" />
+            <SolidColorBrush x:Key="ButtonHoverBg" Color="{StaticResource Green500}" />
+            <SolidColorBrush x:Key="ButtonPressedBg" Color="{StaticResource Green700}" />
 
-            <SolidColorBrush x:Key="OutlineHoverBg" Color="#1A059669"/>
-            <SolidColorBrush x:Key="OutlineHoverBorder" Color="#10B981"/>
-            <SolidColorBrush x:Key="OutlineHoverText" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="OutlineHoverBg" Color="#1A059669" />
+            <SolidColorBrush x:Key="OutlineHoverBorder" Color="#10B981" />
+            <SolidColorBrush x:Key="OutlineHoverText" Color="#FFFFFF" />
 
-            <!-- System Accent Colors -->
+            <!--  System Accent Colors  -->
             <Color x:Key="SystemAccentColor">#10B981</Color>
             <Color x:Key="SystemAccentColorLight1">#34D399</Color>
             <Color x:Key="SystemAccentColorLight2">#6EE7B7</Color>
@@ -97,7 +95,7 @@
             <Color x:Key="SystemAccentColorDark2">#047857</Color>
             <Color x:Key="SystemAccentColorDark3">#065F46</Color>
 
-            <!-- Toggle Switch Colors -->
+            <!--  Toggle Switch Colors  -->
             <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{StaticResource Green500}" />
             <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{StaticResource Green400}" />
             <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{StaticResource Green600}" />
@@ -107,12 +105,12 @@
             <SolidColorBrush x:Key="ToggleSwitchKnobFillOn" Color="#000000" />
             <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver" Color="#000000" />
 
-            <!-- Accent Brushes -->
+            <!--  Accent Brushes  -->
             <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource Green500}" />
             <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{StaticResource Green500}" />
             <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{StaticResource Green500}" />
 
-            <!-- MenuFlyoutItem Theme Resources -->
+            <!--  MenuFlyoutItem Theme Resources  -->
             <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="#34D399" />
             <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="#34D399" />
             <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPointerOver" Color="#1A10B981" />
@@ -120,109 +118,137 @@
 
     </ResourceDictionary.ThemeDictionaries>
 
-    <!-- Global Resources (outside ThemeDictionaries) -->
+    <!--  Global Resources (outside ThemeDictionaries)  -->
     <SolidColorBrush x:Key="SystemAccentColorBrush" Color="{ThemeResource SystemAccentColor}" />
 
-    <!-- Logout Menu Item Style -->
+    <!--  Logout Menu Item Style  -->
     <Style x:Key="LogoutMenuItemStyle" TargetType="MenuFlyoutItem">
         <Setter Property="Foreground" Value="{ThemeResource LogoutBrushForeground}" />
     </Style>
 
-    <!-- Card Style -->
+    <!--  Card Style  -->
     <Style x:Key="ShadcnCardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="24"/>
-        <Setter Property="Margin" Value="0,0,0,16"/>
+        <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="Margin" Value="0,0,0,16" />
     </Style>
 
-    <!-- Primary Button Style -->
-    <Style x:Key="ShadcnPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-        <Setter Property="Background" Value="{ThemeResource ButtonBaseBg}"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="CornerRadius" Value="6"/>
-        <Setter Property="Padding" Value="16,8"/>
-        <Setter Property="FontWeight" Value="Medium"/>
+    <!--  Primary Button Style  -->
+    <Style
+        x:Key="ShadcnPrimaryButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource ButtonBaseBg}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonHoverBg}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonHoverBg}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonPressedBg}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonPressedBg}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- Outline Button Style -->
-    <Style x:Key="ShadcnOutlineButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}"/>
-        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="6"/>
-        <Setter Property="Padding" Value="16,8"/>
+    <!--  Outline Button Style  -->
+    <Style
+        x:Key="ShadcnOutlineButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="16,8" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource OutlineHoverBg}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource OutlineHoverBg}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource OutlineHoverBorder}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource OutlineHoverBorder}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource OutlineHoverText}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource OutlineHoverText}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBaseBg}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBaseBg}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="White" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

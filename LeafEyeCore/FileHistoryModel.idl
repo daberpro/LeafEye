@@ -1,6 +1,6 @@
 namespace LeafEyeCore {
     [default_interface]
-    runtimeclass FileHistoryModel
+    runtimeclass FileHistoryModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         FileHistoryModel();
         FileHistoryModel(UInt64 id, String fileName, UInt32 fileSize, Int64 dateCreated, Int64 dateModified, Single confidenceScore);

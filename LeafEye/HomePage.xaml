@@ -1,80 +1,274 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="LeafEye.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:LeafEye"
+    xmlns:core="using:LeafEyeCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:LeafEye"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    NavigationCacheMode="Required"
     mc:Ignorable="d">
 
     <Grid Padding="40" RowDefinitions="Auto, *, Auto">
 
         <Grid Grid.Row="0" Margin="0,0,0,24">
             <StackPanel Spacing="4">
-                <TextBlock Text="Upload gambar daun untuk mendeteksi penyakit." Style="{StaticResource BodyTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Deteksi penyakit" />
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="Upload gambar daun untuk mendeteksi penyakit." />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-                <Button Content="Pilih Folder Output" Style="{StaticResource ShadcnOutlineButtonStyle}"/>
+            <StackPanel
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="12">
+                <Button
+                    x:Name="SelectFolderOutputButton"
+                    Click="SelectFolderOutputButton_Click"
+                    Content="Pilih Folder Output"
+                    Style="{StaticResource ShadcnOutlineButtonStyle}" />
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" ColumnSpacing="24">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Margin="0,0,24,0">
-                <Rectangle Stroke="{ThemeResource SurfaceStrokeColorDefaultBrush}" 
-                           StrokeThickness="2" 
-                           StrokeDashArray="4 4" 
-                           RadiusX="8" RadiusY="8" 
-                           Fill="{ThemeResource LayerFillColorAltBrush}"/>
+            <Grid
+                x:Name="DropTarget"
+                Grid.Column="0"
+                AllowDrop="True"
+                DragLeave="DropTarget_DragLeave"
+                DragOver="DropTarget_DragOver"
+                Drop="DropTarget_Drop">
+                <Rectangle
+                    Fill="{ThemeResource LayerFillColorAltBrush}"
+                    RadiusX="8"
+                    RadiusY="8"
+                    Stroke="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                    StrokeDashArray="4 4"
+                    StrokeThickness="2" />
 
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16">
-                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}" Width="64" Height="64" CornerRadius="32" BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}" BorderThickness="1">
-                        <FontIcon Glyph="&#xE8B0;" FontSize="24" Foreground="{StaticResource BrandPrimaryBrush}"/>
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="16">
+                    <Border
+                        Width="64"
+                        Height="64"
+                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="32">
+                        <FontIcon
+                            FontSize="24"
+                            Foreground="{StaticResource BrandPrimaryBrush}"
+                            Glyph="&#xE8B0;" />
                     </Border>
 
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="Drag &amp; Drop gambar di sini" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
-                        <TextBlock Text="atau klik tombol di bawah" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="Drag &amp; Drop gambar di sini" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="atau klik tombol di bawah" />
                     </StackPanel>
 
-                    <Button Content="Pilih File" Style="{StaticResource ShadcnOutlineButtonStyle}" HorizontalAlignment="Center"/>
+                    <Button
+                        x:Name="FilePicker"
+                        HorizontalAlignment="Center"
+                        Click="FilePicker_Click"
+                        Content="Pilih File"
+                        Style="{StaticResource ShadcnOutlineButtonStyle}" />
                 </StackPanel>
             </Grid>
 
-            <Border Grid.Column="1" Style="{StaticResource ShadcnCardStyle}" Margin="0">
+            <Border
+                Grid.Column="1"
+                Margin="0"
+                Style="{StaticResource ShadcnCardStyle}">
                 <Grid RowDefinitions="Auto, *">
-                    <TextBlock Text="Antrian File" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,12"/>
 
-                    <ListView Grid.Row="1" SelectionMode="None">
-                        <Grid ColumnDefinitions="*, Auto" Padding="0,8">
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="durian_leaf_001.jpg" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="2.4 MB" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <FontIcon Grid.Column="1" Glyph="&#xE73E;" FontSize="16" Foreground="{StaticResource BrandPrimaryBrush}"/>
-                        </Grid>
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Spacing="4">
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Antrian File" />
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon
+                                    Grid.Column="0"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Glyph="&#xEC50;" />
+
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind HistoryInfo.OutputFolder, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    ToolTipService.ToolTip="{x:Bind HistoryInfo.OutputFolder, Mode=OneWay}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <CheckBox
+                                x:Name="SelectAllFilesCheckBox"
+                                Margin="0"
+                                VerticalAlignment="Center"
+                                Content="Pilih Semua" />
+
+                            <Button
+                                x:Name="DeleteSelectedFilesButton"
+                                Padding="8"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="DeleteSelectedFilesButton_Click"
+                                ToolTipService.ToolTip="Hapus file terpilih">
+                                <FontIcon
+                                    FontSize="14"
+                                    Foreground="Red"
+                                    Glyph="&#xE74D;" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock
+                        x:Name="EmptyFileHistoryListViewText"
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Tidak ada file dalam antrian. Tambahkan file untuk memulai." />
+
+                    <ListView
+                        x:Name="FileHistoryListView"
+                        Grid.Row="1"
+                        SelectionMode="None"
+                        ShowsScrollingPlaceholders="False">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="local:FileItemsHomePageModel">
+                                <Border
+                                    Padding="12"
+                                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <Grid ColumnDefinitions="Auto, Auto, *, Auto">
+
+                                        <CheckBox
+                                            Grid.Column="0"
+                                            MinWidth="0"
+                                            Margin="0,0,12,0"
+                                            VerticalAlignment="Center"
+                                            IsChecked="{x:Bind Selected, Mode=TwoWay}" />
+
+                                        <Border
+                                            Grid.Column="1"
+                                            Width="48"
+                                            Height="48"
+                                            Margin="0,0,12,0"
+                                            Background="{ThemeResource LayerFillColorAltBrush}"
+                                            CornerRadius="4">
+                                            <Image Source="Assets/PlaceholderImage.png" Stretch="UniformToFill" />
+                                        </Border>
+
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Spacing="2">
+                                            <TextBlock
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{x:Bind FileName, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{x:Bind FileName, Mode=OneWay}" />
+                                            <TextBlock
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="{x:Bind local:HomePage.ConvertToDateTimeString(DateCreated)}" />
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="3"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center">
+                                            <TextBlock
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="{x:Bind local:HomePage.ConvertToFileSizeString(FileSize), Mode=OneWay}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Margin" Value="0,0,0,8" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+
                     </ListView>
                 </Grid>
             </Border>
+
         </Grid>
 
-        <Border Grid.Row="2" Margin="0,24,0,0" Padding="24" CornerRadius="8" BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource LayerFillColorDefaultBrush}">
+        <Border
+            Grid.Row="2"
+            Margin="0,24,0,0"
+            Padding="24"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
             <Grid ColumnDefinitions="*, Auto">
-                <StackPanel Spacing="4" VerticalAlignment="Center">
-                    <TextBlock Text="Siap Memproses" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <TextBlock Text="0 file terpilih dalam 0 batch." Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <StackPanel VerticalAlignment="Center" Spacing="4">
+                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind ProcessButtonInfo, Mode=OneWay}" />
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="2 file terpilih dalam 1 batch." />
                 </StackPanel>
 
-                <Button Grid.Column="1" Style="{StaticResource ShadcnPrimaryButtonStyle}">
+                <Button
+                    x:Name="ProcessButton"
+                    Grid.Column="1"
+                    Click="ProcessButton_Click"
+                    IsEnabled="{x:Bind IsProcessButtonEnabled, Mode=OneWay}"
+                    Style="{StaticResource ShadcnPrimaryButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xE768;" FontSize="14"/>
-                        <TextBlock Text="Mulai Proses"/>
+                        <FontIcon FontSize="14" Glyph="&#xE768;" />
+                        <TextBlock Text="Mulai Proses" />
                     </StackPanel>
                 </Button>
             </Grid>
