@@ -9,6 +9,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <core:StringFormatConverter x:Key="FormatConverter" />
+    </Page.Resources>
+
     <Grid Padding="40" RowDefinitions="Auto, *">
 
         <Grid Grid.Row="0" Margin="0,0,0,24">
@@ -90,74 +94,79 @@
                                 </ComboBox>
                             </StackPanel>
                         </Border>
-
-                        <ListView
-                            x:Name="UserListView"
+                        <RefreshContainer
+                            x:Name="UserRefreshContainer"
                             Grid.Row="1"
-                            SelectionMode="Single">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="core:UserModel">
-                                    <Grid Padding="0,8" ColumnDefinitions="Auto, *, Auto">
-                                        <PersonPicture
-                                            Width="40"
-                                            Height="40"
-                                            Margin="0,0,12,0"
-                                            DisplayName="{x:Bind Username, Mode=OneWay}"
-                                            ProfilePicture="Assets/default_avatar.png" />
+                            RefreshRequested="UserRefreshContainer_RefreshRequested">
+                            <ListView
+                                x:Name="UserListView"
+                                IsItemClickEnabled="True"
+                                ItemClick="UserListView_ItemClick"
+                                SelectionMode="Single">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="core:UserModel">
+                                        <Grid Padding="0,8" ColumnDefinitions="Auto, *, Auto">
+                                            <PersonPicture
+                                                Width="40"
+                                                Height="40"
+                                                Margin="0,0,12,0"
+                                                DisplayName="{x:Bind Username, Mode=OneWay}"
+                                                ProfilePicture="Assets/default_avatar.png" />
 
-                                        <StackPanel
-                                            Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Spacing="2">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind Username, Mode=OneWay}" />
-                                            <Border
-                                                Padding="6,2"
-                                                HorizontalAlignment="Left"
-                                                Background="{ThemeResource LayerFillColorAltBrush}"
-                                                CornerRadius="4">
+                                            <StackPanel
+                                                Grid.Column="1"
+                                                VerticalAlignment="Center"
+                                                Spacing="2">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind Username, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='Username: {0}'}" />
+                                                <Border
+                                                    Padding="6,2"
+                                                    HorizontalAlignment="Left"
+                                                    Background="{ThemeResource LayerFillColorAltBrush}"
+                                                    CornerRadius="4">
 
-                                                <TextBlock
-                                                    Foreground="{StaticResource BrandPrimaryBrush}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="{x:Bind local:UsersPage.ConvertToUserStatus(IsAdmin), Mode=OneWay}" />
+                                                    <TextBlock
+                                                        Foreground="{StaticResource BrandPrimaryBrush}"
+                                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                                        Text="{x:Bind local:UsersPage.ConvertToUserStatus(IsAdmin), Mode=OneWay}" />
 
-                                            </Border>
-                                        </StackPanel>
+                                                </Border>
+                                            </StackPanel>
 
-                                        <StackPanel
-                                            Grid.Column="2"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal"
-                                            Spacing="8">
-                                            <Button
-                                                x:Name="UpdateUserBtn"
-                                                Padding="6"
-                                                Click="UpdateUserBtn_Click"
-                                                Style="{StaticResource ShadcnOutlineButtonStyle}"
-                                                Tag="{x:Bind}"
-                                                ToolTipService.ToolTip="Update User">
-                                                <FontIcon
-                                                    FontSize="14"
-                                                    Foreground="{StaticResource BrandPrimaryBrush}"
-                                                    Glyph="&#xE70F;" />
-                                            </Button>
-                                            <Button
-                                                x:Name="DeleteUserBtn"
-                                                Padding="6"
-                                                Click="DeleteUserBtn_Click"
-                                                Style="{StaticResource ShadcnOutlineButtonStyle}"
-                                                Tag="{x:Bind}"
-                                                ToolTipService.ToolTip="Delete User">
-                                                <FontIcon
-                                                    FontSize="14"
-                                                    Foreground="Red"
-                                                    Glyph="&#xE74D;" />
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                                            <StackPanel
+                                                Grid.Column="2"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal"
+                                                Spacing="8">
+                                                <Button
+                                                    x:Name="UpdateUserBtn"
+                                                    Padding="6"
+                                                    Click="UpdateUserBtn_Click"
+                                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
+                                                    Tag="{x:Bind}"
+                                                    ToolTipService.ToolTip="Update User">
+                                                    <FontIcon
+                                                        FontSize="14"
+                                                        Foreground="{StaticResource BrandPrimaryBrush}"
+                                                        Glyph="&#xE70F;" />
+                                                </Button>
+                                                <Button
+                                                    x:Name="DeleteUserBtn"
+                                                    Padding="6"
+                                                    Click="DeleteUserBtn_Click"
+                                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
+                                                    Tag="{x:Bind}"
+                                                    ToolTipService.ToolTip="Delete User">
+                                                    <FontIcon
+                                                        FontSize="14"
+                                                        Foreground="Red"
+                                                        Glyph="&#xE74D;" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </RefreshContainer>
 
                         <Border
                             Grid.Row="2"
@@ -217,22 +226,19 @@
                             BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
                             BorderThickness="1"
                             CornerRadius="60">
-                            <FontIcon
-                                FontSize="48"
-                                Foreground="{StaticResource BrandPrimaryBrush}"
-                                Glyph="&#xE77B;" />
+                            <Image Source="{x:Bind Profile.AvatarPath, Mode=OneWay}" Stretch="UniformToFill" />
                         </Border>
 
                         <StackPanel HorizontalAlignment="Center" Spacing="4">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Style="{StaticResource TitleTextBlockStyle}"
-                                Text="johndoe_admin" />
+                                Text="{x:Bind Profile.Fullname, Mode=OneWay}" />
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
-                                Text="Administrator" />
+                                Text="{x:Bind core:UserRoleHelper.ConvertUserIntRoleToString(Profile.Role), Mode=OneWay}" />
                         </StackPanel>
 
                         <Rectangle
@@ -241,29 +247,6 @@
                             Fill="{ThemeResource SurfaceStrokeColorDefaultBrush}"
                             Opacity="0.5" />
 
-                        <StackPanel Width="250" Spacing="12">
-                            <Grid>
-                                <TextBlock
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Email" />
-                                <TextBlock
-                                    HorizontalAlignment="Right"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="admin@leafeye.com" />
-                            </Grid>
-                            <Grid>
-                                <TextBlock
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Status" />
-                                <TextBlock
-                                    HorizontalAlignment="Right"
-                                    Foreground="Green"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Active" />
-                            </Grid>
-                        </StackPanel>
 
                     </StackPanel>
                 </Border>

@@ -197,7 +197,7 @@
                                             Margin="0,0,12,0"
                                             Background="{ThemeResource LayerFillColorAltBrush}"
                                             CornerRadius="4">
-                                            <Image Source="Assets/PlaceholderImage.png" Stretch="UniformToFill" />
+                                            <Image Source="{x:Bind FilePath, Mode=OneWay}" Stretch="UniformToFill" />
                                         </Border>
 
                                         <StackPanel

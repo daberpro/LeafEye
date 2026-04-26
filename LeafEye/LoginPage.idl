@@ -1,0 +1,11 @@
+namespace LeafEye
+{
+    [default_interface]
+    runtimeclass LoginPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        LoginPage();
+        static void SaveCredentials(String username, String password);
+        static void ClearCredentials();
+        static Windows.Security.Credentials.PasswordCredential LoadCredentials();
+    }
+}

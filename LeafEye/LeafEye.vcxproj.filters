@@ -13,6 +13,7 @@
     <Page Include="UsersPage.xaml" />
     <Page Include="AddUserDialog.xaml" />
     <Page Include="UpdateUserDialog.xaml" />
+    <Page Include="LoginPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -28,6 +29,7 @@
     <ClInclude Include="Base\PaginationBase.h" />
     <ClInclude Include="Base\PaginationBaseExperiment.h" />
     <ClInclude Include="FileItemsHomePageModel.h" />
+    <ClInclude Include="Utils\AppSession.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

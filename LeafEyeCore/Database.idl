@@ -22,10 +22,10 @@ namespace LeafEyeCore {
 
         // ─── User ────────────────────────────────────────────────
         Windows.Foundation.IAsyncOperation<Result> GetUserById(UInt64 id);
-        Windows.Foundation.IAsyncOperation<Result> GetUserByAccessLevel(Boolean is_admin,Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetUserByAccessLevel(Boolean is_admin,Int64 offset, Int64 limit);
         Windows.Foundation.IAsyncOperation<Result> GetUserByUsername(String username);
-        Windows.Foundation.IAsyncOperation<Result> GetUserContainsUsername(String username, Int32 offset, Int32 limit);
-        Windows.Foundation.IAsyncOperation<Result> GetAllUsers(Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetUserContainsUsername(String username, Int64 offset, Int64 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetAllUsers(Int64 offset, Int64 limit);
         Windows.Foundation.IAsyncOperation<Result> ValidateUserCredentials(String username, String password);
         Windows.Foundation.IAsyncOperation<Result> AddUser(UserModel user);
         Windows.Foundation.IAsyncOperation<Result> UpdateUser(UserModel user);
@@ -44,17 +44,23 @@ namespace LeafEyeCore {
 
         // ─── History ─────────────────────────────────────────────
         Windows.Foundation.IAsyncOperation<Result> GetHistoryById(UInt64 id);
-        Windows.Foundation.IAsyncOperation<Result> GetHistoryByUserLink(UInt64 userId, Int32 offset, Int32 limit);
-        Windows.Foundation.IAsyncOperation<Result> GetHistoryByStatus(Int32 status, Int32 offset, Int32 limit);
-        Windows.Foundation.IAsyncOperation<Result> GetHistoryByDateRange(UInt64 start, UInt64 end, Int32 offset, Int32 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryByUserLink(UInt64 userId, Int64 offset, Int64 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryByStatus(Int64 status, Int64 offset, Int64 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryByDateRange(UInt64 start, UInt64 end, Int64 offset, Int64 limit);
+        
+        Windows.Foundation.IAsyncOperation<Result> GetAllHistory(Int64 offset, Int64 limit);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryCount();
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryCountByStatus(Int64 status);
+        Windows.Foundation.IAsyncOperation<Result> GetHistoryCountByDateRange(UInt64 start, UInt64 end);
+        
         Windows.Foundation.IAsyncOperation<Result> AddHistory(HistoryModel history);
         Windows.Foundation.IAsyncOperation<Result> UpdateHistory(HistoryModel history);
         Windows.Foundation.IAsyncOperation<Result> DeleteHistory(UInt64 id);
 
         // ─── File History ─────────────────────────────────────────
         Windows.Foundation.IAsyncOperation<Result> GetFileHistoryById(UInt64 id);
-        Windows.Foundation.IAsyncOperation<Result> GetFileHistoriesByHistoryLink(UInt64 historyId, Int32 page, Int32 pageSize);
-        Windows.Foundation.IAsyncOperation<Result> GetFileHistoriesByConfidenceThreshold(Double minConfidence, Int32 page, Int32 pageSize);
+        Windows.Foundation.IAsyncOperation<Result> GetFileHistoriesByHistoryLink(UInt64 historyId);
+        Windows.Foundation.IAsyncOperation<Result> GetFileHistoriesByConfidenceThreshold(Double minConfidence, Int64 page, Int64 pageSize);
         Windows.Foundation.IAsyncOperation<Result> AddFileHistory(FileHistoryModel fileHistory);
         Windows.Foundation.IAsyncOperation<Result> UpdateFileHistory(FileHistoryModel fileHistory);
         Windows.Foundation.IAsyncOperation<Result> DeleteFileHistory(UInt64 id);

@@ -35,7 +35,7 @@ namespace winrt::LeafEye::Utils {
 
 				// mendapatkan jumlah page
 				m_filter_callback.GetData(m_pagination_current_page * m_pagination_limit, m_pagination_limit);
-				int64_t total_data = co_await m_filter_callback.GetDataCount();
+				uint64_t total_data = co_await m_filter_callback.GetDataCount();
 
 				m_pagination_total_page = std::ceil(static_cast<double>(total_data) / m_pagination_limit);
 

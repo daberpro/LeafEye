@@ -18,10 +18,10 @@ namespace winrt::LeafEyeCore::implementation
         Database(hstring const& database_location, uint64_t max_db_size);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> InitializeAsync();
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserById(uint64_t id);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserByAccessLevel(bool is_admin, int32_t offset, int32_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserByAccessLevel(bool is_admin, int64_t offset, int64_t limit);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserByUsername(hstring username);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserContainsUsername(hstring username, int32_t offset, int32_t limit);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetAllUsers(int32_t offset, int32_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetUserContainsUsername(hstring username, int64_t offset, int64_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetAllUsers(int64_t offset, int64_t limit);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> ValidateUserCredentials(hstring username, hstring password);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> AddUser(winrt::LeafEyeCore::UserModel user);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> UpdateUser(winrt::LeafEyeCore::UserModel user);
@@ -32,15 +32,19 @@ namespace winrt::LeafEyeCore::implementation
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> UpdateUserProfile(winrt::LeafEyeCore::ProfileModel userProfile);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> DeleteUserProfile(uint64_t id);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryById(uint64_t id);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryByUserLink(uint64_t userId, int32_t offset, int32_t limit);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryByStatus(int32_t status, int32_t offset, int32_t limit);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryByDateRange(uint64_t start, uint64_t end, int32_t offset, int32_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryByUserLink(uint64_t userId, int64_t offset, int64_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryByStatus(int64_t status, int64_t offset, int64_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryByDateRange(uint64_t start, uint64_t end, int64_t offset, int64_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetAllHistory(int64_t offset, int64_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryCount();
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryCountByDateRange(uint64_t start, uint64_t end);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetHistoryCountByStatus(int64_t status);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> AddHistory(winrt::LeafEyeCore::HistoryModel history);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> UpdateHistory(winrt::LeafEyeCore::HistoryModel history);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> DeleteHistory(uint64_t id);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetFileHistoryById(uint64_t id);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetFileHistoriesByHistoryLink(uint64_t historyId, int32_t offset, int32_t limit);
-        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetFileHistoriesByConfidenceThreshold(double minConfidence, int32_t offset, int32_t limit);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetFileHistoriesByHistoryLink(uint64_t historyId);
+        winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> GetFileHistoriesByConfidenceThreshold(double minConfidence, int64_t offset, int64_t limit);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> AddFileHistory(winrt::LeafEyeCore::FileHistoryModel fileHistory);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> UpdateFileHistory(winrt::LeafEyeCore::FileHistoryModel fileHistory);
         winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> DeleteFileHistory(uint64_t id);
@@ -77,6 +81,7 @@ namespace winrt::LeafEyeCore::implementation
         std::unique_ptr<obx::Query<Profile>> m_query_profile_by_user_link; // done
 
         // Queries - History
+        std::unique_ptr<obx::Query<History>> m_query_history_all; // done
         std::unique_ptr<obx::Query<History>> m_query_history_by_id; // done
         std::unique_ptr<obx::Query<History>> m_query_history_by_status; // done
         std::unique_ptr<obx::Query<History>> m_query_history_by_user_link; // done

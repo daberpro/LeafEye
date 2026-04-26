@@ -20,6 +20,8 @@
     <ClCompile Include="Schema\model.obx.cpp" />
     <ClCompile Include="Utility\Database.cpp" />
     <ClCompile Include="Utility\ObjectBoxImpl.cpp" />
+    <ClCompile Include="Helper\UserRoleHelper.cpp" />
+    <ClCompile Include="Converter\StringFormatConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -29,6 +31,8 @@
     <ClInclude Include="Model\ProfileModel.h" />
     <ClInclude Include="Model\UserModel.h" />
     <ClInclude Include="Utility\Database.h" />
+    <ClInclude Include="Helper\UserRoleHelper.h" />
+    <ClInclude Include="Converter\StringFormatConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="Database.idl" />
@@ -37,6 +41,8 @@
     <Midl Include="HistoryModel.idl" />
     <Midl Include="FileHistoryModel.idl" />
     <Midl Include="ProfileModel.idl" />
+    <Midl Include="UserRoleHelper.idl" />
+    <Midl Include="StringFormatConverter.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LeafEyeCore.def" />

@@ -1,9 +1,13 @@
 namespace LeafEye
 {
     [default_interface]
-    runtimeclass ProfilePage : Microsoft.UI.Xaml.Controls.Page
+    runtimeclass ProfilePage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         ProfilePage();
-        Int32 MyProperty;
+        LeafEyeCore.ProfileModel Profile{ get; };
+        LeafEyeCore.UserModel User{ get; };
+        static String GetUserNameAndFullNameString(String username, String fullname);
+
+        Boolean IsChanged{get;set;};
     }
 }

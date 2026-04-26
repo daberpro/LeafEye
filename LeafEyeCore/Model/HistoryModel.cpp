@@ -14,7 +14,10 @@ namespace winrt::LeafEyeCore::implementation
     }
     void HistoryModel::Id(uint64_t value)
     {
-        m_id = value;
+        if (m_id != value) {
+            m_id = value;
+            RaisedPropertyChanged(L"Id");
+        }
     }
 
     int64_t HistoryModel::Date()

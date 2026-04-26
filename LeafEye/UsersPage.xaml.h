@@ -2,8 +2,8 @@
 #include "UsersPage.g.h"
 #include "AddUserDialog.xaml.h"
 #include "UpdateUserDialog.xaml.h"
-#include "Base/PaginationBaseExperiment.h" // Include base class pagination kita
-//#include "Base/PaginationBase.h" // Include base class pagination kita
+#include "Base/PaginationBaseExperiment.h"
+#include "Utils/AppSession.h"
 
 namespace winrt::LeafEye::implementation
 {
@@ -17,7 +17,7 @@ namespace winrt::LeafEye::implementation
     struct UsersPage : UsersPageT<UsersPage>, public winrt::LeafEye::Utils::PaginationBase<UserFilterType>
     {
     private:
-        winrt::LeafEyeCore::Database m_db{ nullptr };
+		winrt::LeafEyeCore::ProfileModel m_profile{ nullptr };
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::LeafEyeCore::UserModel> m_users_list;
 
@@ -55,6 +55,8 @@ namespace winrt::LeafEye::implementation
 
         void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 
+        winrt::LeafEyeCore::ProfileModel Profile();
+
         // Event Handlers UI yang sudah ada
         void SearchBar_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
         winrt::fire_and_forget AddUserButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -66,6 +68,8 @@ namespace winrt::LeafEye::implementation
         // Event Handlers Pagination (Baru - untuk disambungkan ke XAML nanti)
         void PrevPageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void NextPageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::fire_and_forget UserListView_ItemClick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::ItemClickEventArgs const& e);
+        void UserRefreshContainer_RefreshRequested(winrt::Microsoft::UI::Xaml::Controls::RefreshContainer const& sender, winrt::Microsoft::UI::Xaml::Controls::RefreshRequestedEventArgs const& args);
     };
 }
 

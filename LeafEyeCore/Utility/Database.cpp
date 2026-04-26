@@ -19,8 +19,8 @@ namespace winrt::LeafEyeCore::implementation
 	constexpr size_t MAX_FULLNAME_LEN = 128;
 	constexpr size_t MAX_PATH_LEN = 512;
 	constexpr size_t MAX_FILENAME_LEN = 256;
-	constexpr int32_t MAX_LIMIT = 500;
-	constexpr int32_t MIN_LIMIT = 1;
+	constexpr int64_t MAX_LIMIT = 500;
+	constexpr int64_t MIN_LIMIT = 1;
 	constexpr float MIN_CONFIDENCE = 0.0f;
 	constexpr float MAX_CONFIDENCE = 1.0f;
 
@@ -30,7 +30,7 @@ namespace winrt::LeafEyeCore::implementation
 		return id > 0;
 	}
 
-	static bool IsValidPagination(int32_t offset, int32_t limit) {
+	static bool IsValidPagination(int64_t offset, int64_t limit) {
 		return offset >= 0 && limit >= MIN_LIMIT && limit <= MAX_LIMIT;
 	}
 
@@ -149,6 +149,8 @@ namespace winrt::LeafEyeCore::implementation
 		model.Id(fh.id);
 		model.FileName(winrt::to_hstring(fh.filename));
 		model.FileSize(fh.file_size);
+		model.FilePath(winrt::to_hstring(fh.file_path));
+		model.Disease(winrt::to_hstring(fh.disease));
 		model.DateCreated(fh.date_created);
 		model.DateModified(fh.date_modified);
 		model.ConfidenceScore(fh.confidence_score);
@@ -206,6 +208,8 @@ namespace winrt::LeafEyeCore::implementation
 		fh.date_created = m.DateCreated();
 		fh.date_modified = m.DateModified();
 		fh.confidence_score = m.ConfidenceScore();
+		fh.file_path = winrt::to_string(m.FilePath());
+		fh.disease = winrt::to_string(m.Disease());
 		return fh;
 	}
 
@@ -286,6 +290,10 @@ namespace winrt::LeafEyeCore::implementation
 			);
 
 			// History query
+			m_query_history_all = std::make_unique<obx::Query<History>>(
+				m_history_box->query().build()
+			);
+
 			m_query_history_by_status = std::make_unique<obx::Query<History>>(
 				m_history_box->query(
 					History_::status.equals(0)
@@ -374,7 +382,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserByAccessLevel(bool is_admin, int32_t offset, int32_t limit) {
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserByAccessLevel(bool is_admin, int64_t offset, int64_t limit) {
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
 		try {
@@ -448,7 +456,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserContainsUsername(hstring username, int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetUserContainsUsername(hstring username, int64_t offset, int64_t limit)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -488,7 +496,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetAllUsers(int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetAllUsers(int64_t offset, int64_t limit)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -600,9 +608,11 @@ namespace winrt::LeafEyeCore::implementation
 			user.Password(
 				winrt::to_hstring(createSecureHash(winrt::to_string(user.Password())))
 			);
-			m_user_box->put(ModelToUser(user));
+			auto user_id = m_user_box->put(ModelToUser(user));
 			result.ErrorCode(0);
 			result.IsError(false);
+			result.IsValueExists(true);
+			result.ResultValue(winrt::box_value(user_id));
 			result.Message(L"User added successfully");
 		}
 		catch (obx::Exception& e) {
@@ -634,23 +644,33 @@ namespace winrt::LeafEyeCore::implementation
 		}
 
 		try {
+
 			// get existing user to preserve username and ID, and prevent accidental username changes which can cause issues with linked data
 			auto existing_user = m_user_box->get(user.Id());
 			if (!existing_user) {
 				result.Message(L"[DATABASE ERROR][UpdateUser] User not found.");
 				co_return result;
 			}
-			auto updated_user = ModelToUser(user);
-			updated_user.id = existing_user->id; // Ensure the ID remains unchanged
-			updated_user.username = existing_user->username;
-			updated_user.is_admin = user.IsAdmin();
+
+			// Check if username is already taken
+			if (existing_user->username != winrt::to_string(user.Username()) && !user.Username().empty()) {
+				m_query_user_by_username->setParameter(User_::username, winrt::to_string(user.Username()));
+				auto existing = m_query_user_by_username->findFirst();
+				if (existing) {
+					result.Message(L"[VALIDATION ERROR][AddUser] Username is already taken.");
+					co_return result;
+				}
+				else {
+					existing_user->username = winrt::to_string(user.Username());
+				}
+			}
+
+			existing_user->is_admin = user.IsAdmin();
+			
 			if (!user.Password().empty()) {
-				updated_user.password = createSecureHash(winrt::to_string(user.Password()));
+				existing_user->password = createSecureHash(winrt::to_string(user.Password()));
 			}
-			else {
-				updated_user.password = existing_user->password;
-			}
-			m_user_box->put(updated_user);
+			m_user_box->put(*existing_user);
 			result.ErrorCode(0);
 			result.IsError(false);
 			result.Message(L"User updated successfully");
@@ -787,9 +807,11 @@ namespace winrt::LeafEyeCore::implementation
 		}
 
 		try {
-			m_profile_box->put(ModelToProfile(userProfile));
+			auto profile_id = m_profile_box->put(ModelToProfile(userProfile));
 			result.ErrorCode(0);
 			result.IsError(false);
+			result.IsValueExists(true);
+			result.ResultValue(winrt::box_value(profile_id));
 			result.Message(L"User profile added successfully");
 		}
 		catch (obx::Exception& e) {
@@ -829,9 +851,11 @@ namespace winrt::LeafEyeCore::implementation
 				result.Message(L"[DATABASE ERROR][UpdateUserProfile] Profile not found.");
 				co_return result;
 			}
-			auto updated_profile = ModelToProfile(userProfile);
-			updated_profile.id = existing_profile->id; // Ensure the ID remains unchanged
-			m_profile_box->put(updated_profile);
+			existing_profile->full_name = winrt::to_string(userProfile.Fullname());
+			existing_profile->role = userProfile.Role();
+			existing_profile->avatar_path = winrt::to_string(userProfile.AvatarPath());
+
+			m_profile_box->put(*existing_profile);
 			result.ErrorCode(0);
 			result.IsError(false);
 			result.Message(L"User profile updated successfully");
@@ -880,6 +904,114 @@ namespace winrt::LeafEyeCore::implementation
 
 	// ─── History ──────────────────────────────────────────────────────────────
 
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetAllHistory(int64_t offset, int64_t limit) {
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+
+		try {
+			auto history = m_query_history_all->offset(offset).limit(limit).find();
+			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::HistoryModel> histories = winrt::single_threaded_vector<winrt::LeafEyeCore::HistoryModel>();
+			for (const auto& history_ptr: history) {
+				histories.Append(HistoryToModel(history_ptr));
+			}
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History fetched successfully");
+			result.ResultValue(histories);
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetAllHistory] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetAllHistory] Failed to fetch history: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetAllHistory] An unknown error occurred while fetching history.");
+		}
+
+		co_return result;
+	};
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryCount() {
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+
+		try {
+
+			auto history_count = static_cast<int64_t>(m_history_box->getAll().size());
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History count fetched successfully");
+			result.ResultValue(winrt::box_value(history_count));
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCount] Failed to fetch history count: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCount] Failed to fetch history count: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCount] An unknown error occurred while fetching history count.");
+		}
+
+		co_return result;
+	};
+	
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryCountByDateRange(uint64_t start, uint64_t end) {
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+
+		
+		try {
+			auto data = m_history_box->query(History_::date.between(start, end)).build().find();
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History count fetched successfully");
+			result.ResultValue(winrt::box_value(data.size()));
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCountByDateRange] Failed to fetch history count: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCountByDateRange] Failed to fetch history count: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCountByDateRange] An unknown error occurred while fetching history count.");
+		}
+
+		co_return result;
+	};
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryCountByStatus(int64_t status) {
+		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
+
+		// Validation
+		if (status < 0) {
+			result.Message(L"[VALIDATION ERROR][GetHistoryCountByStatus] Status cannot be negative.");
+			co_return result;
+		}
+
+		try {
+			auto histories = m_query_history_by_status->setParameter(History_::status, status).find();
+			result.ErrorCode(0);
+			result.IsError(false);
+			result.Message(L"History count fetched successfully");
+			result.ResultValue(winrt::box_value(histories.size()));
+			result.IsValueExists(true);
+		}
+		catch (obx::Exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCountByStatus] Failed to fetch history count: " + winrt::to_hstring(e.what()));
+		}
+		catch (std::exception& e) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCountByStatus] Failed to fetch history count: " + winrt::to_hstring(e.what()));
+		}
+		catch (...) {
+			result.Message(L"[DATABASE ERROR][GetHistoryCountByStatus] An unknown error occurred while fetching history count.");
+		}
+
+		co_return result;
+	};
+
 	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryById(uint64_t id)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
@@ -916,7 +1048,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByUserLink(uint64_t userId, int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByUserLink(uint64_t userId, int64_t offset, int64_t limit)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -955,7 +1087,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByStatus(int32_t status, int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByStatus(int64_t status, int64_t offset, int64_t limit)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -994,7 +1126,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByDateRange(uint64_t start, uint64_t end, int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetHistoryByDateRange(uint64_t start, uint64_t end, int64_t offset, int64_t limit)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -1085,9 +1217,12 @@ namespace winrt::LeafEyeCore::implementation
 				result.Message(L"[DATABASE ERROR][UpdateHistory] History not found.");
 				co_return result;
 			}
-			auto updated_history = ModelToHistory(history);
-			updated_history.id = existing_history->id; // Ensure the ID remains unchanged
-			m_history_box->put(updated_history);
+			
+			existing_history->date = history.Date();
+			existing_history->output_folder = winrt::to_string(history.OutputFolder());
+			existing_history->status = history.Status();
+			existing_history->total_files = history.TotalFiles();
+			m_history_box->put(*existing_history);
 			result.ErrorCode(0);
 			result.IsError(false);
 			result.Message(L"History updated successfully");
@@ -1172,7 +1307,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoriesByHistoryLink(uint64_t historyId, int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoriesByHistoryLink(uint64_t historyId)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -1181,13 +1316,9 @@ namespace winrt::LeafEyeCore::implementation
 			result.Message(L"[VALIDATION ERROR][GetFileHistoriesByHistoryLink] History ID must be greater than 0.");
 			co_return result;
 		}
-		if (!IsValidPagination(offset, limit)) {
-			result.Message(L"[VALIDATION ERROR][GetFileHistoriesByHistoryLink] Invalid offset or limit. Offset >= 0, limit must be between 1 and 500.");
-			co_return result;
-		}
-
+		
 		try {
-			auto fileHistories = m_query_filehistory_by_history_link->setParameter(History_::id, historyId).limit(limit).offset(offset).find();
+			auto fileHistories = m_query_filehistory_by_history_link->setParameter(History_::id, historyId).find();
 			winrt::Windows::Foundation::Collections::IVector<winrt::LeafEyeCore::FileHistoryModel> fhModels = winrt::single_threaded_vector<winrt::LeafEyeCore::FileHistoryModel>();
 			for (auto& fh : fileHistories) {
 				fhModels.Append(FileHistoryToModel(fh));
@@ -1211,7 +1342,7 @@ namespace winrt::LeafEyeCore::implementation
 		co_return result;
 	}
 
-	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoriesByConfidenceThreshold(double minConfidence, int32_t offset, int32_t limit)
+	winrt::Windows::Foundation::IAsyncOperation<winrt::LeafEyeCore::Result> Database::GetFileHistoriesByConfidenceThreshold(double minConfidence, int64_t offset, int64_t limit)
 	{
 		winrt::LeafEyeCore::Result result(true, false, -1, L"", nullptr);
 
@@ -1317,9 +1448,14 @@ namespace winrt::LeafEyeCore::implementation
 				result.Message(L"[DATABASE ERROR][UpdateFileHistory] File history not found.");
 				co_return result;
 			}
-			auto updated_fh = ModelToFileHistory(fileHistory);
-			updated_fh.id = existing_fh->id; // Ensure the ID remains unchanged
-			m_filehistory_box->put(updated_fh);
+			existing_fh->confidence_score = fileHistory.ConfidenceScore();
+			existing_fh->date_created = fileHistory.DateCreated();
+			existing_fh->date_modified = fileHistory.DateModified();
+			existing_fh->disease = winrt::to_string(fileHistory.Disease());
+			existing_fh->filename = winrt::to_string(fileHistory.FileName());
+			existing_fh->file_path = winrt::to_string(fileHistory.FilePath());
+			existing_fh->file_size = fileHistory.FileSize();
+			m_filehistory_box->put(*existing_fh);
 			result.ErrorCode(0);
 			result.IsError(false);
 			result.Message(L"File history updated successfully");

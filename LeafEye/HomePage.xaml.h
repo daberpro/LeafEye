@@ -1,6 +1,7 @@
 #pragma once
 #include "App.xaml.h"
 #include "HomePage.g.h"
+#include "Utils/AppSession.h"
 
 namespace winrt::LeafEye::implementation
 {
@@ -8,7 +9,6 @@ namespace winrt::LeafEye::implementation
     {
     private:
         winrt::LeafEyeCore::HistoryModel m_historyInfo;
-		winrt::LeafEyeCore::Database m_db{ nullptr };
         winrt::Windows::Foundation::Collections::IVectorView<winrt::Windows::Storage::StorageFile> m_files;
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::LeafEye::FileItemsHomePageModel> m_filesMetaInfo;
 
@@ -16,9 +16,11 @@ namespace winrt::LeafEye::implementation
         bool m_isProcessButtonEnabled{ false };
         hstring m_processButtonInfo;
 
+		
         void RaisedPropertyChanged(hstring const& property_name);
     public:
 
+        
 		static hstring ConvertToDateTimeString(uint64_t fileTime);
 		static hstring ConvertToFileSizeString(uint64_t fileSize);
 
@@ -41,6 +43,7 @@ namespace winrt::LeafEye::implementation
     
         winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(winrt::event_token const& token) noexcept;
+        
     };
 }
 

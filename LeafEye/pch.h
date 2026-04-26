@@ -29,6 +29,8 @@
 #include <winrt/Windows.Storage.FileProperties.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Storage.Pickers.h>
+#include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 #include <string>
 #include <print>
@@ -36,6 +38,7 @@
 #include <chrono>
 #include <shobjidl.h>
 #include <microsoft.ui.xaml.window.h>
+#include <filesystem>
 
 #define OBX_CPP_FILE
 #include <objectbox.hpp>

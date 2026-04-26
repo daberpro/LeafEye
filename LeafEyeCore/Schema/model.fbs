@@ -2,11 +2,13 @@ table FileHistory {
     /// objectbox: id
     id:ulong;
     filename:string;
+    file_path:string;
     file_size:uint;
     /// objectbox: date
     date_created:long;
     date_modified:long;
     
+    disease:string;
     confidence_score:float;
 
     /// objectbox:relation=History

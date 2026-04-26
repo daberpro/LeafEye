@@ -134,6 +134,8 @@ struct FileHistory {
     float confidence_score;
     uint32_t file_size;
     obx_id history_id;
+    std::string file_path;
+    std::string disease;
 
     struct _OBX_MetaInfo {
         static constexpr obx_schema_id entityId() { return 5; }
@@ -162,5 +164,7 @@ struct FileHistory_ {
     static const obx::Property<FileHistory, OBXPropertyType_Float> confidence_score;
     static const obx::Property<FileHistory, OBXPropertyType_Int> file_size;
     static const obx::RelationProperty<FileHistory, History> history_id;
+    static const obx::Property<FileHistory, OBXPropertyType_String> file_path;
+    static const obx::Property<FileHistory, OBXPropertyType_String> disease;
 };
 

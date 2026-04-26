@@ -80,7 +80,9 @@ static inline OBX_model* create_obx_model() {
     obx_model_property(model, "history_id", OBXPropertyType_Relation, 7, 6552531899135967717);
     obx_model_property_flags(model, OBXPropertyFlags_INDEXED | OBXPropertyFlags_INDEX_PARTIAL_SKIP_ZERO);
     obx_model_property_relation(model, "History", 3, 3516362836295967298);
-    obx_model_entity_last_property_id(model, 7, 6552531899135967717);
+    obx_model_property(model, "file_path", OBXPropertyType_String, 8, 4729924614752333564);
+    obx_model_property(model, "disease", OBXPropertyType_String, 9, 3392368702361328278);
+    obx_model_entity_last_property_id(model, 9, 3392368702361328278);
     
     obx_model_last_entity_id(model, 5, 7203642947974398314);
     obx_model_last_index_id(model, 7, 5339488725715556934);

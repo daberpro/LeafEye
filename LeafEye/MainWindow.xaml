@@ -45,7 +45,8 @@
                             Width="30"
                             Height="30"
                             Margin="0,0,10,0"
-                            Initials="JD"
+                            Initials="DB"
+                            ProfilePicture="{x:Bind Profile.AvatarPath, Mode=OneWay}"
                             Tapped="ProfilePic_Tapped" />
                         <ToggleSwitch
                             x:Name="ThemeToggleSwitch"
@@ -99,5 +100,13 @@
                     Navigated="contentFrame_Navigated" />
             </NavigationView.Content>
         </NavigationView>
+
+        <Frame
+            x:Name="overlayFrame"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2" />
+
+
     </Grid>
 </Window>

@@ -18,24 +18,21 @@ namespace winrt::LeafEye::implementation
         InitializeComponent();
         m_users_list = winrt::single_threaded_observable_vector<winrt::LeafEyeCore::UserModel>();
         UserListView().ItemsSource(m_users_list);
+        m_profile = winrt::LeafEyeCore::ProfileModel(0,L"No Profile",L"ms-appx:///Assets/PlaceholderImage.png",0);
     }
 
 
     void UsersPage::OnNavigatedTo(Navigation::NavigationEventArgs const& e)
     {
-        if (e.Parameter())
-        {
-            m_db = e.Parameter().as<winrt::LeafEyeCore::Database>();
-        }
         
-        
+        auto database = winrt::LeafEye::Utils::AppSession::GetDatabase();
         RegisterPaginationCallback(
             UserFilterType::None,
-            [this](int64_t offset, int64_t limit) -> winrt::fire_and_forget {
+            [this,database](int64_t offset, int64_t limit) -> winrt::fire_and_forget {
 
                 winrt::apartment_context ui_thread;
                 co_await winrt::resume_background();
-                auto result = co_await m_db.GetAllUsers(offset, limit);
+                auto result = co_await database.GetAllUsers(offset, limit);
                 co_await ui_thread;
 
                 if (!result.IsError() && result.IsValueExists()) {
@@ -51,10 +48,10 @@ namespace winrt::LeafEye::implementation
                 }
 
             },
-            [this]() -> winrt::Windows::Foundation::IAsyncOperation<uint64_t> {
-                auto result = co_await m_db.GetUserCount();
+            [this,database]() -> winrt::Windows::Foundation::IAsyncOperation<uint64_t> {
+                auto result = co_await database.GetUserCount();
                 if (!result.IsError() && result.IsValueExists()) {
-                    co_return result.ResultValue().as<uint64_t>();
+					co_return static_cast<uint64_t>(result.ResultValue().as<size_t>());
                 }
                 co_return 0;
             }
@@ -62,7 +59,7 @@ namespace winrt::LeafEye::implementation
 
         RegisterPaginationCallback(
             UserFilterType::Username,
-            [this](int64_t offset, int64_t limit) -> winrt::fire_and_forget {
+            [this,database](int64_t offset, int64_t limit) -> winrt::fire_and_forget {
                 auto username = SearchBar().Text();
                 winrt::LeafEyeCore::Result result;
                 
@@ -73,7 +70,7 @@ namespace winrt::LeafEye::implementation
 
                 winrt::apartment_context ui_thread;
                 co_await winrt::resume_background();
-                result = co_await m_db.GetUserContainsUsername(username, offset, limit);
+                result = co_await database.GetUserContainsUsername(username, offset, limit);
 
                 co_await ui_thread;
 
@@ -91,13 +88,13 @@ namespace winrt::LeafEye::implementation
 
             },
             [this]() -> winrt::Windows::Foundation::IAsyncOperation<uint64_t> {
-                co_return m_users_list.Size();
+				co_return static_cast<uint64_t>(m_users_list.Size());
             }
         );
 
         RegisterPaginationCallback(
             UserFilterType::AccessLevel,
-            [this](int64_t offset, int64_t limit) -> winrt::fire_and_forget {
+            [this,database](int64_t offset, int64_t limit) -> winrt::fire_and_forget {
                 auto item = AccessLevel().SelectedItem().as<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem>();
                 auto access_level = item.Content().as<winrt::hstring>();
                 winrt::LeafEyeCore::Result result;
@@ -110,7 +107,7 @@ namespace winrt::LeafEye::implementation
                 winrt::apartment_context ui_thread;
                 co_await winrt::resume_background();
                 auto is_admin = access_level == L"Admin";
-                result = co_await m_db.GetUserByAccessLevel(is_admin, offset, limit);
+                result = co_await database.GetUserByAccessLevel(is_admin, offset, limit);
 
                 co_await ui_thread;
 
@@ -127,8 +124,8 @@ namespace winrt::LeafEye::implementation
                 }
 
             },
-            [this]() -> winrt::Windows::Foundation::IAsyncOperation<uint64_t> {
-                co_return m_users_list.Size();
+            [this,database]() -> winrt::Windows::Foundation::IAsyncOperation<uint64_t> {
+                co_return static_cast<uint64_t>(m_users_list.Size());
             }
         );
 
@@ -166,10 +163,11 @@ namespace winrt::LeafEye::implementation
 
     winrt::fire_and_forget UsersPage::AddUserButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
+        auto database = winrt::LeafEye::Utils::AppSession::GetDatabase();
         LeafEye::AddUserDialog dialog;
         dialog.XamlRoot(this->Content().XamlRoot());
 
-        dialog.PrimaryButtonClick([this, dialog](winrt::Microsoft::UI::Xaml::Controls::ContentDialog sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs args) -> winrt::fire_and_forget {
+        dialog.PrimaryButtonClick([this, dialog, database](winrt::Microsoft::UI::Xaml::Controls::ContentDialog sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs args) -> winrt::fire_and_forget {
             auto defferal = args.GetDeferral();
             if (args.Cancel()) { defferal.Complete(); co_return; }
 
@@ -178,17 +176,33 @@ namespace winrt::LeafEye::implementation
             bool isAdmin = dialog.IsAdmin();
 
             auto user = winrt::LeafEyeCore::UserModel(username, password, isAdmin);
-            auto result = co_await m_db.AddUser(user);
+            auto profile = winrt::LeafEyeCore::ProfileModel(0, L"User", L"ms-appx:///Assets/PlaceholderImage.png", 0);
+            auto result = co_await database.AddUser(user);
+            auto result_create_profile = co_await database.AddUserProfile(profile);
 
             if (!result.IsError()) {
-                m_users_list.Append(user);
+                if (!result_create_profile.IsError()) {
+                    auto link_profile_to_user = co_await database.LinkUserProfile(result.ResultValue().as<obx_id>(), result_create_profile.ResultValue().as<obx_id>());
+                    if (!link_profile_to_user.IsError()) {
+						user.Id(result.ResultValue().as<obx_id>());
+                        m_users_list.Append(user);
+                    }
+                    else {
+						args.Cancel(true);
+						dialog.ShowMessage(link_profile_to_user.Message(), winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+                    }
+                }
+                else {
+                    args.Cancel(true);
+					dialog.ShowMessage(result_create_profile.Message(), winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+                }
             }
             else {
                 args.Cancel(true);
                 dialog.ShowMessage(result.Message(), winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
             }
             defferal.Complete();
-            });
+        });
 
         auto dialog_result = co_await dialog.ShowAsync();
 
@@ -204,6 +218,7 @@ namespace winrt::LeafEye::implementation
 
     winrt::fire_and_forget UsersPage::UpdateUserBtn_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
+        auto database = winrt::LeafEye::Utils::AppSession::GetDatabase();
         auto btn = sender.as<winrt::Microsoft::UI::Xaml::Controls::Button>();
         auto user_data = btn.Tag().as<winrt::LeafEyeCore::UserModel>();
 
@@ -215,18 +230,23 @@ namespace winrt::LeafEye::implementation
         updateDialog.XamlRoot(this->XamlRoot());
         updateDialog.SetUserData(username, isAdmin);
 
+
         auto update_result = co_await updateDialog.ShowAsync();
         if (update_result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary) {
+
+			username = updateDialog.Username();
+			isAdmin = updateDialog.IsAdmin();
+            auto password = updateDialog.Password();
 
             winrt::apartment_context ui_thread;
             co_await winrt::resume_background();
 
             auto new_user_data = winrt::LeafEyeCore::UserModel(
-                updateDialog.Username(), L"", updateDialog.IsAdmin()
+                username, password, isAdmin
             );
             new_user_data.Id(id);
 
-            auto result = co_await m_db.UpdateUser(new_user_data);
+            auto result = co_await database.UpdateUser(new_user_data);
 
             co_await ui_thread;
 
@@ -254,6 +274,7 @@ namespace winrt::LeafEye::implementation
 
     winrt::fire_and_forget UsersPage::DeleteUserBtn_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
+        auto database = winrt::LeafEye::Utils::AppSession::GetDatabase();
         auto btn = sender.as<winrt::Microsoft::UI::Xaml::Controls::Button>();
         auto user_data = btn.Tag().as<winrt::LeafEyeCore::UserModel>();
 
@@ -269,7 +290,7 @@ namespace winrt::LeafEye::implementation
             winrt::apartment_context ui_thread;
             co_await winrt::resume_background();
 
-            auto result = co_await m_db.DeleteUser(user_data.Id());
+            auto result = co_await database.DeleteUser(user_data.Id());
 
             co_await ui_thread;
 
@@ -386,5 +407,43 @@ namespace winrt::LeafEye::implementation
     }
 
     // ================================= Pagination =========================================
+    
+    winrt::fire_and_forget UsersPage::UserListView_ItemClick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::ItemClickEventArgs const& e)
+    {
+        auto database = winrt::LeafEye::Utils::AppSession::GetDatabase();
+		auto data = e.ClickedItem().as<winrt::LeafEyeCore::UserModel>();
+		winrt::apartment_context ui_thread;
+        auto id = data.Id();
+		co_await winrt::resume_background();
+        auto profile = co_await database.GetUserProfileByLink(id);
+		co_await ui_thread;
+
+        if (!profile.IsError() && profile.IsValueExists()) {
+		    auto profile_data = profile.ResultValue().as<winrt::LeafEyeCore::ProfileModel>();
+			m_profile.Id(profile_data.Id());
+			m_profile.Fullname(profile_data.Fullname());
+			m_profile.AvatarPath(profile_data.AvatarPath());
+            m_profile.Role(data.IsAdmin() ? static_cast<int32_t>(winrt::LeafEyeCore::UserRole::Admin) : static_cast<int32_t>(winrt::LeafEyeCore::UserRole::User));
+        }
+        else {
+            winrt::Microsoft::UI::Xaml::Controls::ContentDialog errorDialog{};
+            errorDialog.Title(box_value(L"Error"));
+            errorDialog.Content(box_value(profile.Message()));
+            errorDialog.CloseButtonText(L"Ok");
+            errorDialog.XamlRoot(this->XamlRoot());
+            co_await errorDialog.ShowAsync();
+        }
+        co_return;
+    }
+
+    winrt::LeafEyeCore::ProfileModel UsersPage::Profile() {
+        return m_profile;
+    };
+
+    void UsersPage::UserRefreshContainer_RefreshRequested(winrt::Microsoft::UI::Xaml::Controls::RefreshContainer const& sender, winrt::Microsoft::UI::Xaml::Controls::RefreshRequestedEventArgs const& args)
+    {
+        PaginationSetUp();
+    }
 
 }
+

@@ -1,6 +1,6 @@
 #pragma once
-
 #include "App.xaml.g.h"
+#include "Utils/AppSession.h"
 
 namespace winrt::LeafEye::implementation
 {
