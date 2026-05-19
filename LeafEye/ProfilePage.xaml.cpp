@@ -28,12 +28,7 @@ namespace winrt::LeafEye::implementation
 		return winrt::LeafEye::Utils::AppSession::GetUser();
 	}
 
-	void ProfilePage::Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-	{
-		if (auto mainWindow = App::Window().try_as<winrt::LeafEye::implementation::MainWindow>())
-			mainWindow->Logout();
-	}
-
+	
 	winrt::fire_and_forget ProfilePage::EditPhoto_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e) {
 		auto lifetime = get_strong();
 
@@ -67,6 +62,8 @@ namespace winrt::LeafEye::implementation
 
 			// 4. Terapkan ke kontrol Image di XAML sebagai preview
 			ImageProfile().Source(bitmapImage);
+
+			IsChanged(true);
 		}
 	}
 

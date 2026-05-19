@@ -1,0 +1,9 @@
+// FileHistoryDetailDialog.idl
+namespace LeafEye
+{
+    [default_interface]
+    runtimeclass FileHistoryDetailDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+    {
+        FileHistoryDetailDialog(LeafEyeCore.FileHistoryModel model);
+    }
+}

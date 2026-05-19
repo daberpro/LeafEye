@@ -6,6 +6,7 @@ namespace LeafEye
         MainWindow();
         
         LeafEyeCore.ProfileModel Profile{set;get;};
+        LeafEyeCore.UserModel User{set;get;};
         String MyStatusText;
         void DismissOverlay();
         void Logout();

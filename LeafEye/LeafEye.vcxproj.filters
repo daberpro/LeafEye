@@ -14,6 +14,7 @@
     <Page Include="AddUserDialog.xaml" />
     <Page Include="UpdateUserDialog.xaml" />
     <Page Include="LoginPage.xaml" />
+    <Page Include="FileHistoryDetailDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -30,6 +31,7 @@
     <ClInclude Include="Base\PaginationBaseExperiment.h" />
     <ClInclude Include="FileItemsHomePageModel.h" />
     <ClInclude Include="Utils\AppSession.h" />
+    <ClInclude Include="Utils\LeafEyeDetector.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -73,6 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="C:\Users\TUF\Downloads\leafeye_pipeline_v1.onnx.data" />
+    <None Include="C:\Users\TUF\Downloads\leafeye_pipeline_v1.onnx" />
+    <None Include="Assets\leafeye_pipeline_v1.onnx" />
+    <None Include="Assets\leafeye_pipeline_v1.onnx.data" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime.dll" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime_providers_shared.dll" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

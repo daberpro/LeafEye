@@ -10,361 +10,292 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <core:StringFormatConverter x:Name="FormatConverter" />
-
-        <Style x:Key="ShadcnPrimaryButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            <Setter Property="Foreground" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Padding" Value="20,8" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
-
-        <Style x:Key="ShadcnOutlineButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Padding" Value="20,8" />
-            <Setter Property="FontSize" Value="13" />
-        </Style>
-
-        <Style x:Key="ShadcnInputStyle" TargetType="TextBox">
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
-            <Setter Property="Padding" Value="12,8" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-        </Style>
-
-        <Style x:Key="ShadcnPasswordStyle" TargetType="PasswordBox">
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
-            <Setter Property="Padding" Value="12,8" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-        </Style>
-
-        <Style x:Key="StatLabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
-        </Style>
-
-        <Style x:Key="StatValueStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
-
-        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
-        </Style>
+        <core:StringFormatConverter x:Key="FormatConverter" />
     </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="320" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!--  Sidebar kiri  -->
         <Border
             Grid.Column="0"
-            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="0,0,1,0">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel Padding="28,36,28,36" Spacing="32">
+                <StackPanel Padding="32,40,32,40" Spacing="32">
 
-                    <!--  Avatar + nama  -->
-                    <StackPanel Spacing="14">
+                    <StackPanel Spacing="16">
                         <Grid
-                            Width="96"
-                            Height="96"
-                            HorizontalAlignment="Left">
+                            Width="100"
+                            Height="100"
+                            HorizontalAlignment="Center">
                             <Border
-                                Width="96"
-                                Height="96"
+                                Width="100"
+                                Height="100"
                                 Background="{ThemeResource ControlFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
                                 BorderThickness="1"
-                                CornerRadius="100">
+                                CornerRadius="50">
                                 <Image
                                     x:Name="ImageProfile"
                                     Source="{x:Bind Profile.AvatarPath, Mode=OneWay}"
                                     Stretch="UniformToFill" />
                             </Border>
-                            <!--  Tombol edit foto  -->
+
                             <Button
                                 x:Name="EditPhoto"
-                                Width="26"
-                                Height="26"
-                                Margin="0,0,0,0"
+                                Width="32"
+                                Height="32"
                                 Padding="0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
                                 BorderThickness="1"
                                 Click="EditPhoto_Click"
-                                CornerRadius="13"
+                                CornerRadius="16"
                                 ToolTipService.ToolTip="Ganti foto profil">
-                                <FontIcon FontSize="11" Glyph="&#xE70F;" />
+                                <FontIcon FontSize="12" Glyph="&#xE70F;" />
                             </Button>
                         </Grid>
 
-                        <StackPanel Spacing="2">
+                        <StackPanel HorizontalAlignment="Stretch" Spacing="4">
                             <TextBlock
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                Text="{x:Bind Profile.Fullname, Mode=OneWay}" />
+                                Style="{ThemeResource TitleTextBlockStyle}"
+                                Text="{x:Bind Profile.Fullname, Mode=OneWay}"
+                                TextAlignment="Center" />
                             <TextBlock
-                                FontSize="13"
-                                Foreground="{ThemeResource SystemAccentColor}"
-                                Text="{x:Bind core:UserRoleHelper.ConvertUserIntRoleToString(Profile.Role), Mode=OneWay}" />
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind User.Username, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <Grid Margin="0,10,0,0" ColumnSpacing="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Grid.Column="0"
+                                    Padding="5,10"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    CornerRadius="20">
+                                    <TextBlock
+                                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                        Style="{ThemeResource BodyTextBlockStyle}"
+                                        Text="{x:Bind core:UserRoleHelper.ConvertUserIntRoleToString(Profile.Role), Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                </Border>
+                                <Border
+                                    Grid.Column="1"
+                                    Padding="5,10"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    CornerRadius="20">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource BodyTextBlockStyle}"
+                                        Text="{x:Bind local:UsersPage.ConvertToUserStatus(User.IsAdmin), Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </StackPanel>
                     </StackPanel>
 
-                    <!--  Divider  -->
                     <MenuFlyoutSeparator />
 
-                    <!--  Statistik  -->
                     <StackPanel Spacing="16">
                         <TextBlock
-                            CharacterSpacing="80"
-                            FontSize="11"
+                            CharacterSpacing="50"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
                             Text="STATISTIK PENGGUNA" />
 
-                        <!--  ID Pengguna  -->
-                        <StackPanel Spacing="12">
-                            <Grid ColumnSpacing="12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="Auto, *">
                                 <FontIcon
-                                    FontSize="14"
+                                    Grid.Column="0"
+                                    Margin="0,0,16,0"
+                                    FontSize="16"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Glyph="&#xE77B;" />
-                                <StackPanel Grid.Column="1" Spacing="1">
-                                    <TextBlock Style="{StaticResource StatLabelStyle}" Text="ID Pengguna" />
-                                    <TextBlock Style="{StaticResource StatValueStyle}" Text="{x:Bind Profile.Id, Mode=OneWay}" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="ID Pengguna" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Profile.Id, Mode=OneWay}" />
                                 </StackPanel>
                             </Grid>
 
-                            <MenuFlyoutSeparator Opacity="0.4" />
+                            <MenuFlyoutSeparator Opacity="0.5" />
 
-                            <Grid ColumnSpacing="12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                            <Grid ColumnDefinitions="Auto, *">
                                 <FontIcon
-                                    FontSize="14"
+                                    Grid.Column="0"
+                                    Margin="0,0,16,0"
+                                    FontSize="16"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Glyph="&#xE716;" />
-                                <StackPanel Grid.Column="1" Spacing="1">
-                                    <TextBlock Style="{StaticResource StatLabelStyle}" Text="Bergabung sejak" />
-                                    <TextBlock Style="{StaticResource StatValueStyle}" Text="12 Feb 2026" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="Bergabung sejak" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="12 Feb 2026" />
                                 </StackPanel>
                             </Grid>
 
-                            <MenuFlyoutSeparator Opacity="0.4" />
+                            <MenuFlyoutSeparator Opacity="0.5" />
 
-                            <Grid ColumnSpacing="12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                            <Grid ColumnDefinitions="Auto, *">
                                 <FontIcon
-                                    FontSize="14"
+                                    Grid.Column="0"
+                                    Margin="0,0,16,0"
+                                    FontSize="16"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Glyph="&#xE9D2;" />
-                                <StackPanel Grid.Column="1" Spacing="1">
-                                    <TextBlock Style="{StaticResource StatLabelStyle}" Text="Total deteksi valid" />
-                                    <TextBlock Style="{StaticResource StatValueStyle}" Text="1,240 file" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="Total deteksi valid" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="1,240 file" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </StackPanel>
-
                 </StackPanel>
             </ScrollViewer>
         </Border>
 
-        <!--  Konten kanan  -->
         <ScrollViewer
             Grid.Column="1"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <StackPanel
-                Margin="0"
-                Padding="40,36,40,40"
+                Padding="48,40,48,48"
                 HorizontalAlignment="Stretch"
-                Spacing="28">
+                Spacing="32">
 
-                <!--  Header  -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0" Spacing="3">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Pengaturan profil" />
+                <Grid ColumnDefinitions="*, Auto">
+                    <StackPanel
+                        Grid.Column="0"
+                        Margin="0,0,40,0"
+                        Spacing="4">
+                        <TextBlock Style="{ThemeResource TitleLargeTextBlockStyle}" Text="Pengaturan profil" />
                         <TextBlock
-                            FontSize="13"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Kelola informasi akun dan keamanan Anda" />
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="Kelola informasi akun dan preferensi keamanan Anda." />
                     </StackPanel>
 
-                    <Button
-                        Grid.Column="1"
-                        Padding="12,7"
-                        VerticalAlignment="Top"
-                        Background="#10EF4444"
-                        BorderBrush="#33EF4444"
-                        BorderThickness="1"
-                        Click="Button_Click"
-                        CornerRadius="6">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon
-                                FontSize="13"
-                                Foreground="#EF4444"
-                                Glyph="&#xE7E8;" />
-                            <TextBlock
-                                FontSize="13"
-                                FontWeight="Medium"
-                                Foreground="#EF4444"
-                                Text="Log out" />
-                        </StackPanel>
-                    </Button>
+
                 </Grid>
 
-                <!--  Tab  -->
-                <StackPanel Spacing="0">
-                    <StackPanel Orientation="Horizontal" Spacing="24">
-                        <StackPanel Spacing="8">
-                            <TextBlock
-                                FontSize="13"
-                                FontWeight="SemiBold"
-                                Text="Informasi akun" />
-                            <Border
-                                Height="1.5"
-                                Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                CornerRadius="1" />
-                        </StackPanel>
-                        <StackPanel Opacity="0.4" Spacing="8">
-                            <TextBlock FontSize="13" Text="Keamanan" />
-                            <Border Height="1.5" Background="Transparent" />
-                        </StackPanel>
-                    </StackPanel>
-                    <MenuFlyoutSeparator Margin="0,-1,0,0" />
-                </StackPanel>
-
-                <!--  Informasi dasar  -->
                 <StackPanel Spacing="16">
                     <TextBlock
-                        CharacterSpacing="80"
-                        FontSize="11"
+                        CharacterSpacing="50"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
                         Text="INFORMASI DASAR" />
 
-                    <Grid ColumnSpacing="16">
+                    <Grid ColumnSpacing="24">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" Spacing="6">
-                            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Nama lengkap" />
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Nama lengkap" />
                             <TextBox
                                 x:Name="FullNameInput"
-                                Style="{StaticResource ShadcnInputStyle}"
                                 Text="{x:Bind Profile.Fullname, Mode=OneWay}"
                                 TextChanged="FullNameInput_TextChanged" />
                         </StackPanel>
-
-                        <StackPanel Grid.Column="1" Spacing="6">
-                            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Username" />
+                        <StackPanel Grid.Column="1" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Username" />
                             <TextBox
                                 x:Name="UsernameInput"
-                                Style="{StaticResource ShadcnInputStyle}"
                                 Text="{x:Bind User.Username, Mode=OneWay}"
                                 TextChanged="UsernameInput_TextChanged" />
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <MenuFlyoutSeparator Opacity="0.4" />
+                <MenuFlyoutSeparator Opacity="0.5" />
 
-                <!--  Ubah kata sandi  -->
                 <StackPanel Spacing="16">
-                    <StackPanel Spacing="2">
+                    <StackPanel Spacing="4">
                         <TextBlock
-                            CharacterSpacing="80"
-                            FontSize="11"
+                            CharacterSpacing="50"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
                             Text="KATA SANDI" />
                         <TextBlock
-                            FontSize="12"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Perbarui kata sandi untuk menjaga keamanan akun" />
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="Perbarui kata sandi untuk menjaga keamanan akun." />
                     </StackPanel>
 
-                    <StackPanel Spacing="6">
-                        <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Kata sandi saat ini" />
+                    <StackPanel
+                        MaxWidth="400"
+                        HorizontalAlignment="Left"
+                        Spacing="8">
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="Kata sandi saat ini" />
                         <PasswordBox
                             x:Name="OldPasswordInput"
                             PasswordChanged="OldPasswordInput_PasswordChanged"
-                            PlaceholderText="Masukkan sandi lama"
-                            Style="{StaticResource ShadcnPasswordStyle}" />
+                            PlaceholderText="Masukkan sandi lama" />
                     </StackPanel>
 
-                    <Grid ColumnSpacing="16">
+                    <Grid ColumnSpacing="24">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" Spacing="6">
-                            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Kata sandi baru" />
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Kata sandi baru" />
                             <PasswordBox
                                 x:Name="NewPasswordInput"
                                 PasswordChanged="NewPasswordInput_PasswordChanged"
-                                PlaceholderText="Min. 8 karakter"
-                                Style="{StaticResource ShadcnPasswordStyle}" />
+                                PlaceholderText="Min. 8 karakter" />
                         </StackPanel>
-
-                        <StackPanel Grid.Column="1" Spacing="6">
-                            <TextBlock Style="{StaticResource FieldLabelStyle}" Text="Konfirmasi sandi" />
+                        <StackPanel Grid.Column="1" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Konfirmasi sandi" />
                             <PasswordBox
                                 x:Name="ConfirmPasswordInput"
                                 PasswordChanged="ConfirmPasswordInput_PasswordChanged"
-                                PlaceholderText="Ulangi sandi"
-                                Style="{StaticResource ShadcnPasswordStyle}" />
+                                PlaceholderText="Ulangi sandi" />
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <!--  Tombol aksi  -->
                 <StackPanel
-                    Margin="0,4,0,0"
+                    Margin="0,16,0,0"
                     Orientation="Horizontal"
-                    Spacing="10">
+                    Spacing="12">
                     <Button
                         x:Name="Save"
                         Click="Save_Click"
                         Content="Simpan perubahan"
-                        IsEnabled="{x:Bind IsChanged, Mode=OneWay}" />
-                    <Button Content="Batal" Style="{StaticResource ShadcnOutlineButtonStyle}" />
+                        IsEnabled="{x:Bind IsChanged, Mode=OneWay}"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <Button Content="Batal" />
                 </StackPanel>
 
             </StackPanel>

@@ -30,6 +30,15 @@ namespace winrt::LeafEye::implementation
 		}
 	}
 
+	winrt::LeafEyeCore::UserModel MainWindow::User() { return m_user; }
+	void MainWindow::User(winrt::LeafEyeCore::UserModel const& value)
+	{
+		if (m_user != value) {
+			m_user = value;
+			RaisePropertyChanged(L"User");
+		}
+	}
+
 	void MainWindow::SetStatusLog(const winrt::LeafEyeCore::Result& result) {}
 
 	void MainWindow::OnClosed(IInspectable const&, WindowEventArgs const&)

@@ -7,6 +7,7 @@ namespace LeafEye
         LeafEyeCore.ProfileModel Profile{ get; };
         LeafEyeCore.UserModel User{ get; };
         static String GetUserNameAndFullNameString(String username, String fullname);
+    
 
         Boolean IsChanged{get;set;};
     }

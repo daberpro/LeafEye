@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="LeafEye.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -12,25 +11,31 @@
 
     <Grid Padding="40" RowDefinitions="Auto, *, Auto">
 
-        <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel Spacing="4">
-                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Deteksi penyakit" />
+        <Grid
+            Grid.Row="0"
+            Margin="0,0,0,24"
+            ColumnDefinitions="*, Auto">
+            <StackPanel
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Spacing="4">
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Deteksi penyakit" />
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Style="{StaticResource BodyTextBlockStyle}"
+                    Style="{ThemeResource BodyTextBlockStyle}"
                     Text="Upload gambar daun untuk mendeteksi penyakit." />
             </StackPanel>
 
-            <StackPanel
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Spacing="12">
-                <Button
-                    x:Name="SelectFolderOutputButton"
-                    Click="SelectFolderOutputButton_Click"
-                    Content="Pilih Folder Output"
-                    Style="{StaticResource ShadcnOutlineButtonStyle}" />
-            </StackPanel>
+            <Button
+                x:Name="SelectFolderOutputButton"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Click="SelectFolderOutputButton_Click">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="14" Glyph="&#xE8B7;" />
+                    <TextBlock Text="Pilih Folder Output" />
+                </StackPanel>
+            </Button>
         </Grid>
 
         <Grid Grid.Row="1" ColumnSpacing="24">
@@ -46,6 +51,7 @@
                 DragLeave="DropTarget_DragLeave"
                 DragOver="DropTarget_DragOver"
                 Drop="DropTarget_Drop">
+
                 <Rectangle
                     Fill="{ThemeResource LayerFillColorAltBrush}"
                     RadiusX="8"
@@ -57,29 +63,30 @@
                 <StackPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Spacing="16">
+                    Spacing="20">
+
                     <Border
-                        Width="64"
-                        Height="64"
+                        Width="72"
+                        Height="72"
                         Background="{ThemeResource LayerFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
                         BorderThickness="1"
-                        CornerRadius="32">
+                        CornerRadius="36">
                         <FontIcon
-                            FontSize="24"
-                            Foreground="{StaticResource BrandPrimaryBrush}"
+                            FontSize="28"
+                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                             Glyph="&#xE8B0;" />
                     </Border>
 
-                    <StackPanel HorizontalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
                         <TextBlock
                             HorizontalAlignment="Center"
-                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
                             Text="Drag &amp; Drop gambar di sini" />
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
                             Text="atau klik tombol di bawah" />
                     </StackPanel>
 
@@ -87,56 +94,47 @@
                         x:Name="FilePicker"
                         HorizontalAlignment="Center"
                         Click="FilePicker_Click"
-                        Content="Pilih File"
-                        Style="{StaticResource ShadcnOutlineButtonStyle}" />
+                        Content="Pilih File" />
                 </StackPanel>
             </Grid>
 
             <Border
                 Grid.Column="1"
-                Margin="0"
-                Style="{StaticResource ShadcnCardStyle}">
+                Padding="16"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
                 <Grid RowDefinitions="Auto, *">
 
-                    <Grid Grid.Row="0" Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
+                    <Grid
+                        Grid.Row="0"
+                        Margin="0,0,0,16"
+                        ColumnDefinitions="*, Auto">
                         <StackPanel
                             Grid.Column="0"
                             VerticalAlignment="Center"
                             Spacing="4">
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Antrian File" />
-                            <Grid ColumnSpacing="8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
+                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Antrian File" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon
-                                    Grid.Column="0"
                                     FontSize="12"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Glyph="&#xEC50;" />
-
                                 <TextBlock
-                                    Grid.Column="1"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
                                     Text="{x:Bind HistoryInfo.OutputFolder, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
                                     ToolTipService.ToolTip="{x:Bind HistoryInfo.OutputFolder, Mode=OneWay}" />
-                            </Grid>
+                            </StackPanel>
                         </StackPanel>
 
                         <StackPanel
                             Grid.Column="1"
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
-                            Spacing="8">
+                            Spacing="12">
                             <CheckBox
                                 x:Name="SelectAllFilesCheckBox"
                                 Margin="0"
@@ -153,7 +151,7 @@
                                 ToolTipService.ToolTip="Hapus file terpilih">
                                 <FontIcon
                                     FontSize="14"
-                                    Foreground="Red"
+                                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
                                     Glyph="&#xE74D;" />
                             </Button>
                         </StackPanel>
@@ -165,7 +163,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Style="{StaticResource BodyTextBlockStyle}"
+                        Style="{ThemeResource BodyTextBlockStyle}"
                         Text="Tidak ada file dalam antrian. Tambahkan file untuk memulai." />
 
                     <ListView
@@ -178,7 +176,7 @@
                                 <Border
                                     Padding="12"
                                     Background="{ThemeResource LayerFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="8">
                                     <Grid ColumnDefinitions="Auto, Auto, *, Auto">
@@ -186,7 +184,7 @@
                                         <CheckBox
                                             Grid.Column="0"
                                             MinWidth="0"
-                                            Margin="0,0,12,0"
+                                            Margin="0,0,16,0"
                                             VerticalAlignment="Center"
                                             IsChecked="{x:Bind Selected, Mode=TwoWay}" />
 
@@ -194,9 +192,9 @@
                                             Grid.Column="1"
                                             Width="48"
                                             Height="48"
-                                            Margin="0,0,12,0"
+                                            Margin="0,0,16,0"
                                             Background="{ThemeResource LayerFillColorAltBrush}"
-                                            CornerRadius="4">
+                                            CornerRadius="6">
                                             <Image Source="{x:Bind FilePath, Mode=OneWay}" Stretch="UniformToFill" />
                                         </Border>
 
@@ -205,28 +203,25 @@
                                             VerticalAlignment="Center"
                                             Spacing="2">
                                             <TextBlock
-                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
                                                 Text="{x:Bind FileName, Mode=OneWay}"
                                                 TextTrimming="CharacterEllipsis"
                                                 ToolTipService.ToolTip="{x:Bind FileName, Mode=OneWay}" />
                                             <TextBlock
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Style="{ThemeResource CaptionTextBlockStyle}"
                                                 Text="{x:Bind local:HomePage.ConvertToDateTimeString(DateCreated)}" />
                                         </StackPanel>
 
-                                        <StackPanel
+                                        <TextBlock
                                             Grid.Column="3"
                                             HorizontalAlignment="Right"
-                                            VerticalAlignment="Center">
-                                            <TextBlock
-                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="{x:Bind local:HomePage.ConvertToFileSizeString(FileSize), Mode=OneWay}" />
-                                        </StackPanel>
+                                            VerticalAlignment="Center"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Style="{ThemeResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind local:HomePage.ConvertToFileSizeString(FileSize), Mode=OneWay}" />
                                     </Grid>
                                 </Border>
-
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemContainerStyle>
@@ -236,7 +231,6 @@
                                 <Setter Property="Padding" Value="0" />
                             </Style>
                         </ListView.ItemContainerStyle>
-
                     </ListView>
                 </Grid>
             </Border>
@@ -246,32 +240,44 @@
         <Border
             Grid.Row="2"
             Margin="0,24,0,0"
-            Padding="24"
-            Background="{ThemeResource LayerFillColorDefaultBrush}"
-            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="8">
-            <Grid ColumnDefinitions="*, Auto">
-                <StackPanel VerticalAlignment="Center" Spacing="4">
-                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind ProcessButtonInfo, Mode=OneWay}" />
-                    <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="2 file terpilih dalam 1 batch." />
-                </StackPanel>
 
-                <Button
-                    x:Name="ProcessButton"
-                    Grid.Column="1"
-                    Click="ProcessButton_Click"
-                    IsEnabled="{x:Bind IsProcessButtonEnabled, Mode=OneWay}"
-                    Style="{StaticResource ShadcnPrimaryButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="14" Glyph="&#xE768;" />
-                        <TextBlock Text="Mulai Proses" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <ProgressBar x:Name="ProgressBar" Grid.Row="0" MinHeight="6" Value="0" />
+                <Grid Padding="24" Grid.Row="1" ColumnDefinitions="*, Auto">
+                    <StackPanel
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Spacing="4">
+                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind ProcessButtonInfo, Mode=OneWay}" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="2 file terpilih dalam 1 batch." />
                     </StackPanel>
-                </Button>
+                    <Button
+                        x:Name="ProcessButton"
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Click="ProcessButton_Click"
+                        IsEnabled="{x:Bind IsProcessButtonEnabled, Mode=OneWay}"
+                        Style="{ThemeResource AccentButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon FontSize="14" Glyph="&#xE768;" />
+                            <TextBlock Text="Mulai Proses" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
             </Grid>
+            
         </Border>
 
     </Grid>

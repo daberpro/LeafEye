@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="LeafEye.UsersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -13,246 +12,224 @@
         <core:StringFormatConverter x:Key="FormatConverter" />
     </Page.Resources>
 
-    <Grid Padding="40" RowDefinitions="Auto, *">
+    <Grid Padding="32" RowDefinitions="Auto,*">
 
-        <Grid Grid.Row="0" Margin="0,0,0,24">
+        <Grid
+            Grid.Row="0"
+            Margin="0,0,0,24"
+            ColumnDefinitions="*,Auto">
             <StackPanel VerticalAlignment="Center" Spacing="4">
-                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Manajemen Pengguna" />
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Manajemen Pengguna" />
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Text="Kelola daftar pengguna, peran, dan hak akses." />
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="Kelola daftar pengguna, peran, dan hak akses sistem LeafEye." />
             </StackPanel>
 
-            <StackPanel
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Spacing="12">
-                <TextBox
-                    x:Name="SearchBar"
-                    Width="200"
-                    VerticalAlignment="Center"
-                    PlaceholderText="Cari username..."
-                    TextChanged="SearchBar_TextChanged" />
+            <CommandBar
+                Grid.Column="1"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                IsOpen="False">
+                <AppBarElementContainer Margin="0,0,12,0" VerticalAlignment="Center">
+                    <AutoSuggestBox
+                        x:Name="SearchBar"
+                        Width="240"
+                        PlaceholderText="Cari username..."
+                        QueryIcon="Find"
+                        TextChanged="SearchBar_TextChanged" />
+                </AppBarElementContainer>
 
-                <ComboBox
-                    x:Name="AccessLevel"
-                    Width="170"
-                    VerticalAlignment="Center"
-                    PlaceholderText="Filter level akses"
-                    SelectionChanged="AccessLevel_SelectionChanged">
-                    <ComboBoxItem Content="Semua Level" />
-                    <ComboBoxItem Content="Admin" />
-                    <ComboBoxItem Content="User" />
-                </ComboBox>
+                <AppBarElementContainer Margin="0,0,12,0" VerticalAlignment="Center">
+                    <ComboBox
+                        x:Name="AccessLevel"
+                        Width="150"
+                        PlaceholderText="Filter level"
+                        SelectionChanged="AccessLevel_SelectionChanged">
+                        <ComboBoxItem Content="Semua Level" />
+                        <ComboBoxItem Content="Admin" />
+                        <ComboBoxItem Content="User" />
+                    </ComboBox>
+                </AppBarElementContainer>
 
-                <Button
+                <AppBarButton
                     x:Name="AddUserButton"
-                    VerticalAlignment="Center"
                     Click="AddUserButton_Click"
-                    Style="{StaticResource ShadcnPrimaryButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="14" Glyph="&#xE710;" />
-                        <TextBlock x:Uid="AddUser" Text="Tambahkan User" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+                    Icon="Add"
+                    Label="Tambah User" />
+            </CommandBar>
         </Grid>
 
-        <SplitView
-            Grid.Row="1"
-            DisplayMode="Inline"
-            IsPaneOpen="True"
-            OpenPaneLength="400"
-            PaneBackground="Transparent">
+        <Grid Grid.Row="1" ColumnDefinitions="380,24,*">
 
-            <SplitView.Pane>
-                <Border Margin="0,0,24,0" Style="{StaticResource ShadcnCardStyle}">
-                    <Grid RowDefinitions="Auto, *, Auto">
-                        <Border BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                            <StackPanel
-                                Margin="0,0,0,12"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-                                <TextBlock
-                                    Margin="0,0,16,0"
-                                    Style="{StaticResource SubtitleTextBlockStyle}"
-                                    Text="Daftar Pengguna" />
-                                <ComboBox
-                                    x:Name="PageSize"
-                                    Width="70"
-                                    VerticalAlignment="Center"
-                                    PlaceholderText="10"
-                                    SelectionChanged="PageSize_SelectionChanged">
-                                    <ComboBoxItem Content="2" />
-                                    <ComboBoxItem Content="5" />
-                                    <ComboBoxItem Content="10" IsSelected="True" />
-                                    <ComboBoxItem Content="20" />
-                                    <ComboBoxItem Content="30" />
-                                    <ComboBoxItem Content="40" />
-                                    <ComboBoxItem Content="50" />
-                                </ComboBox>
-                            </StackPanel>
-                        </Border>
-                        <RefreshContainer
-                            x:Name="UserRefreshContainer"
-                            Grid.Row="1"
-                            RefreshRequested="UserRefreshContainer_RefreshRequested">
-                            <ListView
-                                x:Name="UserListView"
-                                IsItemClickEnabled="True"
-                                ItemClick="UserListView_ItemClick"
-                                SelectionMode="Single">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="core:UserModel">
-                                        <Grid Padding="0,8" ColumnDefinitions="Auto, *, Auto">
-                                            <PersonPicture
-                                                Width="40"
-                                                Height="40"
-                                                Margin="0,0,12,0"
-                                                DisplayName="{x:Bind Username, Mode=OneWay}"
-                                                ProfilePicture="Assets/default_avatar.png" />
+            <Border
+                Grid.Column="0"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
 
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                VerticalAlignment="Center"
-                                                Spacing="2">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind Username, Mode=OneWay, Converter={StaticResource FormatConverter}, ConverterParameter='Username: {0}'}" />
-                                                <Border
-                                                    Padding="6,2"
-                                                    HorizontalAlignment="Left"
-                                                    Background="{ThemeResource LayerFillColorAltBrush}"
-                                                    CornerRadius="4">
-
-                                                    <TextBlock
-                                                        Foreground="{StaticResource BrandPrimaryBrush}"
-                                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                                        Text="{x:Bind local:UsersPage.ConvertToUserStatus(IsAdmin), Mode=OneWay}" />
-
-                                                </Border>
-                                            </StackPanel>
-
-                                            <StackPanel
-                                                Grid.Column="2"
-                                                VerticalAlignment="Center"
-                                                Orientation="Horizontal"
-                                                Spacing="8">
-                                                <Button
-                                                    x:Name="UpdateUserBtn"
-                                                    Padding="6"
-                                                    Click="UpdateUserBtn_Click"
-                                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
-                                                    Tag="{x:Bind}"
-                                                    ToolTipService.ToolTip="Update User">
-                                                    <FontIcon
-                                                        FontSize="14"
-                                                        Foreground="{StaticResource BrandPrimaryBrush}"
-                                                        Glyph="&#xE70F;" />
-                                                </Button>
-                                                <Button
-                                                    x:Name="DeleteUserBtn"
-                                                    Padding="6"
-                                                    Click="DeleteUserBtn_Click"
-                                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
-                                                    Tag="{x:Bind}"
-                                                    ToolTipService.ToolTip="Delete User">
-                                                    <FontIcon
-                                                        FontSize="14"
-                                                        Foreground="Red"
-                                                        Glyph="&#xE74D;" />
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </RefreshContainer>
-
-                        <Border
-                            Grid.Row="2"
-                            Margin="0,8,0,0"
-                            Padding="12,12,12,0"
-                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
-                            BorderThickness="0,1,0,0">
-                            <StackPanel
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal"
-                                Spacing="16">
-
-                                <Button
-                                    x:Name="PrevPageBtn"
-                                    Padding="8,4"
-                                    Click="PrevPageButton_Click"
-                                    IsEnabled="{x:Bind PrevPageEnabled, Mode=OneWay}"
-                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
-                                    ToolTipService.ToolTip="Previous Page">
-                                    <FontIcon FontSize="12" Glyph="&#xE76B;" />
-                                </Button>
-
-                                <TextBlock
-                                    x:Name="PageInfoText"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind GetPaginationInfo, Mode=OneWay}" />
-
-                                <Button
-                                    x:Name="NextPageBtn"
-                                    Padding="8,4"
-                                    Click="NextPageButton_Click"
-                                    IsEnabled="{x:Bind NextPageEnabled, Mode=OneWay}"
-                                    Style="{StaticResource ShadcnOutlineButtonStyle}"
-                                    ToolTipService.ToolTip="Next Page">
-                                    <FontIcon FontSize="12" Glyph="&#xE76C;" />
-                                </Button>
-
-                            </StackPanel>
-                        </Border>
-
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <Grid
+                        Padding="16"
+                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                        BorderThickness="0,0,0,1">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                            Text="Daftar Pengguna" />
+                        <ComboBox
+                            x:Name="PageSize"
+                            Width="68"
+                            HorizontalAlignment="Right"
+                            SelectedIndex="2"
+                            SelectionChanged="PageSize_SelectionChanged">
+                            <ComboBoxItem Content="5" />
+                            <ComboBoxItem Content="10" />
+                            <ComboBoxItem Content="20" />
+                            <ComboBoxItem Content="50" />
+                        </ComboBox>
                     </Grid>
-                </Border>
-            </SplitView.Pane>
 
-            <SplitView.Content>
-                <Border Margin="0" Style="{StaticResource ShadcnCardStyle}">
+                    <RefreshContainer
+                        x:Name="UserRefreshContainer"
+                        Grid.Row="1"
+                        RefreshRequested="UserRefreshContainer_RefreshRequested">
+                        <ListView
+                            x:Name="UserListView"
+                            Padding="0,8"
+                            IsItemClickEnabled="True"
+                            ItemClick="UserListView_ItemClick"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="core:UserModel">
+                                    <Grid Padding="12,8" ColumnDefinitions="Auto,*,Auto">
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Spacing="2">
+                                            <TextBlock
+                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                Text="{x:Bind Username}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                                Text="{x:Bind local:UsersPage.ConvertToUserStatus(IsAdmin)}" />
+                                        </StackPanel>
+
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="4">
+                                            <Button
+                                                x:Name="UpdateUserBtn"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Click="UpdateUserBtn_Click"
+                                                Tag="{x:Bind}"
+                                                ToolTipService.ToolTip="Update">
+                                                <FontIcon
+                                                    FontSize="14"
+                                                    Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                                    Glyph="&#xE70F;" />
+                                            </Button>
+                                            <Button
+                                                x:Name="DeleteUserBtn"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Click="DeleteUserBtn_Click"
+                                                Tag="{x:Bind}"
+                                                ToolTipService.ToolTip="Delete">
+                                                <FontIcon
+                                                    FontSize="14"
+                                                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                    Glyph="&#xE74D;" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </RefreshContainer>
+
                     <StackPanel
+                        Grid.Row="2"
+                        Padding="12"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Spacing="16">
-
-                        <Border
-                            Width="120"
-                            Height="120"
-                            Background="{ThemeResource LayerFillColorAltBrush}"
-                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="60">
-                            <Image Source="{x:Bind Profile.AvatarPath, Mode=OneWay}" Stretch="UniformToFill" />
-                        </Border>
-
-                        <StackPanel HorizontalAlignment="Center" Spacing="4">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                Style="{StaticResource TitleTextBlockStyle}"
-                                Text="{x:Bind Profile.Fullname, Mode=OneWay}" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Style="{StaticResource SubtitleTextBlockStyle}"
-                                Text="{x:Bind core:UserRoleHelper.ConvertUserIntRoleToString(Profile.Role), Mode=OneWay}" />
-                        </StackPanel>
-
-                        <Rectangle
-                            Height="1"
-                            Margin="0,16"
-                            Fill="{ThemeResource SurfaceStrokeColorDefaultBrush}"
-                            Opacity="0.5" />
-
-
+                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                        BorderThickness="0,1,0,0"
+                        Orientation="Horizontal"
+                        Spacing="24">
+                        <Button
+                            x:Name="PrevPageBtn"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="PrevPageButton_Click"
+                            IsEnabled="{x:Bind PrevPageEnabled, Mode=OneWay}">
+                            <FontIcon FontSize="12" Glyph="&#xE76B;" />
+                        </Button>
+                        <TextBlock
+                            x:Name="PageInfoText"
+                            VerticalAlignment="Center"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="{x:Bind GetPaginationInfo, Mode=OneWay}" />
+                        <Button
+                            x:Name="NextPageBtn"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="NextPageButton_Click"
+                            IsEnabled="{x:Bind NextPageEnabled, Mode=OneWay}">
+                            <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                        </Button>
                     </StackPanel>
-                </Border>
-            </SplitView.Content>
+                </Grid>
+            </Border>
 
-        </SplitView>
+            <Border
+                Grid.Column="2"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
 
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="16">
+                    <PersonPicture
+                        Width="140"
+                        Height="140"
+                        DisplayName="{x:Bind Profile.Fullname, Mode=OneWay}"
+                        ProfilePicture="{x:Bind Profile.AvatarPath, Mode=OneWay}" />
+
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Style="{ThemeResource TitleTextBlockStyle}"
+                            Text="{x:Bind Profile.Fullname, Mode=OneWay}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
+                            Text="{x:Bind core:UserRoleHelper.ConvertUserIntRoleToString(Profile.Role), Mode=OneWay}" />
+                    </StackPanel>
+
+                    <Rectangle
+                        Width="200"
+                        Height="1"
+                        Margin="0,5"
+                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                    <TextBlock
+                        MaxWidth="280"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Text="Pilih pengguna dari daftar untuk melihat detail lengkap atau mengubah hak akses."
+                        TextAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

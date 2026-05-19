@@ -41,6 +41,28 @@ namespace winrt::LeafEye::implementation
         return isChecked ? isChecked.GetBoolean() : false;
     }
 
+    int32_t AddUserDialog::Role() {
+        auto selectedItem = RoleComboBox().SelectedItem();
+        if (selectedItem) {
+            auto comboBoxItem = selectedItem.as<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem>();
+            if (comboBoxItem) {
+                auto tagValue = comboBoxItem.Tag().as<hstring>();
+                if (!tagValue.empty()) {
+                    try {
+                        return std::stoi(winrt::to_string(tagValue));
+                    }
+                    catch (const std::exception&) {
+                        return -1;
+                    }
+                }
+                else {
+                    return -1;
+                }
+            }
+        }
+		return -1;
+    }
+
     void AddUserDialog::UsernameTextBox_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e)
     {
         if (e.Key() == winrt::Windows::System::VirtualKey::Enter) {
@@ -76,4 +98,10 @@ namespace winrt::LeafEye::implementation
         StatusInfoBar().Message(message);
         StatusInfoBar().IsOpen(true);
     }
+
+    void AddUserDialog::RoleComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+    {
+
+    }
 }
+

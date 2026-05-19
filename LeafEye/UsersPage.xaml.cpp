@@ -18,7 +18,7 @@ namespace winrt::LeafEye::implementation
         InitializeComponent();
         m_users_list = winrt::single_threaded_observable_vector<winrt::LeafEyeCore::UserModel>();
         UserListView().ItemsSource(m_users_list);
-        m_profile = winrt::LeafEyeCore::ProfileModel(0,L"No Profile",L"ms-appx:///Assets/PlaceholderImage.png",0);
+        m_profile = winrt::LeafEyeCore::ProfileModel(0,L"No Profile",L"Assets/default_avatar.png",3);
     }
 
 
@@ -42,7 +42,7 @@ namespace winrt::LeafEye::implementation
 
                     m_users_list.Clear();
                     for (auto user : users) {
-                        m_users_list.Append(user);
+						m_users_list.Append(user);
                     }
 
                 }
@@ -132,7 +132,7 @@ namespace winrt::LeafEye::implementation
         SetPaginationFilter(UserFilterType::None);
     }
 
-    void UsersPage::SearchBar_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
+    void UsersPage::SearchBar_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args)
     {
         SetPaginationFilter(UserFilterType::Username);
     }
@@ -168,41 +168,62 @@ namespace winrt::LeafEye::implementation
         dialog.XamlRoot(this->Content().XamlRoot());
 
         dialog.PrimaryButtonClick([this, dialog, database](winrt::Microsoft::UI::Xaml::Controls::ContentDialog sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs args) -> winrt::fire_and_forget {
-            auto defferal = args.GetDeferral();
-            if (args.Cancel()) { defferal.Complete(); co_return; }
+            auto deferral = args.GetDeferral();
+            if (args.Cancel()) { deferral.Complete(); co_return; }
 
+            // 1. Ambil data dari UI selagi masih di UI Thread
             hstring username = dialog.Username();
             hstring password = dialog.Password();
             bool isAdmin = dialog.IsAdmin();
+            int32_t role = dialog.Role();
 
+            // 2. Simpan konteks UI thread & pindah ke background thread
+            winrt::apartment_context ui_thread;
+            co_await winrt::resume_background();
+
+            // --- SEKARANG DI BACKGROUND THREAD ---
             auto user = winrt::LeafEyeCore::UserModel(username, password, isAdmin);
-            auto profile = winrt::LeafEyeCore::ProfileModel(0, L"User", L"ms-appx:///Assets/PlaceholderImage.png", 0);
+            auto profile = winrt::LeafEyeCore::ProfileModel(0, L"User", L"ms-appx:///Assets/PlaceholderImage.png", role);
+
             auto result = co_await database.AddUser(user);
             auto result_create_profile = co_await database.AddUserProfile(profile);
+
+            bool is_success = false;
+            hstring error_message = L"";
 
             if (!result.IsError()) {
                 if (!result_create_profile.IsError()) {
                     auto link_profile_to_user = co_await database.LinkUserProfile(result.ResultValue().as<obx_id>(), result_create_profile.ResultValue().as<obx_id>());
                     if (!link_profile_to_user.IsError()) {
-						user.Id(result.ResultValue().as<obx_id>());
-                        m_users_list.Append(user);
+                        user.Id(result.ResultValue().as<obx_id>());
+                        is_success = true;
                     }
                     else {
-						args.Cancel(true);
-						dialog.ShowMessage(link_profile_to_user.Message(), winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+                        error_message = link_profile_to_user.Message();
                     }
                 }
                 else {
-                    args.Cancel(true);
-					dialog.ShowMessage(result_create_profile.Message(), winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+                    error_message = result_create_profile.Message();
                 }
             }
             else {
-                args.Cancel(true);
-                dialog.ShowMessage(result.Message(), winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+                error_message = result.Message();
             }
-            defferal.Complete();
-        });
+
+            // 3. Kembali ke UI thread untuk memanipulasi koleksi & dialog
+            co_await ui_thread;
+
+            // --- KEMBALI DI UI THREAD ---
+            if (is_success) {
+                m_users_list.Append(user);
+            }
+            else {
+                args.Cancel(true); // Tahan dialog agar tidak tertutup jika ada error
+                dialog.ShowMessage(error_message, winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+            }
+
+            deferral.Complete();
+            });
 
         auto dialog_result = co_await dialog.ShowAsync();
 
@@ -222,49 +243,95 @@ namespace winrt::LeafEye::implementation
         auto btn = sender.as<winrt::Microsoft::UI::Xaml::Controls::Button>();
         auto user_data = btn.Tag().as<winrt::LeafEyeCore::UserModel>();
 
+        // 1. Ambil Data Profile di Background Thread
+        winrt::apartment_context ui_thread_initial;
+        co_await winrt::resume_background();
+
+        auto profile_result = co_await database.GetUserProfileByLink(user_data.Id());
+
+        co_await ui_thread_initial; // Kembali ke UI
+
+        if (profile_result.IsError()) {
+            winrt::Microsoft::UI::Xaml::Controls::ContentDialog errorDialog{};
+            errorDialog.Title(box_value(L"Error"));
+            errorDialog.Content(box_value(profile_result.Message()));
+            errorDialog.CloseButtonText(L"Ok");
+            errorDialog.XamlRoot(this->XamlRoot());
+            co_await errorDialog.ShowAsync();
+            co_return;
+        }
+
+        auto profile = profile_result.ResultValue().as<winrt::LeafEyeCore::ProfileModel>();
+
         uint64_t id = user_data.Id();
         winrt::hstring username = user_data.Username();
         bool isAdmin = user_data.IsAdmin();
+        int32_t role = profile.Role(); // Bisa digunakan jika updateDialog juga mengatur role
 
         winrt::LeafEye::UpdateUserDialog updateDialog;
         updateDialog.XamlRoot(this->XamlRoot());
-        updateDialog.SetUserData(username, isAdmin);
-
-
+        updateDialog.SetUserData(username, isAdmin, role);
         auto update_result = co_await updateDialog.ShowAsync();
         if (update_result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary) {
 
-			username = updateDialog.Username();
-			isAdmin = updateDialog.IsAdmin();
-            auto password = updateDialog.Password();
+            // Ambil data UI SEBELUM pindah ke background
+            winrt::hstring new_username = updateDialog.Username();
+            bool new_isAdmin = updateDialog.IsAdmin();
+            winrt::hstring password = updateDialog.Password();
+			int32_t role = updateDialog.Role();
 
-            winrt::apartment_context ui_thread;
-            co_await winrt::resume_background();
-
-            auto new_user_data = winrt::LeafEyeCore::UserModel(
-                username, password, isAdmin
-            );
+            auto new_user_data = winrt::LeafEyeCore::UserModel(new_username, password, new_isAdmin);
             new_user_data.Id(id);
 
+            profile.Role(role);
+
+            // 2. Simpan konteks UI & pindah ke Background untuk KEDUA proses update
+            winrt::apartment_context ui_thread_update;
+            co_await winrt::resume_background();
+
+            bool is_all_success = false;
+            winrt::hstring final_message = L"";
+
+            // Eksekusi Update User pertama
             auto result = co_await database.UpdateUser(new_user_data);
 
-            co_await ui_thread;
-
             if (!result.IsError()) {
+                // HANYA eksekusi Update Profile jika Update User berhasil
+                auto update_profile_result = co_await database.UpdateUserProfile(profile);
+
+                if (!update_profile_result.IsError()) {
+                    is_all_success = true;
+                    final_message = result.Message(); // Atau pesan kustom: L"User dan Profile berhasil diperbarui."
+                }
+                else {
+                    final_message = update_profile_result.Message();
+                }
+            }
+            else {
+                final_message = result.Message();
+            }
+
+            // 3. Kembali ke UI Thread HANYA SATU KALI setelah semua operasi DB selesai
+            co_await ui_thread_update;
+
+			m_profile.Role(role); // Update role di profile yang di-bind ke dialog update (jika dialog menampilkan role, ini akan otomatis memperbarui tampilannya)
+
+            // Eksekusi pembaruan UI dan tampilkan pop-up berdasarkan hasil akhir
+            if (is_all_success) {
+                user_data.Username(new_username);
+                user_data.IsAdmin(new_isAdmin);
+
                 winrt::Microsoft::UI::Xaml::Controls::ContentDialog successDialog{};
                 successDialog.Title(box_value(L"Info"));
-                successDialog.Content(box_value(result.Message()));
+                successDialog.Content(box_value(final_message));
                 successDialog.CloseButtonText(L"Ok");
                 successDialog.XamlRoot(this->XamlRoot());
                 co_await successDialog.ShowAsync();
-
-                user_data.Username(updateDialog.Username());
-                user_data.IsAdmin(updateDialog.IsAdmin());
             }
             else {
                 winrt::Microsoft::UI::Xaml::Controls::ContentDialog errorDialog{};
                 errorDialog.Title(box_value(L"Error"));
-                errorDialog.Content(box_value(result.Message()));
+                errorDialog.Content(box_value(final_message));
                 errorDialog.CloseButtonText(L"Ok");
                 errorDialog.XamlRoot(this->XamlRoot());
                 co_await errorDialog.ShowAsync();
@@ -295,16 +362,32 @@ namespace winrt::LeafEye::implementation
             co_await ui_thread;
 
             if (!result.IsError()) {
-                winrt::Microsoft::UI::Xaml::Controls::ContentDialog successDialog{};
-                successDialog.Title(box_value(L"Info"));
-                successDialog.Content(box_value(result.Message()));
-                successDialog.CloseButtonText(L"Ok");
-                successDialog.XamlRoot(this->XamlRoot());
-                co_await successDialog.ShowAsync();
 
-                uint32_t index_of_data;
-                m_users_list.IndexOf(user_data, index_of_data);
-                m_users_list.RemoveAt(index_of_data);
+                winrt::apartment_context ui_thread;
+                co_await winrt::resume_background();
+                auto result_delete_profile = co_await database.DeleteUserProfile(user_data.Id());
+                co_await ui_thread;
+
+                if (!result_delete_profile.IsError()) {
+                    winrt::Microsoft::UI::Xaml::Controls::ContentDialog successDialog{};
+                    successDialog.Title(box_value(L"Info"));
+                    successDialog.Content(box_value(result.Message()));
+                    successDialog.CloseButtonText(L"Ok");
+                    successDialog.XamlRoot(this->XamlRoot());
+                    co_await successDialog.ShowAsync();
+
+                    uint32_t index_of_data;
+                    m_users_list.IndexOf(user_data, index_of_data);
+                    m_users_list.RemoveAt(index_of_data);
+                }
+                else {
+                    winrt::Microsoft::UI::Xaml::Controls::ContentDialog errorDialog{};
+                    errorDialog.Title(box_value(L"Error"));
+                    errorDialog.Content(box_value(result_delete_profile.Message()));
+                    errorDialog.CloseButtonText(L"Ok");
+                    errorDialog.XamlRoot(this->XamlRoot());
+                    co_await errorDialog.ShowAsync();
+                }
             }
             else {
                 winrt::Microsoft::UI::Xaml::Controls::ContentDialog errorDialog{};
@@ -423,7 +506,7 @@ namespace winrt::LeafEye::implementation
 			m_profile.Id(profile_data.Id());
 			m_profile.Fullname(profile_data.Fullname());
 			m_profile.AvatarPath(profile_data.AvatarPath());
-            m_profile.Role(data.IsAdmin() ? static_cast<int32_t>(winrt::LeafEyeCore::UserRole::Admin) : static_cast<int32_t>(winrt::LeafEyeCore::UserRole::User));
+            m_profile.Role(profile_data.Role());
         }
         else {
             winrt::Microsoft::UI::Xaml::Controls::ContentDialog errorDialog{};

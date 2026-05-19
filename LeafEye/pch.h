@@ -30,7 +30,12 @@
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Storage.Pickers.h>
 #include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.Graphics.Imaging.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+
+#include <winrt/Microsoft.Graphics.Canvas.h>
+#include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
+#include <winrt/Windows.UI.h>
 
 #include <string>
 #include <print>

@@ -2,9 +2,11 @@
 #include "HistoryPage.g.h"
 #include "Base/PaginationBaseExperiment.h"
 #include "Utils/AppSession.h"
+#include "FileHistoryDetailDialog.xaml.h"
 
 namespace winrt::LeafEye::implementation
 {
+
     enum class HistoryFileType {
         NONE,
         DATE,
@@ -15,6 +17,7 @@ namespace winrt::LeafEye::implementation
     {
     private:
 
+        uint64_t m_startTime{ 0 }, m_endTime{ 0 };
 		winrt::LeafEyeCore::HistoryModel m_selectedHistory;
         // ================================= Pagination =========================================
         winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
@@ -58,6 +61,9 @@ namespace winrt::LeafEye::implementation
         void NextPageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void PageSize_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         winrt::fire_and_forget HistoryListView_ItemClick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::ItemClickEventArgs const& e);
+        void StartDate_DateChanged(winrt::Microsoft::UI::Xaml::Controls::CalendarDatePicker const& sender, winrt::Microsoft::UI::Xaml::Controls::CalendarDatePickerDateChangedEventArgs const& args);
+        void EndDate_DateChanged(winrt::Microsoft::UI::Xaml::Controls::CalendarDatePicker const& sender, winrt::Microsoft::UI::Xaml::Controls::CalendarDatePickerDateChangedEventArgs const& args);
+        winrt::fire_and_forget FileHistoryListView_ItemClick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::ItemClickEventArgs const& e);
     };
 }
 

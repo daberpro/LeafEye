@@ -44,9 +44,25 @@
                 PlaceholderText="Masukkan password..." />
         </StackPanel>
 
+        <StackPanel Spacing="8">
+            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Pilih Role" />
+            <ComboBox
+                x:Name="RoleComboBox"
+                CornerRadius="6"
+                SelectionChanged="RoleComboBox_SelectionChanged">
+                <ComboBoxItem Content="Manajer" Tag="0" />
+                <ComboBoxItem Content="Staff" Tag="1" />
+                <ComboBoxItem Content="Koordinator" Tag="2" />
+                <ComboBoxItem
+                    Content="Tamu"
+                    IsSelected="True"
+                    Tag="3" />
+            </ComboBox>
+        </StackPanel>
+
         <CheckBox
             x:Name="IsAdminCheckBox"
-            Margin="0,8,0,0"
+            Margin="0,4,0,0"
             Content="Jadikan sebagai Admin" />
 
     </StackPanel>

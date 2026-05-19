@@ -2,12 +2,16 @@
 #include "App.xaml.h"
 #include "HomePage.g.h"
 #include "Utils/AppSession.h"
+#include "Utils/LeafEyeDetector.h"
 
 namespace winrt::LeafEye::implementation
 {
     struct HomePage : HomePageT<HomePage>
     {
     private:
+
+        inline static std::shared_ptr<winrt::LeafEye::Utils::LeafEyeDetector> ai_detector = nullptr;
+
         winrt::LeafEyeCore::HistoryModel m_historyInfo;
         winrt::Windows::Foundation::Collections::IVectorView<winrt::Windows::Storage::StorageFile> m_files;
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::LeafEye::FileItemsHomePageModel> m_filesMetaInfo;
@@ -43,6 +47,8 @@ namespace winrt::LeafEye::implementation
     
         winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
         void PropertyChanged(winrt::event_token const& token) noexcept;
+
+        winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::Collections::IVector<float>> PreprocessImageAsync(winrt::Windows::Storage::StorageFile file);
         
     };
 }

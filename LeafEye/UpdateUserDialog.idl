@@ -5,10 +5,11 @@ namespace LeafEye
     {
         UpdateUserDialog();
 
-        void SetUserData(String username, Boolean isAdmin);
+        void SetUserData(String username, Boolean isAdmin, Int32 role);
 
         String Username();
         String Password();
         Boolean IsAdmin();
+        Int32 Role();
     }
 }

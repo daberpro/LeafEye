@@ -3,8 +3,10 @@ namespace LeafEyeCore
 {
     enum UserRole
     {
-        Admin = 0,
-        User = 1
+        Manager = 0,
+        Staff = 1,
+        Coordinator = 2,
+        Guest = 3
     };
     
     [default_interface]

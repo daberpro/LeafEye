@@ -24,10 +24,11 @@ namespace winrt::LeafEye::implementation
         InitializeComponent();
     }
 
-    void UpdateUserDialog::SetUserData(winrt::hstring const& username, bool isAdmin)
+    void UpdateUserDialog::SetUserData(winrt::hstring const& username, bool isAdmin, const int32_t& role)
     {
         UsernameTextBox().Text(username);
         IsAdminCheckBox().IsChecked(isAdmin);
+        RoleComboBox().SelectedIndex(role);
     }
 
     hstring UpdateUserDialog::Username()
@@ -45,6 +46,29 @@ namespace winrt::LeafEye::implementation
         auto isChecked = IsAdminCheckBox().IsChecked();
         return isChecked ? isChecked.GetBoolean() : false;
     }
+
+    int32_t UpdateUserDialog::Role()
+    {
+        auto selectedItem = RoleComboBox().SelectedItem();
+        if (selectedItem) {
+            auto comboBoxItem = selectedItem.as<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem>();
+            if (comboBoxItem) {
+                auto tagValue = comboBoxItem.Tag().as<hstring>();
+                if (!tagValue.empty()) {
+                    try {
+                        return std::stoi(winrt::to_string(tagValue));
+                    }
+                    catch (const std::exception&) {
+                        return -1;
+                    }
+                }
+                else {
+                    return -1;
+                }
+            }
+        }
+        return -1;
+	}
 
     void UpdateUserDialog::UsernameTextBox_KeyDown(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& e)
     {
@@ -79,4 +103,8 @@ namespace winrt::LeafEye::implementation
         StatusInfoBar().Message(message);
         StatusInfoBar().IsOpen(true);
     }
+}
+void winrt::LeafEye::implementation::UpdateUserDialog::RoleComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e)
+{
+
 }

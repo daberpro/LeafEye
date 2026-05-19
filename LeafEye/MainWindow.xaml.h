@@ -14,12 +14,16 @@ namespace winrt::LeafEye::implementation
 		winrt::hstring m_myStatusText{ L"Hello, World!" };
 		winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
 		winrt::LeafEyeCore::ProfileModel m_profile{ nullptr };
+		winrt::LeafEyeCore::UserModel m_user{ nullptr };
 		
 	public:
 		MainWindow();
 
 		winrt::LeafEyeCore::ProfileModel Profile();	
 		void Profile(winrt::LeafEyeCore::ProfileModel const& value);
+
+		winrt::LeafEyeCore::UserModel User();
+		void User(winrt::LeafEyeCore::UserModel	const& value);
 
 		winrt::fire_and_forget Init();
 		void OnClosed(winrt::Windows::Foundation::IInspectable const& sender,

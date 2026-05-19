@@ -97,9 +97,11 @@ namespace winrt::LeafEye::implementation
         if (result.IsValueExists() && profile.IsValueExists())
         {
             winrt::LeafEye::Utils::AppSession::SetUser(result.ResultValue().as<winrt::LeafEyeCore::UserModel>());
+            winrt::LeafEye::Utils::AppSession::GetUser().Password(L"");
             winrt::LeafEye::Utils::AppSession::SetProfile(profile.ResultValue().as<winrt::LeafEyeCore::ProfileModel>());
             if (auto mainWindow = App::Window().try_as<winrt::LeafEye::implementation::MainWindow>()) {
 				mainWindow->Profile(winrt::LeafEye::Utils::AppSession::GetProfile());
+				mainWindow->User(winrt::LeafEye::Utils::AppSession::GetUser());
                 mainWindow->DismissOverlay();
             }
         }
@@ -128,7 +130,9 @@ namespace winrt::LeafEye::implementation
         if (username.empty() || password.empty())
         {
             ErrorBar().Message(L"Username dan password tidak boleh kosong.");
-            ErrorBar().IsOpen(true);
+            if (!ErrorBar().IsOpen()) {
+                ErrorBar().IsOpen(true);
+            }
             co_return;
         }
 
@@ -142,7 +146,9 @@ namespace winrt::LeafEye::implementation
         if (result.IsError())
         {
             ErrorBar().Message(result.Message());
-            ErrorBar().IsOpen(true);
+            if (!ErrorBar().IsOpen()) {
+                ErrorBar().IsOpen(true);
+            }
         }
         else if (result.IsValueExists() && profile.IsValueExists())
         {
@@ -151,13 +157,17 @@ namespace winrt::LeafEye::implementation
             winrt::LeafEye::Utils::AppSession::SetProfile(profile.ResultValue().as<winrt::LeafEyeCore::ProfileModel>());
             SaveCredentials(username, password); // simpan ke vault
             if (auto mainWindow = App::Window().try_as<winrt::LeafEye::implementation::MainWindow>()) {
+                mainWindow->Profile(winrt::LeafEye::Utils::AppSession::GetProfile());
+                mainWindow->User(winrt::LeafEye::Utils::AppSession::GetUser());
                 mainWindow->DismissOverlay();
             }
         }
         else
         {
             ErrorBar().Message(L"Username atau password salah.");
-            ErrorBar().IsOpen(true);
+            if (!ErrorBar().IsOpen()) {
+                ErrorBar().IsOpen(true);
+            }
         }
     }
 }

@@ -7,10 +7,14 @@ namespace winrt::LeafEyeCore::implementation
     hstring UserRoleHelper::ConvertUserRoleToString(winrt::LeafEyeCore::UserRole const& role)
     {
         switch (role) {
-            case winrt::LeafEyeCore::UserRole::Admin:
-				return L"Admin";
-			case winrt::LeafEyeCore::UserRole::User:
-                return L"User";
+            case winrt::LeafEyeCore::UserRole::Manager:
+				return L"Manager";
+			case winrt::LeafEyeCore::UserRole::Staff:
+                return L"Staff";
+			case winrt::LeafEyeCore::UserRole::Coordinator:
+                return L"Coordinator";
+			case winrt::LeafEyeCore::UserRole::Guest:
+                return L"Guest";
 			default:
 				return L"Unknown";
         }
@@ -20,9 +24,13 @@ namespace winrt::LeafEyeCore::implementation
 	{
 		switch (role) {
 		case 0:
-			return L"Admin";
+			return L"Manager";
 		case 1:
-			return L"User";
+			return L"Staff";
+		case 2:
+			return L"Coordinator";
+		case 3:
+			return L"Guest";
 		default:
 			return L"Unknown";
 		}
