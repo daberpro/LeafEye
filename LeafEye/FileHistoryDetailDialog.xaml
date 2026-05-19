@@ -1,0 +1,154 @@
+﻿<ContentDialog
+    x:Class="LeafEye.FileHistoryDetailDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Detail File History"
+    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+    BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+    BorderThickness="1"
+    CloseButtonStyle="{StaticResource ShadcnOutlineButtonStyle}"
+    CloseButtonText="Tutup"
+    CornerRadius="8"
+    DefaultButton="Close">
+
+    <Grid Margin="0,16,0,0">
+
+        <!-- MaxHeight diturunkan menjadi 400 agar menyisakan ruang (gap) untuk jendela aplikasi yang berukuran normal -->
+        <ScrollViewer
+            MaxHeight="400"
+            Padding="0,0,16,0"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+
+            <StackPanel Spacing="20">
+
+                <!-- Tinggi maksimal gambar diturunkan menjadi 200 agar proporsional dengan tinggi ScrollViewer yang baru -->
+                <Border
+                    Height="200"
+                    HorizontalAlignment="Stretch"
+                    Background="{ThemeResource ControlFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <Image
+                        x:Name="imgPreview"
+                        Stretch="Uniform" />
+                </Border>
+
+                <!-- Detail Informasi -->
+                <StackPanel Spacing="16">
+
+                    <!-- Nama File -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Nama File" />
+                        <TextBox
+                            x:Name="txtFileName"
+                            IsReadOnly="True"
+                            TextWrapping="Wrap"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12,8" />
+                    </StackPanel>
+
+                    <!-- Path -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Path" />
+                        <TextBox
+                            x:Name="txtFilePath"
+                            IsReadOnly="True"
+                            TextWrapping="Wrap"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="12,8" />
+                    </StackPanel>
+
+                    <!-- Ukuran & Skor -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Ukuran File" />
+                            <Border
+                                Padding="12,8"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                                <TextBlock x:Name="txtFileSize" IsTextSelectionEnabled="True" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Spacing="6">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Skor Keyakinan" />
+                            <Border
+                                Padding="12,8"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                                <TextBlock x:Name="txtConfidence" IsTextSelectionEnabled="True" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Penyakit -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Penyakit" />
+                        <Border
+                            Padding="12,8"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                            <TextBlock x:Name="txtDisease" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Tanggal -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Tanggal Dibuat" />
+                            <Border
+                                Padding="12,8"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                                <TextBlock x:Name="txtDateCreated" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Spacing="6">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Tanggal Diubah" />
+                            <Border
+                                Padding="12,8"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                                <TextBlock x:Name="txtDateModified" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</ContentDialog>

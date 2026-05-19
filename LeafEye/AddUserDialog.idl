@@ -1,0 +1,16 @@
+namespace LeafEye
+{
+    [default_interface]
+    runtimeclass AddUserDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+    {
+        AddUserDialog();
+        
+        String Username{ get; };
+        String Password{ get; };
+        Boolean IsAdmin{ get; };
+        Int32 Role{ get; };
+
+        void ShowMessage(String message, Microsoft.UI.Xaml.Controls.InfoBarSeverity severity);
+
+    }
+}

@@ -1,6 +1,6 @@
 namespace LeafEyeCore {
     [default_interface]
-    runtimeclass ProfileModel
+    runtimeclass ProfileModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         ProfileModel();
         ProfileModel(UInt64 id, String fullname, String avatarPath, Int32 role);

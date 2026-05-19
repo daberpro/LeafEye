@@ -17,11 +17,17 @@ namespace winrt::LeafEyeCore::implementation
         int32_t Role();
         void Role(int32_t value);
 
+        winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
+        void PropertyChanged(winrt::event_token const& token) noexcept;
+
     private:
         uint64_t m_id{ 0 };
         hstring m_fullname;
         hstring m_avatarPath;
         int32_t m_role{ 0 };
+
+        winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
+        void RaisedPropertyChanged(const winrt::hstring& property_name);
     };
 }
 

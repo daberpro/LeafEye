@@ -18,7 +18,7 @@
     },
     {
       "id": "2:40048249367672753",
-      "lastPropertyId": "5:3881446591020797012",
+      "lastPropertyId": "6:5099225419494932291",
       "name": "History",
       "properties": [
         {
@@ -52,6 +52,11 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "User"
+        },
+        {
+          "id": "6:5099225419494932291",
+          "name": "output_folder",
+          "type": 9
         }
       ]
     },
@@ -127,7 +132,7 @@
     },
     {
       "id": "5:7203642947974398314",
-      "lastPropertyId": "7:6552531899135967717",
+      "lastPropertyId": "9:3392368702361328278",
       "name": "FileHistory",
       "properties": [
         {
@@ -169,6 +174,16 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "History"
+        },
+        {
+          "id": "8:4729924614752333564",
+          "name": "file_path",
+          "type": 9
+        },
+        {
+          "id": "9:3392368702361328278",
+          "name": "disease",
+          "type": 9
         }
       ]
     }

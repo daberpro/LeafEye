@@ -4,6 +4,12 @@ namespace LeafEye
     runtimeclass MainWindow : Microsoft.UI.Xaml.Window, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         MainWindow();
+        
+        LeafEyeCore.ProfileModel Profile{set;get;};
+        LeafEyeCore.UserModel User{set;get;};
         String MyStatusText;
+        void DismissOverlay();
+        void Logout();
+
     }
 }

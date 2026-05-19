@@ -23,7 +23,10 @@ namespace winrt::LeafEyeCore::implementation
     }
     void ProfileModel::Fullname(hstring const& value)
     {
-        m_fullname = value;
+        if (m_fullname != value) {
+            m_fullname = value;
+            RaisedPropertyChanged(L"Fullname");
+        }
     }
 
     hstring ProfileModel::AvatarPath()
@@ -32,7 +35,10 @@ namespace winrt::LeafEyeCore::implementation
     }
     void ProfileModel::AvatarPath(hstring const& value)
     {
-        m_avatarPath = value;
+        if (m_avatarPath != value) {
+            m_avatarPath = value;
+            RaisedPropertyChanged(L"AvatarPath");
+        }
     }
 
     int32_t ProfileModel::Role()
@@ -41,6 +47,24 @@ namespace winrt::LeafEyeCore::implementation
     }
     void ProfileModel::Role(int32_t value)
     {
-        m_role = value;
+        if (m_role != value) {
+            m_role = value;
+            RaisedPropertyChanged(L"Role");
+        }
+    }
+    winrt::event_token ProfileModel::PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+    {
+        return m_propertyChanged.add(handler);
+    }
+    void ProfileModel::PropertyChanged(winrt::event_token const& token) noexcept
+    {
+        m_propertyChanged.remove(token);
+    }
+
+    void ProfileModel::RaisedPropertyChanged(const winrt::hstring& property_name) {
+        if (m_propertyChanged)
+        {
+            m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ property_name });
+        }
     }
 }

@@ -1,291 +1,270 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="LeafEye.HistoryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:LeafEyeCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:LeafEye"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="40">
+    <Grid Padding="32" RowDefinitions="Auto, *">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel Spacing="4">
+        <Grid
+            Grid.Row="0"
+            Margin="0,0,0,24"
+            ColumnDefinitions="*,Auto">
+            <StackPanel VerticalAlignment="Center" Spacing="4">
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Riwayat Pemindaian" />
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Text="Lihat dan kelola hasil pemindaian sebelumnya." />
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="Lihat dan kelola hasil ekstraksi fitur dan klasifikasi citra daun." />
             </StackPanel>
 
-            <StackPanel
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Spacing="12">
-                <Button Style="{StaticResource ShadcnOutlineButtonStyle}">
+            <CommandBar
+                Grid.Column="1"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                IsOpen="False">
+                <AppBarElementContainer Margin="0,0,8,0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="14" Glyph="&#xE7ad;" />
-                        <TextBlock Text="Export CSV" />
+                        <CalendarDatePicker x:Name="StartDate" DateChanged="StartDate_DateChanged" Width="140" PlaceholderText="Tanggal Mulai" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="-" />
+                        <CalendarDatePicker x:Name="EndDate" DateChanged="EndDate_DateChanged" Width="140" PlaceholderText="Tanggal Akhir" />
                     </StackPanel>
-                </Button>
-            </StackPanel>
+                </AppBarElementContainer>
+
+                <AppBarElementContainer Margin="8,0,12,0" VerticalAlignment="Center">
+                    <ComboBox Width="130" PlaceholderText="Filter Status">
+                        <ComboBoxItem Content="Semua" />
+                        <ComboBoxItem Content="Selesai" />
+                        <ComboBoxItem Content="Proses" />
+                        <ComboBoxItem Content="Gagal" />
+                    </ComboBox>
+                </AppBarElementContainer>
+
+                <AppBarButton Icon="Download" Label="Export CSV" />
+            </CommandBar>
         </Grid>
 
-        <Grid Grid.Row="1" ColumnSpacing="24">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" ColumnDefinitions="380, 24, *">
 
             <Border
                 Grid.Column="0"
-                Padding="0"
-                Style="{StaticResource ShadcnCardStyle}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+
+                <Grid RowDefinitions="Auto, *, Auto">
                     <Grid
                         Padding="16,12"
-                        Background="{ThemeResource LayerFillColorAltBrush}"
-                        BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
-                        BorderThickness="0,0,0,1"
-                        ColumnDefinitions="*, Auto">
+                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                        BorderThickness="0,0,0,1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock
-                            FontSize="14"
-                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            Style="{ThemeResource SubtitleTextBlockStyle}"
                             Text="Sesi Terakhir" />
-                        <TextBlock
+                        <ComboBox
+                            x:Name="PageSize"
                             Grid.Column="1"
-                            FontSize="14"
-                            Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text="Status" />
+                            Width="70"
+                            SelectedIndex="2"
+                            SelectionChanged="PageSize_SelectionChanged">
+                            <ComboBoxItem Content="5" />
+                            <ComboBoxItem Content="10" />
+                            <ComboBoxItem Content="20" />
+                            <ComboBoxItem Content="50" />
+                        </ComboBox>
                     </Grid>
 
                     <ListView
+                        x:Name="HistoryListView"
                         Grid.Row="1"
                         Padding="0,8"
+                        IsItemClickEnabled="True"
+                        ItemClick="HistoryListView_ItemClick"
                         SelectionMode="Single">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Padding" Value="16,12" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-
-                        <ListView.Items>
-                            <ListViewItem>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Spacing="2">
-                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="12 Feb 2026, 14:30" />
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="core:HistoryModel">
+                                <Grid Padding="12,8" ColumnDefinitions="*, Auto">
+                                    <StackPanel
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        Spacing="4">
+                                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind local:HistoryPage.ConvertToDateTimeString(Date), Mode=OneWay}" />
                                         <TextBlock
                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="16 File diproses" />
+                                            Style="{ThemeResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind local:HistoryPage.ConvertTotalFileToString(TotalFiles), Mode=OneWay}" />
                                     </StackPanel>
+
                                     <Border
                                         Grid.Column="1"
-                                        Padding="8,2"
+                                        Padding="8,4"
+                                        VerticalAlignment="Center"
                                         Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
                                         CornerRadius="4">
                                         <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontSize="15"
                                             Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                            Style="{ThemeResource CaptionTextBlockStyle}"
                                             Text="Selesai" />
                                     </Border>
                                 </Grid>
-                            </ListViewItem>
-
-                            <ListViewItem IsSelected="True">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Spacing="2">
-                                        <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="12 Feb 2026, 10:15" />
-                                        <TextBlock
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="45 File diproses" />
-                                    </StackPanel>
-                                    <Border
-                                        Grid.Column="1"
-                                        Padding="8,2"
-                                        Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
-                                        CornerRadius="4">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontSize="15"
-                                            Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                                            Text="Selesai" />
-                                    </Border>
-                                </Grid>
-                            </ListViewItem>
-                        </ListView.Items>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
+
+                    <StackPanel
+                        Grid.Row="2"
+                        Padding="12"
+                        HorizontalAlignment="Center"
+                        BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                        BorderThickness="0,1,0,0"
+                        Orientation="Horizontal"
+                        Spacing="24">
+                        <Button
+                            x:Name="PreviousPageButton"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="PreviousPageButton_Click"
+                            ToolTipService.ToolTip="Previous">
+                            <FontIcon FontSize="12" Glyph="&#xE76B;" />
+                        </Button>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="{x:Bind GetPaginationInfo, Mode=OneWay}" />
+                        <Button
+                            x:Name="NextPageButton"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="NextPageButton_Click"
+                            ToolTipService.ToolTip="Next">
+                            <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                        </Button>
+                    </StackPanel>
                 </Grid>
             </Border>
 
-            <Border Grid.Column="1" Style="{StaticResource ShadcnCardStyle}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid Margin="0,0,0,20">
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Detail Sesi: #1024" />
-                            <StackPanel
-                                Margin="0,4,0,0"
-                                Orientation="Horizontal"
-                                Spacing="8">
-                                <FontIcon
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Glyph="&#xEC50;" />
-                                <TextBlock
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="D:/Output/LeafEye_20260212" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
+            <Border
+                Grid.Column="2"
+                Padding="20"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
 
-                    <MenuFlyoutSeparator Grid.Row="1" Margin="0,0,0,16" />
+                <Grid RowDefinitions="Auto, Auto, *">
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="0,0,0,16"
+                        Spacing="4">
+                        <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{x:Bind local:HistoryPage.HistoryIdToStringConverter(SelectedHistory.Id), Mode=OneWay}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Glyph="&#xEC50;" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind SelectedHistory.OutputFolder, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Rectangle
+                        Grid.Row="1"
+                        Height="1"
+                        Margin="0,0,0,16"
+                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                    <TextBlock
+                        x:Name="EmptyFileHistoryListViewText"
+                        Grid.Row="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="Pilih sesi riwayat di sebelah kiri untuk melihat detail file." />
 
                     <ListView
+                        IsItemClickEnabled="True"
+                        ItemClick="FileHistoryListView_ItemClick"
+                        x:Name="FileHistoryListView"
                         Grid.Row="2"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
                         SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="core:FileHistoryModel">
+                                <Border
+                                    Margin="0,0,0,8"
+                                    Padding="12"
+                                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="6">
+                                    <Grid ColumnDefinitions="Auto, *, Auto">
 
-                        <ListView.Header>
-                            <Grid
-                                Padding="12"
-                                Background="{ThemeResource LayerFillColorAltBrush}"
-                                CornerRadius="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="Nama File" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Deteksi" />
-                                <TextBlock
-                                    Grid.Column="2"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Confidence" />
-                            </Grid>
-                        </ListView.Header>
+                                        <Border
+                                            Grid.Column="0"
+                                            Width="56"
+                                            Height="56"
+                                            Margin="0,0,16,0"
+                                            Background="{ThemeResource LayerFillColorAltBrush}"
+                                            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                            <Image Source="{x:Bind local:HistoryPage.CheckFilePath(FilePath), Mode=OneWay}" Stretch="UniformToFill" />
+                                        </Border>
 
-                        <ListView.Items>
-                            <Grid Margin="-18,0,-18,0" Padding="12,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon
-                                        FontSize="14"
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                        Glyph="&#xE8A5;" />
-                                    <TextBlock VerticalAlignment="Center" Text="IMG_001.jpg" />
-                                </StackPanel>
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Spacing="4">
+                                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind FileName, Mode=OneWay}" />
 
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
-                                    Foreground="{StaticResource BrandPrimaryBrush}"
-                                    Text="Sakit (Spot)" />
+                                            <Border
+                                                Padding="6,2"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource SystemFillColorCautionBackgroundBrush}"
+                                                CornerRadius="4">
+                                                <TextBlock
+                                                    Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind Disease, Mode=OneWay}" />
+                                            </Border>
+                                        </StackPanel>
 
-                                <TextBlock
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center"
-                                    Text="98.5%" />
-                            </Grid>
-
-                            <Grid Margin="-18,0,-18,0" Padding="12,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel
-                                    Grid.Column="0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Orientation="Horizontal"
-                                    Spacing="8">
-                                    <FontIcon
-                                        FontSize="14"
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                        Glyph="&#xE8A5;" />
-                                    <TextBlock VerticalAlignment="Center" Text="IMG_002.jpg" />
-                                </StackPanel>
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    Foreground="Green"
-                                    Text="Sehat" />
-
-                                <TextBlock
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center"
-                                    Text="99.1%" />
-                            </Grid>
-
-                            <Grid Margin="-18,0,-18,0" Padding="12,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="2*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon
-                                        FontSize="14"
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                        Glyph="&#xE8A5;" />
-                                    <TextBlock VerticalAlignment="Center" Text="IMG_003.jpg" />
-                                </StackPanel>
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
-                                    Foreground="{StaticResource BrandPrimaryBrush}"
-                                    Text="Sakit (Karat)" />
-
-                                <TextBlock
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center"
-                                    Text="87.4%" />
-                            </Grid>
-                        </ListView.Items>
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Spacing="2">
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                                Text="Confidence" />
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                Text="{x:Bind ConfidenceScore, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
             </Border>
-
         </Grid>
     </Grid>
 </Page>

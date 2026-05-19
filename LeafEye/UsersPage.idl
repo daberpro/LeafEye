@@ -1,0 +1,18 @@
+namespace LeafEye
+{
+    [default_interface]
+    runtimeclass UsersPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        UsersPage();
+        static String ConvertToUserStatus(Boolean is_admin);
+
+        LeafEyeCore.ProfileModel Profile{get;};
+
+        String GetPaginationInfo{get;};
+        Int64 TotalPage{set;get;};
+        Int64 CurrentPage{get;set;};
+        Boolean PrevPageEnabled{set;get;};
+        Boolean NextPageEnabled{set;get;};
+
+    }
+}

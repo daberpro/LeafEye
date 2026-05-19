@@ -10,16 +10,28 @@
     <Page Include="SettingsPage.xaml" />
     <Page Include="HistoryPage.xaml" />
     <Page Include="ProfilePage.xaml" />
+    <Page Include="UsersPage.xaml" />
+    <Page Include="AddUserDialog.xaml" />
+    <Page Include="UpdateUserDialog.xaml" />
+    <Page Include="LoginPage.xaml" />
+    <Page Include="FileHistoryDetailDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
+    <Midl Include="FileItemsHomePageModel.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="FileItemsHomePageModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Base\PaginationBase.h" />
+    <ClInclude Include="Base\PaginationBaseExperiment.h" />
+    <ClInclude Include="FileItemsHomePageModel.h" />
+    <ClInclude Include="Utils\AppSession.h" />
+    <ClInclude Include="Utils\LeafEyeDetector.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -43,6 +55,9 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\PlaceholderImage.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -60,6 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="C:\Users\TUF\Downloads\leafeye_pipeline_v1.onnx.data" />
+    <None Include="C:\Users\TUF\Downloads\leafeye_pipeline_v1.onnx" />
+    <None Include="Assets\leafeye_pipeline_v1.onnx" />
+    <None Include="Assets\leafeye_pipeline_v1.onnx.data" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime.dll" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime_providers_shared.dll" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
@@ -67,5 +88,9 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\..\..\module\bin\objectbox.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\id-ID\Resources.resw" />
   </ItemGroup>
 </Project>

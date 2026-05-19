@@ -1,0 +1,20 @@
+
+namespace LeafEyeCore
+{
+    enum UserRole
+    {
+        Manager = 0,
+        Staff = 1,
+        Coordinator = 2,
+        Guest = 3
+    };
+    
+    [default_interface]
+    runtimeclass UserRoleHelper
+    {
+        UserRoleHelper();
+        static String ConvertUserRoleToString(UserRole role);
+        static String ConvertUserIntRoleToString(Int32 role);
+    }
+
+}

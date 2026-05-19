@@ -2,9 +2,20 @@
 namespace LeafEye
 {
     [default_interface]
-    runtimeclass HistoryPage : Microsoft.UI.Xaml.Controls.Page
+    runtimeclass HistoryPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         HistoryPage();
-        Int32 MyProperty;
+    
+        static String ConvertToDateTimeString(UInt64 fileTime);
+        static String ConvertTotalFileToString(UInt32 totalFile);
+        static String HistoryIdToStringConverter(UInt64 historyId);
+        static Microsoft.UI.Xaml.Media.ImageSource CheckFilePath(String filePath);
+        LeafEyeCore.HistoryModel SelectedHistory{get;set;};
+
+        String GetPaginationInfo{get;};
+        Int64 TotalPage{set;get;};
+        Int64 CurrentPage{get;set;};
+        Boolean PrevPageEnabled{set;get;};
+        Boolean NextPageEnabled{set;get;};
     }
 }

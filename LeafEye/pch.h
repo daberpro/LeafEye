@@ -25,9 +25,27 @@
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <wil/cppwinrt_helpers.h>
 #include <winrt/Windows.UI.Xaml.Interop.h>
+#include <winrt/Windows.Storage.h>
+#include <winrt/Windows.Storage.FileProperties.h>
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
+#include <winrt/Windows.Storage.Pickers.h>
+#include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.Graphics.Imaging.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+
+#include <winrt/Microsoft.Graphics.Canvas.h>
+#include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
+#include <winrt/Windows.UI.h>
 
 #include <string>
 #include <print>
+#include <string_view>
+#include <chrono>
+#include <shobjidl.h>
+#include <microsoft.ui.xaml.window.h>
+#include <filesystem>
 
 #define OBX_CPP_FILE
 #include <objectbox.hpp>
+
+#include <winrt/LeafEyeCore.h>

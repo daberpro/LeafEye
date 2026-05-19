@@ -128,6 +128,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Converter\StringFormatConverter.h" />
+    <ClInclude Include="Helper\UserRoleHelper.h" />
     <ClInclude Include="Model\FileHistoryModel.h" />
     <ClInclude Include="Model\HistoryModel.h" />
     <ClInclude Include="Model\ProfileModel.h" />
@@ -137,6 +139,8 @@
     <ClInclude Include="Utility\Result.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Converter\StringFormatConverter.cpp" />
+    <ClCompile Include="Helper\UserRoleHelper.cpp" />
     <ClCompile Include="Model\FileHistoryModel.cpp" />
     <ClCompile Include="Model\HistoryModel.cpp" />
     <ClCompile Include="Model\ProfileModel.cpp" />
@@ -163,7 +167,9 @@
     <Midl Include="HistoryModel.idl" />
     <Midl Include="ProfileModel.idl" />
     <Midl Include="Result.idl" />
+    <Midl Include="StringFormatConverter.idl" />
     <Midl Include="UserModel.idl" />
+    <Midl Include="UserRoleHelper.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

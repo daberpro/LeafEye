@@ -1,274 +1,304 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="LeafEye.ProfilePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:LeafEye"
+    xmlns:core="using:LeafEyeCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:LeafEye"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <Grid Padding="40" MinWidth="700">
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+    <Page.Resources>
+        <core:StringFormatConverter x:Key="FormatConverter" />
+    </Page.Resources>
 
-                <!-- Header Section -->
-                <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,32">
-                    <TextBlock Text="Kelola informasi pribadi dan keamanan akun Anda." 
-                               Style="{StaticResource BodyTextBlockStyle}" 
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border
+            Grid.Column="0"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,0,1,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="32,40,32,40" Spacing="32">
+
+                    <StackPanel Spacing="16">
+                        <Grid
+                            Width="100"
+                            Height="100"
+                            HorizontalAlignment="Center">
+                            <Border
+                                Width="100"
+                                Height="100"
+                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="50">
+                                <Image
+                                    x:Name="ImageProfile"
+                                    Source="{x:Bind Profile.AvatarPath, Mode=OneWay}"
+                                    Stretch="UniformToFill" />
+                            </Border>
+
+                            <Button
+                                x:Name="EditPhoto"
+                                Width="32"
+                                Height="32"
+                                Padding="0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                Click="EditPhoto_Click"
+                                CornerRadius="16"
+                                ToolTipService.ToolTip="Ganti foto profil">
+                                <FontIcon FontSize="12" Glyph="&#xE70F;" />
+                            </Button>
+                        </Grid>
+
+                        <StackPanel HorizontalAlignment="Stretch" Spacing="4">
+                            <TextBlock
+                                Style="{ThemeResource TitleTextBlockStyle}"
+                                Text="{x:Bind Profile.Fullname, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind User.Username, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <Grid Margin="0,10,0,0" ColumnSpacing="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Grid.Column="0"
+                                    Padding="5,10"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    CornerRadius="20">
+                                    <TextBlock
+                                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                        Style="{ThemeResource BodyTextBlockStyle}"
+                                        Text="{x:Bind core:UserRoleHelper.ConvertUserIntRoleToString(Profile.Role), Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                </Border>
+                                <Border
+                                    Grid.Column="1"
+                                    Padding="5,10"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    CornerRadius="20">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource BodyTextBlockStyle}"
+                                        Text="{x:Bind local:UsersPage.ConvertToUserStatus(User.IsAdmin), Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <MenuFlyoutSeparator />
+
+                    <StackPanel Spacing="16">
+                        <TextBlock
+                            CharacterSpacing="50"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="STATISTIK PENGGUNA" />
+
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="Auto, *">
+                                <FontIcon
+                                    Grid.Column="0"
+                                    Margin="0,0,16,0"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Glyph="&#xE77B;" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="ID Pengguna" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Profile.Id, Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <MenuFlyoutSeparator Opacity="0.5" />
+
+                            <Grid ColumnDefinitions="Auto, *">
+                                <FontIcon
+                                    Grid.Column="0"
+                                    Margin="0,0,16,0"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Glyph="&#xE716;" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="Bergabung sejak" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="12 Feb 2026" />
+                                </StackPanel>
+                            </Grid>
+
+                            <MenuFlyoutSeparator Opacity="0.5" />
+
+                            <Grid ColumnDefinitions="Auto, *">
+                                <FontIcon
+                                    Grid.Column="0"
+                                    Margin="0,0,16,0"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Glyph="&#xE9D2;" />
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="Total deteksi valid" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="1,240 file" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <ScrollViewer
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel
+                Padding="48,40,48,48"
+                HorizontalAlignment="Stretch"
+                Spacing="32">
+
+                <Grid ColumnDefinitions="*, Auto">
+                    <StackPanel
+                        Grid.Column="0"
+                        Margin="0,0,40,0"
+                        Spacing="4">
+                        <TextBlock Style="{ThemeResource TitleLargeTextBlockStyle}" Text="Pengaturan profil" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="Kelola informasi akun dan preferensi keamanan Anda." />
+                    </StackPanel>
+
+
+                </Grid>
+
+                <StackPanel Spacing="16">
+                    <TextBlock
+                        CharacterSpacing="50"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Text="INFORMASI DASAR" />
+
+                    <Grid ColumnSpacing="24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Nama lengkap" />
+                            <TextBox
+                                x:Name="FullNameInput"
+                                Text="{x:Bind Profile.Fullname, Mode=OneWay}"
+                                TextChanged="FullNameInput_TextChanged" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Username" />
+                            <TextBox
+                                x:Name="UsernameInput"
+                                Text="{x:Bind User.Username, Mode=OneWay}"
+                                TextChanged="UsernameInput_TextChanged" />
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
 
-                <!-- Main Content Grid -->
-                <Grid Grid.Row="1" ColumnSpacing="24" RowSpacing="24">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.2*" MinWidth="320" MaxWidth="420"/>
-                        <ColumnDefinition Width="2*" MinWidth="450"/>
-                    </Grid.ColumnDefinitions>
+                <MenuFlyoutSeparator Opacity="0.5" />
 
-                    <!-- Left Column - Profile Card -->
-                    <Border Grid.Column="0" 
-                            Style="{StaticResource ShadcnCardStyle}" 
-                            VerticalAlignment="Top">
-                        <Grid RowSpacing="24" Padding="0,16">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                <StackPanel Spacing="16">
+                    <StackPanel Spacing="4">
+                        <TextBlock
+                            CharacterSpacing="50"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="KATA SANDI" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="Perbarui kata sandi untuk menjaga keamanan akun." />
+                    </StackPanel>
 
-                            <!-- Profile Picture -->
-                            <PersonPicture Grid.Row="0"
-                                           DisplayName="Admin User" 
-                                           Initials="AD" 
-                                           Height="100" 
-                                           Width="100"
-                                           HorizontalAlignment="Center"/>
+                    <StackPanel
+                        MaxWidth="400"
+                        HorizontalAlignment="Left"
+                        Spacing="8">
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="Kata sandi saat ini" />
+                        <PasswordBox
+                            x:Name="OldPasswordInput"
+                            PasswordChanged="OldPasswordInput_PasswordChanged"
+                            PlaceholderText="Masukkan sandi lama" />
+                    </StackPanel>
 
-                            <!-- Name and Role -->
-                            <StackPanel Grid.Row="1" Spacing="8" HorizontalAlignment="Center">
-                                <TextBlock Text="Admin User" 
-                                           Style="{StaticResource SubtitleTextBlockStyle}" 
-                                           HorizontalAlignment="Center" 
-                                           FontWeight="Bold"/>
-
-                                <Border Background="{ThemeResource Green100}" 
-                                        BorderBrush="{ThemeResource Green300}" 
-                                        BorderThickness="1" 
-                                        CornerRadius="12" 
-                                        Padding="12,4" 
-                                        HorizontalAlignment="Center">
-                                    <TextBlock Text="Administrator" 
-                                               Style="{StaticResource CaptionTextBlockStyle}" 
-                                               Foreground="{ThemeResource Green800}" 
-                                               FontWeight="SemiBold"/>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Separator -->
-                            <MenuFlyoutSeparator Grid.Row="2"/>
-
-                            <!-- User Info -->
-                            <Grid Grid.Row="3" RowSpacing="16">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- User ID -->
-                                <Grid Grid.Row="0" ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                        <FontIcon Glyph="&#xE77B;" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                        <TextBlock Text="ID Pengguna" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" 
-                                               Text="#882190" 
-                                               HorizontalAlignment="Right" 
-                                               FontWeight="Medium"/>
-                                </Grid>
-
-                                <!-- Join Date -->
-                                <Grid Grid.Row="1" ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                        <FontIcon Glyph="&#xE716;" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                        <TextBlock Text="Bergabung" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" 
-                                               Text="12 Feb 2026" 
-                                               HorizontalAlignment="Right" 
-                                               FontWeight="Medium"/>
-                                </Grid>
-
-                                <!-- Total Detections -->
-                                <Grid Grid.Row="2" ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                        <FontIcon Glyph="&#xE9D2;" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                        <TextBlock Text="Total Deteksi" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" 
-                                               Text="1,240 File" 
-                                               HorizontalAlignment="Right" 
-                                               FontWeight="Medium"/>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Border>
-
-                    <!-- Right Column - Security & Logout -->
-                    <Grid Grid.Column="1" RowSpacing="24">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Security Card -->
-                        <Border Grid.Row="0" Style="{StaticResource ShadcnCardStyle}">
-                            <Grid RowSpacing="20">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- Header -->
-                                <StackPanel Grid.Row="0" Spacing="4">
-                                    <TextBlock Text="Keamanan Akun" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                                    <TextBlock Text="Perbarui kata sandi Anda secara berkala." 
-                                               Style="{StaticResource CaptionTextBlockStyle}" 
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                </StackPanel>
-
-                                <!-- Separator -->
-                                <MenuFlyoutSeparator Grid.Row="1" Opacity="0.5"/>
-
-                                <!-- Form Fields -->
-                                <Grid Grid.Row="2" RowSpacing="16">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <!-- Username -->
-                                    <StackPanel Grid.Row="0" Spacing="8">
-                                        <TextBlock Text="Username" FontWeight="Medium"/>
-                                        <TextBox Text="admin_user" IsReadOnly="True" IsEnabled="False" Opacity="0.7"/>
-                                    </StackPanel>
-
-                                    <!-- Old Password -->
-                                    <StackPanel Grid.Row="1" Spacing="8">
-                                        <TextBlock Text="Kata Sandi Lama" FontWeight="Medium"/>
-                                        <PasswordBox PlaceholderText="Masukkan kata sandi saat ini"/>
-                                    </StackPanel>
-
-                                    <!-- New Password Grid -->
-                                    <Grid Grid.Row="2" ColumnSpacing="16">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0" Spacing="8">
-                                            <TextBlock Text="Kata Sandi Baru" FontWeight="Medium"/>
-                                            <PasswordBox PlaceholderText="Minimal 8 karakter"/>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Spacing="8">
-                                            <TextBlock Text="Konfirmasi Kata Sandi" FontWeight="Medium"/>
-                                            <PasswordBox PlaceholderText="Ulangi kata sandi baru"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Grid>
-
-                                <!-- Action Buttons -->
-                                <Grid Grid.Row="3" Margin="0,12,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="1" 
-                                                Orientation="Horizontal" 
-                                                Spacing="12" 
-                                                HorizontalAlignment="Right">
-                                        <Button Content="Batal" 
-                                                Style="{StaticResource ShadcnOutlineButtonStyle}" 
-                                                Width="100"/>
-                                        <Button Style="{StaticResource ShadcnPrimaryButtonStyle}" 
-                                                Width="120">
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <FontIcon Glyph="&#xE74E;" FontSize="14"/>
-                                                <TextBlock Text="Simpan"/>
-                                            </StackPanel>
-                                        </Button>
-                                    </StackPanel>
-                                </Grid>
-                            </Grid>
-                        </Border>
-
-                        <!-- Logout Card -->
-                        <Border Grid.Row="1"
-                                Style="{StaticResource ShadcnCardStyle}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="24"
-                                Background="Transparent">
-
-                            <Grid ColumnSpacing="16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0" 
-                                            Spacing="4" 
-                                            VerticalAlignment="Center">
-                                    <TextBlock Text="Keluar dari Sesi" 
-                                               Style="{StaticResource BodyStrongTextBlockStyle}" 
-                                               Foreground="#DC2626"/>
-                                    <TextBlock Text="Akhiri sesi Anda saat ini. Anda harus login kembali untuk masuk." 
-                                               Style="{StaticResource CaptionTextBlockStyle}" 
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                </StackPanel>
-
-                                <Button Grid.Column="1" 
-                                        Style="{StaticResource ShadcnOutlineButtonStyle}" 
-                                        BorderBrush="#FCA5A5" 
-                                        Background="Transparent"
-                                        VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <FontIcon Glyph="&#xE7E8;" Foreground="#DC2626"/>
-                                        <TextBlock Text="Log out" Foreground="#DC2626"/>
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
-                        </Border>
-
+                    <Grid ColumnSpacing="24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Kata sandi baru" />
+                            <PasswordBox
+                                x:Name="NewPasswordInput"
+                                PasswordChanged="NewPasswordInput_PasswordChanged"
+                                PlaceholderText="Min. 8 karakter" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="8">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="Konfirmasi sandi" />
+                            <PasswordBox
+                                x:Name="ConfirmPasswordInput"
+                                PasswordChanged="ConfirmPasswordInput_PasswordChanged"
+                                PlaceholderText="Ulangi sandi" />
+                        </StackPanel>
                     </Grid>
-                </Grid>
-            </Grid>
-        </Grid>
-    </ScrollViewer>
+                </StackPanel>
+
+                <StackPanel
+                    Margin="0,16,0,0"
+                    Orientation="Horizontal"
+                    Spacing="12">
+                    <Button
+                        x:Name="Save"
+                        Click="Save_Click"
+                        Content="Simpan perubahan"
+                        IsEnabled="{x:Bind IsChanged, Mode=OneWay}"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <Button Content="Batal" />
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Page>

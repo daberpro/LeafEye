@@ -1,6 +1,6 @@
 namespace LeafEyeCore {
     [default_interface]
-    runtimeclass UserModel
+    runtimeclass UserModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         
         UserModel();

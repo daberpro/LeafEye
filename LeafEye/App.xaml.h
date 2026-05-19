@@ -1,6 +1,6 @@
 #pragma once
-
 #include "App.xaml.g.h"
+#include "Utils/AppSession.h"
 
 namespace winrt::LeafEye::implementation
 {
@@ -8,9 +8,11 @@ namespace winrt::LeafEye::implementation
     {
         App();
 
+        static winrt::Microsoft::UI::Xaml::Window Window() { return window; }
+        static void ClearWindow() { window = nullptr; }
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
 
     private:
-        winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+        static winrt::Microsoft::UI::Xaml::Window window;
     };
 }

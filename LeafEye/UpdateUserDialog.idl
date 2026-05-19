@@ -1,0 +1,15 @@
+namespace LeafEye
+{
+    [default_interface]
+    runtimeclass UpdateUserDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+    {
+        UpdateUserDialog();
+
+        void SetUserData(String username, Boolean isAdmin, Int32 role);
+
+        String Username();
+        String Password();
+        Boolean IsAdmin();
+        Int32 Role();
+    }
+}

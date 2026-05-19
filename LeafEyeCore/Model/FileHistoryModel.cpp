@@ -4,8 +4,8 @@
 
 namespace winrt::LeafEyeCore::implementation
 {
-    FileHistoryModel::FileHistoryModel(uint64_t const& id, hstring const& fileName, uint32_t const& fileSize, int64_t const& dateCreated, int64_t const& dateModified, float const& confidenceScore)
-        : m_id(id), m_fileName(fileName), m_fileSize(fileSize), m_dateCreated(dateCreated), m_dateModified(dateModified), m_confidenceScore(confidenceScore)
+    FileHistoryModel::FileHistoryModel(uint64_t const& id, hstring const& fileName, uint32_t const& fileSize, int64_t const& dateCreated, int64_t const& dateModified, float const& confidenceScore, const hstring& filePath, const hstring& disease)
+        : m_id(id), m_fileName(fileName), m_fileSize(fileSize), m_dateCreated(dateCreated), m_dateModified(dateModified), m_confidenceScore(confidenceScore), m_filePath(filePath), m_disease(disease)
     {
 	}
     uint64_t FileHistoryModel::Id()
@@ -15,6 +15,24 @@ namespace winrt::LeafEyeCore::implementation
     void FileHistoryModel::Id(uint64_t value)
     {
         m_id = value;
+    }
+
+    hstring FileHistoryModel::Disease()
+    {
+        return m_disease;
+    }
+    void FileHistoryModel::Disease(hstring const& value)
+    {
+        m_disease = value;
+    }
+
+    hstring FileHistoryModel::FilePath()
+    {
+        return m_filePath;
+    }
+    void FileHistoryModel::FilePath(hstring const& value)
+    {
+        m_filePath = value;
     }
 
     hstring FileHistoryModel::FileName()
@@ -69,5 +87,20 @@ namespace winrt::LeafEyeCore::implementation
     void FileHistoryModel::ConfidenceScore(float value)
     {
         m_confidenceScore = value;
+    }
+    winrt::event_token FileHistoryModel::PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+    {
+        return m_propertyChanged.add(handler);
+    }
+    void FileHistoryModel::PropertyChanged(winrt::event_token const& token) noexcept
+    {
+        m_propertyChanged.remove(token);
+    }
+
+    void FileHistoryModel::RaisedPropertyChanged(const winrt::hstring& property_name) {
+        if (m_propertyChanged)
+        {
+            m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ property_name });
+        }
     }
 }
