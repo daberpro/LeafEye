@@ -1,4 +1,5 @@
 # LeafEye
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/14dae460-14d9-412b-8ab5-f04e95c344ae" />
 Simple native application to detect multi-object durian leaf disease.
 
 LeafEye is a native Windows desktop application developed using C++/WinRT and WinUI 3 (Windows App SDK). It utilizes a deep learning model to perform multi-object detection on durian leaves, classifying various diseases locally. The application relies on an offline-first architecture powered by ObjectBox to manage user data, scan histories, and detection results without requiring an active internet connection.
